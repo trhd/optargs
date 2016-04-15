@@ -2,9 +2,14 @@ project(
 	'optargs',
 	'c',
 	license : 'GPLv2',
-	version : '1.0.0',
+	version : '1.0.1',
 	meson_version : '>=0.31.0',
-	default_options : [ 'werror=true', 'warning_level=3', 'stdsplit=false' ]
+	default_options : [
+		'werror=true',
+		'warning_level=3',
+		'stdsplit=false',
+		'c_std=c11'
+	]
 )
 
 OPTARGS_HDR = include_directories(meson.current_source_dir())
