@@ -1,0 +1,16 @@
+Usage: @TESTER_4_PATH@ [OPTIONS] MY_ARGUMENT
+
+OPTIONS:
+  -o,--option1 FOOBAR       An option with a named argument.
+  -O,--option2 [BARFOO]     Another option with a named argument.
+  -0,--option3 [KEKEKE]     A third option with a named argument.
+
+OPTION ARGUMENTS:
+  FOOBAR :=                 This is the argument.
+  BARFOO                    This is another argument.
+  KEKEKE =>                 This a third argument.
+
+ARGUMENTS:
+  MY_ARGUMENT               Just some argument.
+
+skibidiwaynow!

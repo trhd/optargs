@@ -1,0 +1,9 @@
+Usage: @TESTER_2_PATH@ [OPTIONS] Name_0 Name_1
+
+OPTIONS:
+  -a,--aaa           AAA
+  -b,--bbb           BBB
+
+  -c,--ccc           CCC
+
+foobar
