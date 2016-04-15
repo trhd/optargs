@@ -25,6 +25,7 @@ script:
     - PATH=$PWD/meson-0.31.0:$PWD:$PATH
     - BDIR=$(mktemp -d)
     - meson.py $BDIR
+    - mesonconf.py -Derrorlogs=true $BDIR
     - ninja -v -C $BDIR
     - ninja -v -C $BDIR test
     - ninja -v -C $BDIR test-valgrind
