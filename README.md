@@ -1,5 +1,7 @@
-optargs // [![Build Status](https://travis-ci.org/trhd/optargs.svg?branch=master)](https://travis-ci.org/trhd/optargs) [![Build Status](https://travis-ci.org/trhd/optargs.svg?branch=next)](https://travis-ci.org/trhd/optargs)
+optargs
 =======
+[![Build Status](https://travis-ci.org/trhd/optargs.svg?branch=master)](https://travis-ci.org/trhd/optargs)
+[![Build Status](https://travis-ci.org/trhd/optargs.svg?branch=next)](https://travis-ci.org/trhd/optargs)
 
 What Is Optargs
 ---------------
@@ -89,7 +91,7 @@ Contact the author e.g. via email.
 Authors
 -------
 
-  Hemmo Nieminen <hemmo.nieminen@iki.fi>
+[Hemmo Nieminen](mailto:hemmo.nieminen@iki.fi)
 
 
 Licensing
