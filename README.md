@@ -6,17 +6,17 @@ optargs
 What Is Optargs
 ---------------
 
-Optargs is an option and argument parsing library with the goal of being
-easy-to-use and able of providing visually pleasant, informative and
-useful help texts for CLI applications with as little input from the
-developer as possible.
+Optargs is an option and argument management library with the goal of
+being easy-to-use and able of providing visually pleasant, informative and
+useful help texts for command line applications with as little input from
+the developer as possible.
 
 
 Why Optargs
 -----------
 
-Existing argument parsing solutions were seen as unnecessarily complicated
-or lacking on the help text generation side.
+Existing argument parsing/management solutions were seen as unnecessarily
+complicated or lacking on the help text generation side.
 
 
 How To Use Optargs

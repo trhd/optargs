@@ -1,4 +1,5 @@
 /**
+ * optargs -- A command line option and argument management library.
  * Copyright (C) 2016 Hemmo Nieminen
  *
  * This program is free software; you can redistribute it and/or modify
