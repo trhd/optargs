@@ -1,16 +1,21 @@
 Usage: @TESTER_4_PATH@ [OPTIONS] MY_ARGUMENT
 
 OPTIONS:
-  -o,--option1 FOOBAR       An option with a named argument.
-  -O,--option2 [BARFOO]     Another option with a named argument.
-  -0,--option3 [KEKEKE]     A third option with a named argument.
+  -o,--option1 FOOBAR                   An option with a named argument.
+  -O,--option2 [BARFOO]                 Another option with a named argument.
+  -0,--option3 [KEKEKE]                 A third option with a named argument.
+  -0,--option3 [This-is-an-option-argument-with-a-really-long-name]
+                                        A fourth option with a long name
+                                        argument.
 
 OPTION ARGUMENTS:
-  FOOBAR :=                 This is the argument.
-  BARFOO                    This is another argument.
-  KEKEKE =>                 This a third argument.
+  FOOBAR :=                             This is the argument.
+  BARFOO                                This is another argument.
+  KEKEKE =>                             This a third argument.
+  This-is-an-option-argument-with-a-really-long-name
+                                        This is the fourth argument.
 
 ARGUMENTS:
-  MY_ARGUMENT               Just some argument.
+  MY_ARGUMENT                           Just some argument.
 
 skibidiwaynow!
