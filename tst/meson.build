@@ -87,6 +87,15 @@ TESTER_7 = executable(
 	include_directories : OPTARGS_HDR
 )
 
+TESTER_8_PATH = meson.current_build_dir() + '/tester_8-ignore_hidden_option_length'
+CONF_DATA.set('TESTER_8_PATH', TESTER_8_PATH)
+TESTER_8 = executable(
+	'tester_8-ignore_hidden_option_length',
+	'tester_8-ignore_hidden_option_length.c',
+	link_with : OPTARGS_LIB,
+	include_directories : OPTARGS_HDR
+)
+
 configure_file(
 	input : 'help_text_sample_1.txt.in',
 	output : 'help_text_sample_1.txt',
@@ -108,6 +117,12 @@ configure_file(
 configure_file(
 	input : 'help_text_sample_4.txt.in',
 	output : 'help_text_sample_4.txt',
+	configuration : CONF_DATA
+)
+
+configure_file(
+	input : 'help_text_sample_8.txt.in',
+	output : 'help_text_sample_8.txt',
 	configuration : CONF_DATA
 )
 
@@ -776,6 +791,7 @@ foreach t : [
 			[ '2', TESTER_2_PATH ],
 			[ '3', TESTER_3_PATH ],
 			[ '4', TESTER_4_PATH ],
+			[ '8', TESTER_8_PATH ],
 		]
 	test(
 		'Ensure help text integrity for TESTER_@0@.'.format(t.get(0)),

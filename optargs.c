@@ -453,7 +453,11 @@ find_longest_opt(const struct optargs_opt *opts)
 	size_t r;
 
 	for (r = 0 ; option_is_valid(opts) ; opts++)
+	{
+		if (option_is_hidden(opts))
+			continue;
 		r = max(r, get_long_opt_length(opts));
+	}
 
 	return r + 12;
 }
