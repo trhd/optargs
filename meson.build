@@ -30,6 +30,7 @@ project(
 )
 
 OPTARGS_HDR = include_directories(meson.current_source_dir())
+OPTARGS_SRC = meson.current_source_dir() + '/optargs.c'
 
 if get_option('buildtype') == 'release'
 	release_flags = [ '-DNDEBUG' ]
@@ -39,7 +40,7 @@ endif
 
 OPTARGS_LIB = shared_library(
 	'optargs',
-	'optargs.c',
+	OPTARGS_SRC,
 	c_args : release_flags,
 	version : meson.project_version(),
 	install : true
@@ -48,7 +49,7 @@ OPTARGS_LIB = shared_library(
 if meson.is_subproject()
 	OPTARGS_BIN = static_library(
 		'optargs',
-		'optargs.c',
+		OPTARGS_SRC,
 		c_args : release_flags
 	)
 endif
