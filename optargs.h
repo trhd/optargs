@@ -23,13 +23,13 @@
  * A macro for initializing an all zero instance of struct optargs_arg.
  * Can be used e.g. to indicate the end of an argument list.
  */
-#define optargs_arg_eol { NULL, NULL, 0 }
+#define optargs_arg_eol { (void*)0, (void*)0, 0 }
 
 /**
  * A macro for initializing an all zero instance of struct optargs_opt.
  * Can be used e.g. to indicate the end of an option list.
  */
-#define optargs_opt_eol { NULL, NULL, 0, optargs_arg_eol, NULL }
+#define optargs_opt_eol { (void*)0, (void*)0, 0, optargs_arg_eol, (void*)0 }
 
 /**
  * The default value for a parsed option.
