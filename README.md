@@ -39,7 +39,7 @@ In a nutshell:
 
 		if (optargs_parse(argc, argv, opts))
 		{
-			printf("Some sort of an error occurred.");
+			printf("Some sort of an error occurred.\n");
 			return -1;
 		}
 
@@ -74,12 +74,12 @@ To build and install optargs shared library (using ninja backend):
 	$ sudo ninja -C build install
 
 If used as a meson subproject one can use the variables OPTARGS_BIN to get
-optargs as a static library and OPTARGS_HDR to locate the optargs.h header
-file's directory.
+optargs as a static library, OPTARGS_HDR to locate the optargs.h header
+file's directory and OPTARGS_SRC to access the optargs' main source file.
 
 One can also compile optargs into their own program by just including the
 optargs.c file in it. The compiler define NDEBUG can be used disable
-optarg's internal assertions (see "man assert").
+optarg's internal assertions (see "man 3 assert").
 
 
 Reporting Bugs, Sending Patches and Giving Feedback
