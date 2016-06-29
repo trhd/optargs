@@ -224,5 +224,3 @@ const char * optargs_opt_by_index(const struct optargs_opt *opts, int index);
  *  argument was not found.
  */
 int optargs_arg_index(const struct optargs_arg *arguments, const char *name);
-
-/* vim: set expandtab tabstop=4 shiftwidth=4 */
