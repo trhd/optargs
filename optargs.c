@@ -450,13 +450,19 @@ find_longest_opt(const struct optargs_opt *opts)
 {
 	assert(opts);
 
-	size_t r;
+	size_t r, t;
 
 	for (r = 0 ; option_is_valid(opts) ; opts++)
 	{
 		if (option_is_hidden(opts))
 			continue;
-		r = max(r, get_long_opt_length(opts));
+
+		t = get_long_opt_length(opts);
+
+		if (t > LEFT_COLUMN_MAX_WIDTH)
+			continue;
+
+		r = max(r, t);
 	}
 
 	return r + 12;
@@ -475,10 +481,17 @@ find_longest_arg(const struct optargs_arg *args)
 {
 	assert(args);
 
-	int r;
+	int r, t;
 
 	for (r = 0; argument_is_valid(args) ; args++)
-		r = max(r, get_arg_length(args));
+	{
+		t = get_arg_length(args);
+
+		if (t > LEFT_COLUMN_MAX_WIDTH)
+			continue;
+
+		r = max(r, t);
+	}
 
 	return r + 6;
 }
