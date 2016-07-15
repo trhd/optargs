@@ -22,35 +22,84 @@ complicated or lacking on the help text generation side.
 How To Use Optargs
 ------------------
 
-In a nutshell:
+To use, write something like this:
 
-	int main(int argc, char **argv)
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include "optargs.h"
+
+	#define ABOUT "About this program. This is the most awesomest program " \
+		"ever written and you ought to know that."
+
+	int
+	main(int ac, char **av)
 	{
 		struct optargs_opt opts[] =
 		{
 			{
-				.description = "Print this help text.",
+				.description = "Help text",
 				.long_option = "help",
 				.short_option = 'h',
+				.argument = { .mandatory = optargs_no},
+			},
+			{
+				.description = "Be quiet.",
+				.short_option = 'q',
+				.argument = { .mandatory = optargs_no},
+			},
+			{
+				.description = "Be verbose.",
+				.long_option = "verbose",
+				.argument = { .mandatory = optargs_no},
+			},
+			{
+				.long_option = "secret-option",
 				.argument = { .mandatory = optargs_no},
 			},
 			optargs_opt_eol
 		};
 
-		if (optargs_parse(argc, argv, opts))
+		struct optargs_arg args[] =
 		{
-			printf("Some sort of an error occurred.\n");
-			return -1;
+			{ "COMMAND", NULL, optargs_yes },
+			{ "start", "Start doing stuff.", optargs_no },
+			{ "stop", "Stop doing stuff.", optargs_no },
+			optargs_arg_eol
+		};
+
+		if (optargs_parse(ac, (const char **)av, opts) < 0)
+		{
+			printf("Something went wrong.\n");
+			return EXIT_FAILURE;
 		}
 
 		if (optargs_opt_by_long(opts, "help"))
 		{
-			optargs_print_help(argv[0], "This is a really simple example.", opts, NULL);
-			return 0;
+			optargs_print_help(av[0], ABOUT, opts, args);
+			return EXIT_SUCCESS;
 		}
 
-		// Do the boogie.
+		printf("Do the hustle!\n");
+
+		return 0;
 	}
+
+and get something like this:
+
+	$ b/tst/readme -h
+	Usage: b/tst/readme [OPTIONS] [COMMAND]
+
+	OPTIONS:
+	  -h,--help           Help text
+	  -q                  Be quiet.
+	  --verbose           Be verbose.
+
+	COMMAND:
+	  start               Start doing stuff.
+	  stop                Stop doing stuff.
+
+	About this program. This is the most awesomest program ever written and you
+	ought to know that.
 
 See optargs' tests for more complex usage examples. The optargs.h header
 file should provide all the needed documentation.

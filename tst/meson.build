@@ -28,6 +28,13 @@ MATCHER = executable(
 	include_directories : OPTARGS_HDR
 )
 
+README = executable(
+	'readme',
+	'readme.c',
+	link_with : OPTARGS_LIB,
+	include_directories : OPTARGS_HDR
+)
+
 TESTER_1_PATH = meson.current_build_dir() + '/tester_1'
 CONF_DATA.set('TESTER_1_PATH', TESTER_1_PATH)
 TESTER_1 = executable(
@@ -805,5 +812,9 @@ endforeach
 #### Ensure NULL about string can be used. ###############################
                                                                          #
 test('NULL about string', TESTER_5, valgrind_args : VALGRIND_ARGS)
+                                                                         #
+#### Ensure the reame progjems "works". ##################################
+                                                                         #
+test('readme', README, valgrind_args : VALGRIND_ARGS)
                                                                          #
 ##########################################################################
