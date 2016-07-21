@@ -34,6 +34,8 @@ To use, write something like this:
 	int
 	main(int ac, char **av)
 	{
+		int verbosity;
+		const char *tmp;
 		struct optargs_opt opts[] =
 		{
 			{
@@ -50,7 +52,11 @@ To use, write something like this:
 			{
 				.description = "Be verbose.",
 				.long_option = "verbose",
-				.argument = { .mandatory = optargs_no},
+				.argument = {
+					.name = "level",
+					.description = "The level of the desired verbosity.",
+					.mandatory = optargs_maybe
+				}
 			},
 			{
 				.long_option = "secret-option",
@@ -58,7 +64,6 @@ To use, write something like this:
 			},
 			optargs_opt_eol
 		};
-
 		struct optargs_arg args[] =
 		{
 			{ "COMMAND", NULL, optargs_yes },
@@ -79,7 +84,15 @@ To use, write something like this:
 			return EXIT_SUCCESS;
 		}
 
-		printf("Do the hustle!\n");
+		tmp = optargs_opt_by_long(opts, "verbose");
+		if (!tmp)
+			verbosity = 0;
+		else if (tmp == &optargs_default_result)
+			verbosity = 100;
+		else
+			verbosity = atoi(tmp);
+
+		printf("Doing stuff with %d%% verbosity.\n", verbosity);
 
 		return 0;
 	}
@@ -87,16 +100,19 @@ To use, write something like this:
 and get something like this:
 
 	$ b/tst/readme -h
-	Usage: b/tst/readme [OPTIONS] [COMMAND]
+	Usage: b/tst/readme [OPTIONS] COMMAND
 
 	OPTIONS:
-	  -h,--help           Help text
-	  -q                  Be quiet.
-	  --verbose           Be verbose.
+	  -h,--help             Help text
+	  -q                    Be quiet.
+	  --verbose [level]     Be verbose.
+
+	OPTION ARGUMENTS:
+	  level                 The level of the desired verbosity.
 
 	COMMAND:
-	  start               Start doing stuff.
-	  stop                Stop doing stuff.
+	  start                 Start doing stuff.
+	  stop                  Stop doing stuff.
 
 	About this program. This is the most awesomest program ever written and you
 	ought to know that.

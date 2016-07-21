@@ -27,6 +27,8 @@
 int
 main(int ac, char **av)
 {
+	int verbosity;
+	const char *tmp;
 	struct optargs_opt opts[] =
 	{
 		{
@@ -43,7 +45,11 @@ main(int ac, char **av)
 		{
 			.description = "Be verbose.",
 			.long_option = "verbose",
-			.argument = { .mandatory = optargs_no},
+			.argument = {
+				.name = "level",
+				.description = "The level of the desired verbosity.",
+				.mandatory = optargs_maybe
+			}
 		},
 		{
 			.long_option = "secret-option",
@@ -51,7 +57,6 @@ main(int ac, char **av)
 		},
 		optargs_opt_eol
 	};
-
 	struct optargs_arg args[] =
 	{
 		{ "COMMAND", NULL, optargs_yes },
@@ -72,7 +77,15 @@ main(int ac, char **av)
 		return EXIT_SUCCESS;
 	}
 
-	printf("Do the hustle!\n");
+	tmp = optargs_opt_by_long(opts, "verbose");
+	if (!tmp)
+		verbosity = 0;
+	else if (tmp == &optargs_default_result)
+		verbosity = 100;
+	else
+		verbosity = atoi(tmp);
+
+	printf("Doing stuff with %d%% verbosity.\n", verbosity);
 
 	return 0;
 }
