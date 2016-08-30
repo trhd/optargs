@@ -25,24 +25,27 @@
 #include <string.h>
 #include "optargs.h"
 
-#define MAX_WIDTH 79
-#define LEFT_COLUMN_MAX_WIDTH 40
+enum constants
+{
+	MAX_WIDTH = 79,
+	LEFT_COLUMN_MAX_WIDTH = 40
+};
 
 const char optargs_default_result = 'x';
 
-static size_t
+static int
 max(int a, int b)
 {
 	return a > b ? a : b;
 }
 
-static size_t
+static int
 min(int a, int b)
 {
 	return a > b ? b : a;
 }
 
-static size_t
+static int
 word_length(const char *s)
 {
 	assert(s);
@@ -136,7 +139,7 @@ is_double_hyphen(const char *opt)
 }
 
 static int
-long_option_is_invalid(const char *o, size_t l)
+long_option_is_invalid(const char *o, int l)
 {
 	assert(o);
 	assert(l > 0);
@@ -155,19 +158,19 @@ short_option_is_invalid(const char c)
 }
 
 static bool
+option_is_divider(const struct optargs_opt *opt)
+{
+	assert(opt);
+
+	return !(opt->short_option || opt->long_option);
+}
+
+static bool
 option_is_hidden(const struct optargs_opt *opt)
 {
 	assert(opt);
 
-	return !opt->description;
-}
-static bool
-option_is_divider(const struct optargs_opt *opt)
-{
-	assert(opt);
-	assert(option_is_hidden(opt));
-
-	return !(opt->short_option || opt->long_option);
+	return !option_is_divider(opt) && !opt->description;
 }
 
 static bool
@@ -200,7 +203,7 @@ locate_short_option(struct optargs_opt *o, const char c)
 }
 
 static void
-locate_long_option(struct optargs_opt **o, const char *l, size_t ll)
+locate_long_option(struct optargs_opt **o, const char *l, int ll)
 {
 	assert(o);
 	assert(*o);
@@ -212,7 +215,7 @@ locate_long_option(struct optargs_opt **o, const char *l, size_t ll)
 		if (!(*o)->long_option)
 			continue;
 
-		if (strlen((*o)->long_option) != ll)
+		if ((int)strlen((*o)->long_option) != ll)
 			continue;
 
 		if ((*o)->long_option && !strncmp((*o)->long_option, l, ll))
@@ -299,8 +302,7 @@ parse_long_option(const char *c, const char *n, struct optargs_opt *o)
 	assert(c);
 	assert(o);
 
-	size_t d;
-	int r;
+	int r, d;
 
 	assert(c[0] == '-' && c[1] == '-');
 	c += 2;
@@ -362,11 +364,9 @@ print_arg_name(const struct optargs_arg *arg)
 {
 	assert(arg);
 
-	int l;
-
 	if (arg->name && arg->mandatory != optargs_no)
 	{
-		l = word_length(arg->name);
+		int l = word_length(arg->name);
 
 		if (arg->mandatory == optargs_yes)
 			printf(" %.*s", l, arg->name);
@@ -387,13 +387,13 @@ print_arg_names(const struct optargs_arg *args)
 		print_arg_name(args);
 }
 
-static size_t
-calc_line_length(const char *src, size_t cols)
+static int 
+calc_line_length(const char *src, int cols)
 {
 	assert(src);
 	assert(cols > 0);
 
-	size_t r, t;
+	int r, t;
 
 	for (r = 0, t = 0 ; r < cols && src[r] != '\n' && src[r] != '\0' ; r++)
 	{
@@ -413,31 +413,30 @@ calc_line_length(const char *src, size_t cols)
 }
 
 static void
-print_wrapped(const char *src, size_t width, size_t indent)
+print_wrapped(const char *src, int width, int indent)
 {
 	assert(src);
 	assert(width > 0);
 	assert(*src != '\0');
 
-	size_t l;
 	bool first = true;
 
 	width -= indent;
 
 	do {
-		l = calc_line_length(src, width);
-		printf("%*s%.*s\n", first ? 0 : (int)indent, "", (int)l, src);
+		int l = calc_line_length(src, width);
+		printf("%*s%.*s\n", first ? 0 : indent, "", l, src);
 		first = false;
 		src += l + 1;
 	} while (*(src - 1) != '\0');
 }
 
-static size_t
+static int
 get_long_opt_length(const struct optargs_opt *opt)
 {
 	assert(opt);
 
-	size_t r;
+	int r;
 
 	if (!opt->long_option)
 		return 0;
@@ -453,12 +452,12 @@ get_long_opt_length(const struct optargs_opt *opt)
 }
 
 
-static size_t
+static int
 find_longest_opt(const struct optargs_opt *opts)
 {
 	assert(opts);
 
-	size_t r, t;
+	int r, t;
 
 	for (r = 0 ; option_is_valid(opts) ; opts++)
 	{
@@ -476,7 +475,7 @@ find_longest_opt(const struct optargs_opt *opts)
 	return r + 12;
 }
 
-static size_t
+static int
 get_arg_length(const struct optargs_arg *arg)
 {
 	assert(arg);
@@ -489,11 +488,11 @@ find_longest_arg(const struct optargs_arg *args)
 {
 	assert(args);
 
-	int r, t;
+	int r;
 
 	for (r = 0; argument_is_valid(args) ; args++)
 	{
-		t = get_arg_length(args);
+		int t = get_arg_length(args);
 
 		if (t > LEFT_COLUMN_MAX_WIDTH)
 			continue;
@@ -504,15 +503,20 @@ find_longest_arg(const struct optargs_arg *args)
 	return r + 6;
 }
 
-static size_t
+static int
 find_left_column_maximum(const struct optargs_opt *opts,
 		const struct optargs_arg *args)
 {
-	size_t m = max(opts ? find_longest_opt(opts) : 0, args ? find_longest_arg(args) : 0);
-	return min(m, LEFT_COLUMN_MAX_WIDTH);
+	return min(
+		LEFT_COLUMN_MAX_WIDTH,
+		max(
+			opts ? find_longest_opt(opts) : 0,
+			args ? find_longest_arg(args) : 0
+		)
+	);
 }
 
-static size_t
+static int
 print_option_options(const struct optargs_opt *opt)
 {
 	assert(opt);
@@ -534,12 +538,12 @@ print_option_options(const struct optargs_opt *opt)
 	return strlen(opt->long_option) + 4;
 }
 
-static size_t
+static int
 print_mandatory_option_argument(const struct optargs_opt *opt)
 {
 	assert(opt);
 
-	size_t z;
+	int z;
 
 	if (opt->argument.name)
 	{
@@ -556,17 +560,17 @@ print_mandatory_option_argument(const struct optargs_opt *opt)
 	return z;
 }
 
-static size_t
+static int
 print_optional_option_argument(const struct optargs_opt *opt)
 {
 	assert(opt);
 
-	size_t z;
+	int z;
 
 	if (opt->argument.name)
 	{
 		z = word_length(opt->argument.name);
-		printf(" [%.*s]", (int)z, opt->argument.name);
+		printf(" [%.*s]", z, opt->argument.name);
 		z += 3;
 	}
 	else
@@ -578,7 +582,7 @@ print_optional_option_argument(const struct optargs_opt *opt)
 	return z;
 }
 
-static size_t
+static int
 print_option_argument(const struct optargs_opt *opt)
 {
 	assert(opt);
@@ -592,12 +596,12 @@ print_option_argument(const struct optargs_opt *opt)
 }
 
 static void
-print_option_padding(size_t width, size_t pos)
+print_option_padding(int width, int pos)
 {
-	if (pos >= (size_t)width)
-		printf("\n%*s", (int)width, "");
+	if (pos >= width)
+		printf("\n%*s", width, "");
 	else
-		printf("%-*s", (int)(width - pos), "");
+		printf("%-*s", width - pos, "");
 }
 
 static void
@@ -658,24 +662,25 @@ print_option_argument_description(const struct optargs_arg *arg, int left_column
 }
 
 static void
-print_option(const struct optargs_opt *opt, size_t left_column)
+print_regular_option(const struct optargs_opt *opt, int left_column)
 {
-	size_t len;
-
-	if (option_is_hidden(opt))
-	{
-		if (option_is_divider(opt))
-			printf("\n");
-		return;
-	}
-
-	len = print_option_options(opt);
+	int len = print_option_options(opt);
 	len += print_option_argument(opt);
 	print_option_padding(left_column, len);
 	print_wrapped(opt->description, MAX_WIDTH, left_column);
 
 	if (opt->argument.description)
 		print_option_argument_description(&opt->argument, left_column);
+}
+
+
+static void
+print_option(const struct optargs_opt *opt, int left_column)
+{
+	if (option_is_divider(opt))
+		printf("\n");
+	else if (!option_is_hidden(opt))
+		print_regular_option(opt, left_column);
 }
 
 static void
@@ -686,7 +691,7 @@ print_options(const struct optargs_opt *opts, int indent)
 
 	printf("\nOPTIONS:\n");
 
-	for (; option_is_valid(opts); ++opts)
+	for ( ; option_is_valid(opts) ; ++opts)
 		print_option(opts, indent);
 }
 
@@ -762,10 +767,7 @@ optargs_arg_index(const struct optargs_arg *args, const char *name)
 	assert(args);
 	assert(name);
 
-	int r;
-	size_t l;
-
-	for (r = 0; argument_is_valid(&args[r]); r++)
+	for (int r = 0, l ; argument_is_valid(&args[r]) ; r++)
 	{
 		if (argument_is_header(&args[r]))
 			continue;
@@ -783,9 +785,7 @@ optargs_arg_index(const struct optargs_arg *args, const char *name)
 const char *
 optargs_opt_by_long(const struct optargs_opt *opts, const char *l)
 {
-	int i;
-
-	for (i = 0; option_is_valid(&opts[i]); ++i)
+	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].long_option == l)
 			return opts[i].result;
 	abort();
@@ -794,9 +794,7 @@ optargs_opt_by_long(const struct optargs_opt *opts, const char *l)
 const char *
 optargs_opt_by_short(const struct optargs_opt *opts, const char s)
 {
-	int i;
-
-	for (i = 0; option_is_valid(&opts[i]); ++i)
+	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].short_option == s)
 			return opts[i].result;
 	abort();
