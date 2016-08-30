@@ -32,6 +32,7 @@ main(int ac __attribute__((unused)), char **av)
 		{ "Another option with a named argument.", "option2", 'O', { "BARFOO", "This is another argument.", optargs_maybe }, NULL },
 		{ "A third option with a named argument.", "option3", '0', { "KEKEKE =>", "This a third argument.", optargs_maybe }, NULL },
 		{ "A fourth option with a long name argument.", "option3", '0', { "This-is-an-option-argument-with-a-really-long-name", "This is the fourth argument.", optargs_maybe }, NULL },
+		{ "Fifth option.", "option5", '5', { "YOMAMMA", "This is the fifth option argument with a really long description that will wrap to multiple lines.", optargs_maybe }, NULL },
 		optargs_opt_eol
 	};
 

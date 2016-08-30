@@ -176,7 +176,15 @@ argument_is_header(const struct optargs_arg *arg)
 	assert(arg);
 	assert(arg->name);
 
-	return !arg->description;
+	return !arg->description && arg->name;
+}
+
+static bool
+argument_is_divider(const struct optargs_arg *arg)
+{
+	assert(arg);
+
+	return !(arg->description || arg->name);
 }
 
 static struct optargs_opt *
@@ -504,49 +512,6 @@ find_left_column_maximum(const struct optargs_opt *opts,
 	return min(m, LEFT_COLUMN_MAX_WIDTH);
 }
 
-static void
-print_option_argument_description(const struct optargs_opt *opt, size_t left_column)
-{
-	assert(opt);
-
-	if (opt->argument.description)
-	{
-		/** An option with description must have a name as well. */
-		assert(opt->argument.name);
-
-		/** Doesn't make any sense to describe arguments that can not be given. */
-		assert(opt->argument.mandatory == optargs_yes
-				|| opt->argument.mandatory == optargs_maybe);
-
-		if (strlen(opt->argument.name) >= left_column)
-			printf("  %-*s\n%*s", (int)left_column - 2, opt->argument.name, (int)left_column, "");
-		else
-			printf("  %-*s", (int)left_column - 2, opt->argument.name);
-
-		print_wrapped(opt->argument.description, MAX_WIDTH, left_column);
-
-	}
-}
-
-static void
-print_option_argument_descriptions(const struct optargs_opt *opts, size_t width)
-{
-
-	assert(opts);
-	assert(width > 0);
-
-	/** No need to pass the options without argument descriptions. */
-	for ( ; option_is_valid(opts) && !opts->argument.description; opts++);
-
-	if (option_is_valid(opts))
-	{
-		printf("\nOPTION ARGUMENTS:\n");
-
-		for ( ; option_is_valid(opts) ; opts++)
-			print_option_argument_description(opts, width);
-	}
-}
-
 static size_t
 print_option_options(const struct optargs_opt *opt)
 {
@@ -629,12 +594,67 @@ print_option_argument(const struct optargs_opt *opt)
 static void
 print_option_padding(size_t width, size_t pos)
 {
-
 	if (pos >= (size_t)width)
 		printf("\n%*s", (int)width, "");
 	else
 		printf("%-*s", (int)(width - pos), "");
+}
 
+static void
+print_argument(const struct optargs_arg *arg, int left_column)
+{
+	assert(arg);
+	assert(arg->name || !arg->description);
+
+	if (argument_is_divider(arg))
+		printf("\n");
+	else if (argument_is_header(arg))
+		printf("\n%s:\n", arg->name);
+	else
+	{
+		printf("  %-*s", left_column - 2, arg->name);
+
+		if ((int)strlen(arg->name) + 2 >= left_column)
+			printf("\n%*s", left_column, "");
+
+		print_wrapped(arg->description, MAX_WIDTH, left_column);
+	}
+}
+
+static void
+print_option_argument_description(const struct optargs_arg *arg, int left_column)
+{
+	char buf[MAX_WIDTH];
+	int l = left_column + strlen(arg->name) + 1, o, d = strlen(arg->description);
+
+	printf("%*s%s:%s", left_column, "", arg->name, l < MAX_WIDTH ? " " : "");
+
+	if (l >= MAX_WIDTH)
+	{
+		printf("\n%*s", left_column, "");
+		print_wrapped(arg->description, MAX_WIDTH, left_column);
+	}
+	else if (l + d <= MAX_WIDTH)
+		printf("%s\n", arg->description);
+	else
+	{
+		o = MAX_WIDTH - l;
+		strncpy(buf, arg->description, o);
+
+		for (--o ; o >= 0 ; o--)
+			if (is_word_separator(buf[o]))
+				break;
+
+		if (o > 0)
+		{
+			buf[o] = '\0';
+			print_wrapped(buf, MAX_WIDTH, l);
+			++o;
+		}
+
+		printf("%*s", left_column, "");
+		print_wrapped(arg->description + o, MAX_WIDTH, left_column);
+	}
 }
 
 static void
@@ -653,6 +673,9 @@ print_option(const struct optargs_opt *opt, size_t left_column)
 	len += print_option_argument(opt);
 	print_option_padding(left_column, len);
 	print_wrapped(opt->description, MAX_WIDTH, left_column);
+
+	if (opt->argument.description)
+		print_option_argument_description(&opt->argument, left_column);
 }
 
 static void
@@ -677,31 +700,6 @@ all_args_without_description(const struct optargs_arg *args)
 			return false;
 
 	return true;
-}
-
-static void
-print_argument(const struct optargs_arg *arg, size_t left_column)
-{
-	assert(arg);
-
-	if (!arg->description)
-	{
-		if (arg->name)
-			printf("\n%s:\n", arg->name);
-		else
-			printf("\n");
-	}
-	else
-	{
-		assert(arg->name);
-
-		if (strlen(arg->name) + 2 >= (size_t)left_column)
-			printf("  %-*s\n%*s", (int)left_column - 2, arg->name, (int)left_column, "");
-		else
-			printf("  %-*s", (int)left_column - 2, arg->name);
-
-		print_wrapped(arg->description, MAX_WIDTH, left_column);
-	}
 }
 
 static void
@@ -747,10 +745,7 @@ optargs_print_help(const char *exe, const char *about,
 	print_usage(exe, opts, args);
 
 	if (opts)
-	{
 		print_options(opts, indent);
-		print_option_argument_descriptions(opts, indent);
-	}
 
 	if (args)
 		print_arguments(args, indent);

@@ -101,19 +101,17 @@ and get something like this:
 
 	$ b/tst/readme -h
 	Usage: b/tst/readme [OPTIONS] COMMAND
-
+	
 	OPTIONS:
 	  -h,--help             Help text
 	  -q                    Be quiet.
 	  --verbose [level]     Be verbose.
-
-	OPTION ARGUMENTS:
-	  level                 The level of the desired verbosity.
-
+	                        level: The level of the desired verbosity.
+	
 	COMMAND:
 	  start                 Start doing stuff.
 	  stop                  Stop doing stuff.
-
+	
 	About this program. This is the most awesomest program ever written and you
 	ought to know that.
 
