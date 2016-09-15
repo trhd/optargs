@@ -69,8 +69,9 @@ struct optargs_arg
 
 	/**
 	 * Description of this argument. If defined, this will be shown in the
-	 * ARGUMENTS section of the help text. This requires that the argument
-	 * also has the name field defined.
+	 * arguments section of the help text. This requires that the argument
+	 * also has the name field defined. An argument with no description
+	 * will become a subheader for a group of arguments (e.g. "COMMANDS").
 	 */
 	const char *description;
 
