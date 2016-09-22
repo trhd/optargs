@@ -13,11 +13,11 @@ OPTIONS:
   -i,--iiii ARG                         Description I.
   --iiii2 ARG                           Description I2.
   -I ARG                                Description I3.
-  -j,--jjjj [ARG]                       Description J.
-  -k [ARG]                              Description K.
-  --llll [ARG]                          Description L.
-  -m,--mmmmmmmmmmmmmmmmmmmm [ARG]       Description M.
-  -n,--nnnnnnnn [ARG]                   This is a super long option description
+  -j,--jjjj[=ARG]                       Description J.
+  -k[=ARG]                              Description K.
+  --llll[=ARG]                          Description L.
+  -m,--mmmmmmmmmmmmmmmmmmmm[=ARG]       Description M.
+  -n,--nnnnnnnn[=ARG]                   This is a super long option description
                                         that will have to be printed on several
                                         lines as it is too long to fit on only
                                         one line and we thus need to test that
@@ -47,14 +47,14 @@ OPTIONS:
   --option-args-greater-than-LEFT_COLUMN_MAX_WIDTH ARG
                                         A crazy long option #3.
 
-  --opti-lt-LEFT_COLUMN_MAX_WIDTH [ARG] A crazy long option #0.1.
-  --opti-lt-LEFT_COLUMN_MAX_WIDTHx [ARG]
+  --opti-lt-LEFT_COLUMN_MAX_WIDTH[=ARG] A crazy long option #0.1.
+  --opti-lt-LEFT_COLUMN_MAX_WIDTHx[=ARG]
                                         A crazy long option #0.2.
-  --option-eq-LEFT_COLUMN_MAX_WIDTH-opti [ARG]
+  --option-eq-LEFT_COLUMN_MAX_WIDTH-opti[=ARG]
                                         A crazy long option #1.
-  --option-opti-just-less-than-in-above [ARG]
+  --option-opti-just-less-than-in-above[=ARG]
                                         A crazy long option #2.
-  --option-opti-greater-than-LEFT_COLUMN_MAX_WIDTH [ARG]
+  --option-opti-greater-than-LEFT_COLUMN_MAX_WIDTH[=ARG]
                                         A crazy long option #3.
 
 ARGUMENTS:

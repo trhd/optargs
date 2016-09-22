@@ -626,12 +626,12 @@ print_optional_option_argument(const struct optargs_opt *opt)
 	if (opt->argument.name)
 	{
 		z = word_length(opt->argument.name);
-		printf(" [%.*s]", z, opt->argument.name);
+		printf("[=%.*s]", z, opt->argument.name);
 		z += 3;
 	}
 	else
 	{
-		printf(" [ARG]");
+		printf("[=ARG]");
 		z = 6;
 	}
 
