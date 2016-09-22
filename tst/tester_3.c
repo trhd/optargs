@@ -29,7 +29,6 @@ main(int ac, char **av)
 			.description = "Help text",
 			.long_option = "help",
 			.short_option = 'h',
-			.argument = { .mandatory = optargs_no},
 		},
 		optargs_opt_eol
 	};

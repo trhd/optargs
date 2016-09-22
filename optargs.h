@@ -20,10 +20,24 @@
 #pragma once
 
 /**
- * A macro for initializing an all zero instance of struct optargs_arg.
- * Can be used e.g. to indicate the end of an argument list.
+ * A macro for initializing an all zero optargs_arg structure.
  */
-#define optargs_arg_eol { (void*)0, (void*)0, 0 }
+#define optargs_arg_nil { (void*)0, (void*)0, 0 }
+
+/**
+ * A macro for initializing an all zero optargs_opt structure.
+ *
+ * This can effectively be used to create an empty line into the option
+ * help text.
+ */
+#define optargs_opt_nil { (void*)0, (void*)0, 0, optargs_arg_nil, (void*)0 }
+
+/**
+ * A macro for initializing an "end of list" instance of struct optargs_arg.
+ *
+ * This can (and should) be used e.g. to indicate the end of an argument list.
+ */
+#define optargs_arg_eol { (void*)0, (void*)0, _optargs_eol }
 
 /**
  * A macro for initializing an all zero instance of struct optargs_opt.
@@ -34,12 +48,13 @@
 /**
  * A multiple choice enumeration.
  *
- * Used e.g. to indicate whether an argument is mandatory,
- * optional or not allowed.
+ * Used e.g. to indicate whether an argument is mandatory, optional or not
+ * allowed. The _optargs_eol entry is for optarg's internal usage.
  */
 enum optargs_multiple_choice
 {
-	optargs_no = 1,
+	_optargs_eol = -1,
+	optargs_no,
 	optargs_yes,
 	optargs_maybe
 };

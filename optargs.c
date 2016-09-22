@@ -66,7 +66,7 @@ argument_is_valid(const struct optargs_arg *o)
 {
 	assert(o);
 
-	return o->mandatory;
+	return o->mandatory != _optargs_eol;
 }
 
 static bool
@@ -309,6 +309,8 @@ mark_option(struct optargs_opt *opt, const char *arg, bool force)
 		case optargs_maybe:
 			rv = mark_optional_argument_option(opt, arg, force);
 			break;
+		default:
+			abort();
 	}
 
 	return rv;

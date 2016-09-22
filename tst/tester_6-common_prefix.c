@@ -30,13 +30,13 @@ main(int ac, char **av)
 			"Print help.",
 			"help",
 			'h',
-			{ .mandatory = optargs_no },
+			optargs_arg_nil,
 			NULL,
 		}, {
 			"Print full help.",
 			"help-full",
 			'h',
-			{ .mandatory = optargs_no },
+			optargs_arg_nil,
 			NULL,
 		},
 		optargs_opt_eol

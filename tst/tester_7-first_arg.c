@@ -32,17 +32,14 @@ main(int ac, char **av)
 			.description = "Description A.",
 			.long_option = "aaaa",
 			.short_option = 'a',
-			.argument = { .mandatory = optargs_no},
 		}, {
 			.description = "Description B.",
 			.long_option = "bbbb",
 			.short_option = 'b',
-			.argument = { .mandatory = optargs_no},
 		}, {
 			.description = "Description C.",
 			.long_option = "cccc",
 			.short_option = 'c',
-			.argument = { .mandatory = optargs_no},
 		}, {
 			.description = "Description D.",
 			.long_option = "dddd",

@@ -28,11 +28,11 @@ main(int ac __attribute__((unused)), char **av)
 {
 	struct optargs_opt opts[] =
 	{
-		{ .description = "AAA", .short_option = 'a', .long_option = "aaa", .argument = { .mandatory = optargs_no }},
-		{ .short_option = 'x', .long_option = "secret", .argument = { .mandatory = optargs_no }},
-		{ .description = "BBB", .short_option = 'b', .long_option = "bbb", .argument = { .mandatory = optargs_no }},
-		{ .argument = { .mandatory = optargs_no }},
-		{ .description = "CCC", .short_option = 'c', .long_option = "ccc", .argument = { .mandatory = optargs_no }},
+		{ .description = "AAA", .short_option = 'a', .long_option = "aaa" },
+		{ .short_option = 'x', .long_option = "secret" },
+		{ .description = "BBB", .short_option = 'b', .long_option = "bbb" },
+		optargs_opt_nil,
+		{ .description = "CCC", .short_option = 'c', .long_option = "ccc" },
 		optargs_opt_eol
 	};
 	struct optargs_arg args[] =

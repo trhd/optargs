@@ -8,8 +8,8 @@ main(int ac, char **av)
 {
 	struct optargs_opt opts[] =
 	{
-		{ .long_option = "verbose", .short_option = 'v', .argument = { .mandatory = optargs_no }},
-		{ .long_option = "wanha", .short_option = 'w', .argument = { .mandatory = optargs_no }},
+		{ .long_option = "verbose", .short_option = 'v' },
+		{ .long_option = "wanha", .short_option = 'w' },
 		optargs_opt_eol
 	};
 	const char * t;
