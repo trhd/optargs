@@ -27,7 +27,7 @@
 int
 main(int ac, char **av)
 {
-	int verbosity;
+	int verbosity, debug;
 	const char *tmp;
 	struct optargs_opt opts[] =
 	{
@@ -35,16 +35,23 @@ main(int ac, char **av)
 			.description = "Help text",
 			.long_option = "help",
 			.short_option = 'h',
-			.argument = { .mandatory = optargs_no},
 		},
 		{
 			.description = "Be quiet.",
-			.short_option = 'q',
-			.argument = { .mandatory = optargs_no},
+			.long_option = "quiet",
+		},
+		{
+			.description = "Path to imaginary socket file.",
+			.long_option = "socket",
+			.argument = {
+				.name = "file",
+				.mandatory = optargs_yes
+			}
 		},
 		{
 			.description = "Be verbose.",
 			.long_option = "verbose",
+			.short_option = 'v',
 			.argument = {
 				.name = "level",
 				.description = "The level of the desired verbosity.",
@@ -52,8 +59,11 @@ main(int ac, char **av)
 			}
 		},
 		{
+			.description = "Output debug info (can be given several times).",
+			.short_option = 'd',
+		},
+		{
 			.long_option = "secret-option",
-			.argument = { .mandatory = optargs_no},
 		},
 		optargs_opt_eol
 	};
@@ -77,6 +87,8 @@ main(int ac, char **av)
 		return EXIT_SUCCESS;
 	}
 
+	debug = optargs_is_default(optargs_opt_by_short(opts, 'd'));
+
 	tmp = optargs_opt_by_long(opts, "verbose");
 	if (!tmp)
 		verbosity = 0;
@@ -85,7 +97,11 @@ main(int ac, char **av)
 	else
 		verbosity = atoi(tmp);
 
-	printf("Doing stuff with %d%% verbosity.\n", verbosity);
+	if (!optargs_opt_by_long(opts, "quiet"))
+	{
+		printf("Doing stuff with %d%% verbosity.\n", verbosity);
+		printf("Debug level defined to %d.\n", debug);
+	}
 
 	return 0;
 }

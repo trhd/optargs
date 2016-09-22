@@ -34,7 +34,7 @@ To use, write something like this:
 	int
 	main(int ac, char **av)
 	{
-		int verbosity;
+		int verbosity, debug;
 		const char *tmp;
 		struct optargs_opt opts[] =
 		{
@@ -42,16 +42,23 @@ To use, write something like this:
 				.description = "Help text",
 				.long_option = "help",
 				.short_option = 'h',
-				.argument = { .mandatory = optargs_no},
 			},
 			{
 				.description = "Be quiet.",
-				.short_option = 'q',
-				.argument = { .mandatory = optargs_no},
+				.long_option = "quiet",
+			},
+			{
+				.description = "Path to imaginary socket file.",
+				.long_option = "socket",
+				.argument = {
+					.name = "file",
+					.mandatory = optargs_yes
+				}
 			},
 			{
 				.description = "Be verbose.",
 				.long_option = "verbose",
+				.short_option = 'v',
 				.argument = {
 					.name = "level",
 					.description = "The level of the desired verbosity.",
@@ -59,8 +66,11 @@ To use, write something like this:
 				}
 			},
 			{
+				.description = "Output debug info (can be given several times).",
+				.short_option = 'd',
+			},
+			{
 				.long_option = "secret-option",
-				.argument = { .mandatory = optargs_no},
 			},
 			optargs_opt_eol
 		};
@@ -84,34 +94,41 @@ To use, write something like this:
 			return EXIT_SUCCESS;
 		}
 
+		debug = optargs_is_default(optargs_opt_by_short(opts, 'd'));
+
 		tmp = optargs_opt_by_long(opts, "verbose");
 		if (!tmp)
 			verbosity = 0;
-		else if (tmp == &optargs_default_result)
+		else if (optargs_is_default(tmp))
 			verbosity = 100;
 		else
 			verbosity = atoi(tmp);
 
-		printf("Doing stuff with %d%% verbosity.\n", verbosity);
+		if (!optargs_opt_by_long(opts, "quiet"))
+		{
+			printf("Doing stuff with %d%% verbosity.\n", verbosity);
+			printf("Debug level defined to %d.\n", debug);
+		}
 
 		return 0;
 	}
 
 and get something like this:
 
-	$ b/tst/readme -h
 	Usage: b/tst/readme [OPTIONS] COMMAND
-	
+
 	OPTIONS:
 	  -h,--help             Help text
-	  -q                    Be quiet.
-	  --verbose [level]     Be verbose.
+	  --quiet               Be quiet.
+	  --socket file         Path to imaginary socket file.
+	  -v,--verbose[=level]  Be verbose.
 	                        level: The level of the desired verbosity.
-	
+	  -d                    Output debug info (can be given several times).
+
 	COMMAND:
 	  start                 Start doing stuff.
 	  stop                  Stop doing stuff.
-	
+
 	About this program. This is the most awesomest program ever written and you
 	ought to know that.
 
