@@ -25,13 +25,15 @@
 #include <string.h>
 #include "optargs.h"
 
+#define DEFAULT_VALUE_ADDRESS_MASK (((unsigned char *)-1) - 0xffff)
+
 enum constants
 {
 	MAX_WIDTH = 79,
 	LEFT_COLUMN_MAX_WIDTH = 40
 };
 
-const char optargs_default_result = 'x';
+const char default_value[2];
 
 static int
 max(int a, int b)
@@ -104,6 +106,22 @@ non_wanted_argument_error(const struct optargs_opt *opt)
 
 	return -EINVAL;
 }
+
+static int
+redefine_option_argument_error(const struct optargs_opt *opt)
+{
+	assert(opt);
+
+	char buf[5] = "'-";
+
+	fprintf(stderr, "Conflicting arguments given for the option %s%s%s%s%s.\n",
+			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
+			opt->long_option && opt->short_option ? " / " : "",
+			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+
+	return -EINVAL;
+}
+
 
 static bool
 starts_with_single_hyphen(const char *str)
@@ -224,6 +242,56 @@ locate_long_option(struct optargs_opt **o, const char *l, int ll)
 }
 
 static int
+mark_default_option(struct optargs_opt *opt)
+{
+	assert(opt);
+
+	opt->result = (const char *)
+		(((size_t)DEFAULT_VALUE_ADDRESS_MASK) + 1 + optargs_is_default(opt->result));
+
+	return 0;
+}
+
+static int
+mark_no_argument_option(struct optargs_opt *opt, bool assign)
+{
+	assert(opt);
+
+	if (assign)
+		return non_wanted_argument_error(opt);
+
+	return mark_default_option(opt);
+}
+
+static int
+mark_argument_option(struct optargs_opt *opt, const char *arg)
+{
+	if (opt->result)
+		return redefine_option_argument_error(opt);
+
+	if (!arg)
+		return opt_missing_arg_error(opt);
+
+	opt->result = arg;
+
+	return 1;
+}
+
+static int
+mark_optional_argument_option(struct optargs_opt *opt, const char *arg, bool assign)
+{
+	assert(opt);
+
+	if (assign && arg)
+		return mark_argument_option(opt, arg);
+
+	if (opt->result && !optargs_is_default(opt->result))
+		return redefine_option_argument_error(opt);
+
+	return mark_default_option(opt);
+}
+
+static int
 mark_option(struct optargs_opt *opt, const char *arg, bool force)
 {
 	assert(opt);
@@ -233,28 +301,13 @@ mark_option(struct optargs_opt *opt, const char *arg, bool force)
 	switch (opt->argument.mandatory)
 	{
 		case optargs_no:
-			if (force)
-				rv = non_wanted_argument_error(opt);
-			else
-				opt->result = &optargs_default_result;
+			rv = mark_no_argument_option(opt, force);
 			break;
 		case optargs_yes:
-			if (!arg)
-				rv = opt_missing_arg_error(opt);
-			else
-			{
-				opt->result = arg;
-				rv = 1;
-			}
+			rv = mark_argument_option(opt, arg);
 			break;
 		case optargs_maybe:
-			if (force && arg)
-			{
-				opt->result = arg;
-				rv = 1;
-			}
-			else
-				opt->result = &optargs_default_result;
+			rv = mark_optional_argument_option(opt, arg, force);
 			break;
 	}
 
@@ -810,4 +863,13 @@ optargs_opt_by_index(const struct optargs_opt *opts, int i)
 		assert(option_is_valid(&opts[j]));
 #endif
 	return opts[i].result;
+}
+
+int
+optargs_is_default(const char *v)
+{
+	if (((size_t)DEFAULT_VALUE_ADDRESS_MASK & (size_t)v) == (size_t)DEFAULT_VALUE_ADDRESS_MASK)
+		return (size_t)v & ~(size_t)DEFAULT_VALUE_ADDRESS_MASK;
+	else
+		return 0;
 }

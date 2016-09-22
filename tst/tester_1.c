@@ -310,7 +310,7 @@ main(int ac, char **av)
 
 	if ((t = optargs_opt_by_long(opts, "jjjj")))
 	{
-		if (t == &optargs_default_result)
+		if (optargs_is_default(t))
 			t = "Oujea!";
 
 		printf("j{%s}", t);

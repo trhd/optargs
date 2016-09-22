@@ -80,7 +80,7 @@ main(int ac, char **av)
 	tmp = optargs_opt_by_long(opts, "verbose");
 	if (!tmp)
 		verbosity = 0;
-	else if (tmp == &optargs_default_result)
+	else if (optargs_is_default(tmp))
 		verbosity = 100;
 	else
 		verbosity = atoi(tmp);

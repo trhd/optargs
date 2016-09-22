@@ -32,15 +32,6 @@
 #define optargs_opt_eol { (void*)0, (void*)0, 0, optargs_arg_eol, (void*)0 }
 
 /**
- * The default value for a parsed option.
- *
- * The function optargs_parse() sets an option struct's result
- * pointer to point to this variable when the option wasn't given
- * an argument.
- */
-extern const char optargs_default_result;
-
-/**
  * A multiple choice enumeration.
  *
  * Used e.g. to indicate whether an argument is mandatory,
@@ -125,8 +116,8 @@ struct optargs_opt
 	/**
 	 * Will contain the result of this option after parsing. If the option
 	 * wasn't given by the user this will contain NULL. Othwerwise the
-	 * value of this will be the address of the optargs_default_result
-	 * variable or that of the user provided argument for this option.
+	 * value of this will be the address of the optargs' default option
+	 * value or that of the user provided argument for this option.
 	 */
 	const char *result;
 };
@@ -160,6 +151,28 @@ int optargs_parse(int argc, const char **argv, struct optargs_opt *options);
  */
 void optargs_print_help(const char *cmd, const char *about,
 		const struct optargs_opt *options, const struct optargs_arg *arguments);
+
+/**
+ *
+ * Determine if an option's value is the "default value" meaning that the
+ * option was given without an argument.
+ *
+ * An option that was not given an argument by the user will have the
+ * optargs' default value assigned to it. This function can be used to
+ * determine if this is the case.
+ *
+ * This function will also tell if the option was given multiple times
+ * (without an argument).
+ *
+ * Arguments:
+ *  result:   The value of the option whose defaultness or number of times
+ *            given is to be determined.
+ *
+ * Return value:
+ *  The number of times the option was given without an argument or zero
+ *  if the value of the option is not the default value.
+ */
+int optargs_is_default(const char *result);
 
 /**
  * Find the matching option from a list by long option name.
