@@ -246,8 +246,9 @@ mark_default_option(struct optargs_opt *opt)
 {
 	assert(opt);
 
-	opt->result = (const char *)
-		(((size_t)DEFAULT_VALUE_ADDRESS_MASK) + 1 + optargs_is_default(opt->result));
+	if ((size_t)opt->result < (size_t)(unsigned char *)-1)
+		opt->result = (const char *)
+			(((size_t)DEFAULT_VALUE_ADDRESS_MASK) + 1 + optargs_is_default(opt->result));
 
 	return 0;
 }
