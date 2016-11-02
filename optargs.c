@@ -841,6 +841,8 @@ optargs_arg_index(const struct optargs_arg *args, const char *name)
 const char *
 optargs_opt_by_long(const struct optargs_opt *opts, const char *l)
 {
+	assert(opts);
+
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].long_option == l)
 			return opts[i].result;
@@ -850,6 +852,8 @@ optargs_opt_by_long(const struct optargs_opt *opts, const char *l)
 const char *
 optargs_opt_by_short(const struct optargs_opt *opts, const char s)
 {
+	assert(opts);
+
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].short_option == s)
 			return opts[i].result;
@@ -859,6 +863,8 @@ optargs_opt_by_short(const struct optargs_opt *opts, const char s)
 const char *
 optargs_opt_by_index(const struct optargs_opt *opts, int i)
 {
+	assert(opts);
+
 #ifndef NDEBUG
 	int j;
 
