@@ -33,8 +33,6 @@ enum constants
 	LEFT_COLUMN_MAX_WIDTH = 40
 };
 
-const char default_value[2];
-
 static int
 max(int a, int b)
 {
