@@ -35,22 +35,22 @@ main(int ac, char **av)
 
 	struct optargs_arg args[] =
 	{
-		{ "ARGS1", NULL, optargs_maybe },
-		{ "arg1a", "argument 1a", optargs_no },
-		{ "arg1b", "argument 1b", optargs_no },
-		{ "arg1c", "argument 1c", optargs_no },
-		{ "ARGS2", NULL, optargs_maybe },
-		{ "arg2a", "argument 2a", optargs_no },
-		{ "arg2b", "argument 2b", optargs_no },
-		{ "arg2c", "argument 2c", optargs_no },
-		{ "ARGS3", NULL, optargs_maybe },
-		{ "arg3a", "argument 3a", optargs_no },
-		{ "arg3b", "argument 3b", optargs_no },
-		{ "arg3c", "argument 3c", optargs_no },
-		{ "ARGS4", NULL, optargs_maybe },
-		{ "arg4a foo", "argument 4a", optargs_no },
-		{ "arg4b bar", "argument 4b", optargs_no },
-		{ "arg4c keke", "argument 4c", optargs_no },
+		{ .name = "ARGS1", .mandatory = optargs_maybe },
+		{ .name = "arg1a", .description = "argument 1a", .mandatory = optargs_no },
+		{ .name = "arg1b", .description = "argument 1b", .mandatory = optargs_no },
+		{ .name = "arg1c", .description = "argument 1c", .mandatory = optargs_no },
+		{ .name = "ARGS2", .mandatory = optargs_maybe },
+		{ .name = "arg2a", .description = "argument 2a", .mandatory = optargs_no },
+		{ .name = "arg2b", .description = "argument 2b", .mandatory = optargs_no },
+		{ .name = "arg2c", .description = "argument 2c", .mandatory = optargs_no },
+		{ .name = "ARGS3", .mandatory = optargs_maybe },
+		{ .name = "arg3a", .description = "argument 3a", .mandatory = optargs_no },
+		{ .name = "arg3b", .description = "argument 3b", .mandatory = optargs_no },
+		{ .name = "arg3c", .description = "argument 3c", .mandatory = optargs_no },
+		{ .name = "ARGS4", .mandatory = optargs_maybe },
+		{ .name = "arg4a foo", .description = "argument 4a", .mandatory = optargs_no },
+		{ .name = "arg4b bar", .description = "argument 4b", .mandatory = optargs_no },
+		{ .name = "arg4c keke", .description = "argument 4c", .mandatory = optargs_no },
 		optargs_arg_eol
 	};
 	int i, j, k;
@@ -61,7 +61,7 @@ main(int ac, char **av)
 		return -1;
 	}
 
-	if (optargs_opt_by_index(opts, 0))
+	if (optargs_count_by_index(opts, 0))
 	{
 		optargs_print_help(av[0], "Foobar", opts, args);
 		return 0;

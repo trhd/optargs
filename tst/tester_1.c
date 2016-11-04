@@ -216,30 +216,72 @@ main(int ac, char **av)
 	};
 	struct optargs_arg args[] =
 	{
-		{ .name = "ARGUMENTS" },
-		{ "Name_1", "Description 1.", optargs_no },
-		{ "Name_3", "This is a super long argument description because blaa blaa balabla blaa blaa. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum.", optargs_maybe },
+		{
+			.name = "ARGUMENTS"
+		}, {
+			.name = "Name_1",
+			.description = "Description 1."
+		}, {
+			.description = "This is a super long argument description because blaa blaa balabla blaa blaa. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum. Loorem lapsum lipsum lopsum.",
+			.name = "Name_3",
+			.mandatory = optargs_maybe
+		},
 		optargs_arg_nil,
-		{ "Name_2", "Description 2.", optargs_yes },
-		{ "Name_4", "fooboo", optargs_yes },
-		{ .name = "COMMANDS", .mandatory = optargs_yes },
-		{ "command_1", "Command 1 is the shiiit!", optargs_maybe },
-		{ "command_2", "Command 2 is the booomb!", optargs_yes },
-		{ .name = "curse_words", .mandatory = optargs_yes },
-		{ "vittu", "fuck / vag", optargs_no },
-		{ "perkele", "god damn it / devil", optargs_maybe },
-		{ "args with long name", NULL, optargs_yes },
-		{ "argument usb-argument", "Some non-relevant description.", optargs_yes },
-		{ "argument name eq LEFT_COLUMN_MAX_WIDTH", "Some non-relevant description #2.", optargs_yes },
-		{ "argument name just less than in above", "Some non-relevant description #3.", optargs_no },
-		{ "argument name greater than LEFT_COLUMN_MAX_WIDTH", "Some non-relevant description #4.", optargs_no },
-		optargs_arg_eol
+		{
+			.name = "Name_2",
+			.description = "Description 2.",
+			.mandatory = optargs_yes
+		}, {
+			.name = "Name_4",
+			.description = "fooboo",
+			.mandatory = optargs_yes
+		}, {
+			.name = "COMMANDS",
+			.mandatory = optargs_yes
+		}, {
+			.name = "command_1",
+			.description = "Command 1 is the shiiit!",
+			.mandatory = optargs_maybe
+		}, {
+			.name = "command_2",
+			.description = "Command 2 is the booomb!",
+			.mandatory = optargs_yes
+		}, {
+			.name = "curse_words",
+			.mandatory = optargs_yes
+		}, {
+			.name = "vittu",
+			.description = "fuck / vag"
+		}, {
+			.name = "perkele",
+			.description = "god damn it / devil",
+			.mandatory = optargs_maybe
+		}, {
+			.name = "args with long name",
+			.description = NULL,
+			.mandatory = optargs_yes
+		}, {
+			.name = "argument usb-argument",
+			.description = "Some non-relevant description.",
+			.mandatory = optargs_yes
+		}, {
+			.name = "argument name eq LEFT_COLUMN_MAX_WIDTH",
+			.description = "Some non-relevant description #2.",
+			.mandatory = optargs_yes
+		}, {
+			.name = "argument name just less than in above",
+			.description = "Some non-relevant description #3."
+		}, {
+			.name = "argument name greater than LEFT_COLUMN_MAX_WIDTH",
+			.description = "Some non-relevant description #4."
+		}, optargs_arg_eol
 	};
+	const struct optargs_result *r;
 
 	if ((idx = optargs_parse(ac, (const char **)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_opt_by_long(opts, "help"))
+	if (optargs_count_by_long(opts, "help"))
 	{
 		optargs_print_help(av[0], about, opts, args);
 		return EXIT_SUCCESS;
@@ -247,40 +289,42 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	if (optargs_opt_by_short(opts, 'a'))
+	if (optargs_count_by_short(opts, 'a'))
 		printf("a");
 
-	if (optargs_opt_by_long(opts, "bbbb"))
+	if (optargs_count_by_long(opts, "bbbb"))
 		printf("b");
 
-	if (optargs_opt_by_short(opts, 'c'))
+	if (optargs_count_by_short(opts, 'c'))
 		printf("c");
 
-	if (optargs_opt_by_long(opts, "dddd"))
+	if (optargs_count_by_long(opts, "dddd"))
 		printf("d");
 
-	if (optargs_opt_by_short(opts, 'e'))
+	if (optargs_count_by_short(opts, 'e'))
 		printf("e");
 
-	if (optargs_opt_by_long(opts, "ffff"))
+	if (optargs_count_by_long(opts, "ffff"))
 		printf("f");
 
-	if (optargs_opt_by_short(opts, 'g'))
+	if (optargs_count_by_short(opts, 'g'))
 		printf("g");
 
-	if (optargs_opt_by_index(opts, 7))
+	if (optargs_count_by_index(opts, 7))
 		printf("h");
 
-	if (optargs_opt_by_long(opts, "hidden-option"))
+	if (optargs_count_by_long(opts, "hidden-option"))
 		printf("hidden!");
 
-	if ((t = optargs_opt_by_short(opts, 'i')))
+	if ((t = optargs_string_by_short(opts, 'i')))
 		printf("i{%s}", t);
 
-	if ((t = optargs_opt_by_long(opts, "jjjj")))
+	if ((r = optargs_result_by_long(opts, "jjjj")))
 	{
-		if (optargs_is_default(t))
+		if (r->type == optargs_count)
 			t = "Oujea!";
+		else
+			t = r->value.string;
 
 		printf("j{%s}", t);
 	}

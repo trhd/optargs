@@ -51,6 +51,7 @@ main(int ac, char **av)
 			.short_option = 'e',
 			.argument = { .mandatory = optargs_maybe},
 		},
+		optargs_opt_eol
 	};
 
 	i = optargs_parse(ac, (const char **)av, opts);
@@ -61,7 +62,7 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	printf("First argument: %s\n", i == 0 ? "--" :  av[i]);
+	printf("First argument: %s\n", i == ac ? "--" :  av[i]);
 
 	return EXIT_SUCCESS;
 }

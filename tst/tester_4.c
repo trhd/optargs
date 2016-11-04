@@ -28,17 +28,67 @@ main(int ac __attribute__((unused)), char **av)
 {
 	struct optargs_opt opts[] =
 	{
-		{ "An option with a named argument.", "option1", 'o', { "FOOBAR :=", "This is the argument.", optargs_yes }, NULL },
-		{ "Another option with a named argument.", "option2", 'O', { "BARFOO", "This is another argument.", optargs_maybe }, NULL },
-		{ "A third option with a named argument.", "option3", '0', { "KEKEKE =>", "This a third argument.", optargs_maybe }, NULL },
-		{ "A fourth option with a long name argument.", "option3", '0', { "This-is-an-option-argument-with-a-really-long-name", "This is the fourth argument.", optargs_maybe }, NULL },
-		{ "Fifth option.", "option5", '5', { "YOMAMMA", "This is the fifth option argument with a really long description that will wrap to multiple lines.", optargs_maybe }, NULL },
+		{
+			.description = "An option with a named argument.",
+			.long_option = "option1",
+			.short_option = 'o',
+			.argument =
+			{
+				.name = "FOOBAR :=",
+				.description = "This is the argument.",
+				.mandatory = optargs_yes
+			}
+		}, {
+			.description = "Another option with a named argument.",
+			.long_option = "option2",
+			.short_option = 'O',
+			.argument =
+			{
+				.name = "BARFOO",
+				.description = "This is another argument.",
+				.mandatory = optargs_maybe
+			}
+		}, {
+			.description = "A third option with a named argument.",
+			.long_option = "option3",
+			.short_option = '0',
+			.argument =
+			{
+				.name = "KEKEKE =>",
+				.description = "This a third argument.",
+				.mandatory = optargs_maybe
+			}
+		}, {
+			.description = "A fourth option with a long name argument.",
+				.long_option = "option3",
+				.short_option = '0',
+				.argument =
+				{
+					.name = "This-is-an-option-argument-with-a-really-long-name",
+					.description = "This is the fourth argument.",
+					.mandatory = optargs_maybe
+				}
+		}, {
+			.description = "Fifth option.",
+				.long_option = "option5",
+				.short_option = '5',
+				.argument =
+				{
+					.name = "YOMAMMA",
+					.description = "This is the fifth option argument with a really long description that will wrap to multiple lines.",
+					.mandatory = optargs_maybe
+				}
+		},
 		optargs_opt_eol
 	};
 
 	const struct optargs_arg args[] =
 	{
-		{ "MY_ARGUMENT", "Just some argument.", optargs_yes },
+		{
+			.name = "MY_ARGUMENT",
+			.description = "Just some argument.",
+			.mandatory = optargs_yes
+		},
 		optargs_arg_eol
 	};
 

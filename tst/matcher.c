@@ -80,7 +80,8 @@ main(int ac, char **av)
 			.long_option = "exit-code",
 			.short_option = 'e',
 			.argument = { .mandatory = optargs_yes}
-		}
+		},
+		optargs_opt_eol
 	};
 
 	if ((idx = optargs_parse(ac, (const char **)av, opts)) < 0)
@@ -124,7 +125,7 @@ main(int ac, char **av)
 		if (close(pp[1]))
 			error("Failed to close pipe's writing end.");
 
-		if (!optargs_opt_by_short(opts, 'F'))
+		if (!optargs_count_by_short(opts, 'F'))
 		{
 			if (!fgets(buf1, buf_size, fp))
 				error("Failed to read program's output.");
@@ -136,7 +137,7 @@ main(int ac, char **av)
 
 			compare_outputs(buf1, av[idx],
 					min(strlen(av[idx + 1]) + 1, strlen(buf1) + 1),
-					optargs_opt_by_short(opts, 'f'));
+					optargs_count_by_short(opts, 'f'));
 
 		}
 		else
@@ -147,7 +148,7 @@ main(int ac, char **av)
 				error("fdopen() failed");
 
 			while (fgets(buf1, buf_size, fp) && fgets(buf2, buf_size, ff))
-				compare_outputs(buf1, buf2, buf_size, optargs_opt_by_short(opts, 'f'));
+				compare_outputs(buf1, buf2, buf_size, optargs_count_by_short(opts, 'f'));
 		}
 
 
@@ -160,11 +161,11 @@ main(int ac, char **av)
 		if (!WIFEXITED(i))
 			error("Expected child to return a status.");
 
-		if (WEXITSTATUS(i) != (optargs_opt_by_short(opts, 'e') ? atoi(optargs_opt_by_short(opts, 'e')) : 0))
+		if (WEXITSTATUS(i) != (optargs_string_by_short(opts, 'e') ? atoi(optargs_string_by_short(opts, 'e')) : 0))
 		{
 			printf("Child returned: %d, expected %s.\n",
 					WEXITSTATUS(i),
-					optargs_opt_by_short(opts, 'e') ? optargs_opt_by_short(opts, 'e') : "0");
+					optargs_string_by_short(opts, 'e') ? optargs_string_by_short(opts, 'e') : "0");
 			error("Child returned incorrect exit code.");
 		}
 	}

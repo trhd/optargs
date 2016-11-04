@@ -27,17 +27,17 @@ main(int ac, char **av)
 	struct optargs_opt opts[] =
 	{
 		{
-			"Print help.",
 			"help",
 			'h',
+			"Print help.",
 			optargs_arg_nil,
-			NULL,
+			optargs_result_nil
 		}, {
-			"Print full help.",
 			"help-full",
 			'h',
+			"Print full help.",
 			optargs_arg_nil,
-			NULL,
+			optargs_result_nil
 		},
 		optargs_opt_eol
 	};
@@ -48,10 +48,10 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_by_long(opts, "help"))
+	if (optargs_result_by_long(opts, "help"))
 		printf("got basic\n");
 
-	if (optargs_opt_by_long(opts, "help-full"))
+	if (optargs_result_by_long(opts, "help-full"))
 		printf("got full\n");
 
 	return EXIT_SUCCESS;

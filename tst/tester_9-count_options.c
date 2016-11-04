@@ -12,7 +12,7 @@ main(int ac, char **av)
 		{ .long_option = "wanha", .short_option = 'w' },
 		optargs_opt_eol
 	};
-	const char * t;
+	unsigned t;
 
 	if (optargs_parse(ac, (const char **)av, opts) < 0)
 	{
@@ -22,13 +22,13 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	t = optargs_opt_by_long(opts, "verbose");
+	t = optargs_count_by_long(opts, "verbose");
 	if (t)
-		printf("v=%d ", optargs_is_default(t));
+		printf("v=%u ", t);
 
-	t = optargs_opt_by_long(opts, "wanha");
+	t = optargs_count_by_long(opts, "wanha");
 	if (t)
-		printf("w=%d ", optargs_is_default(t));
+		printf("w=%u ", t);
 
 	printf("\n");
 

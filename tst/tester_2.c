@@ -37,8 +37,8 @@ main(int ac __attribute__((unused)), char **av)
 	};
 	struct optargs_arg args[] =
 	{
-		{ "Name_0", NULL, optargs_yes },
-		{ "Name_1", NULL, optargs_yes },
+		{ .name = "Name_0", .mandatory = optargs_yes },
+		{ .name = "Name_1", .mandatory = optargs_yes },
 		optargs_arg_eol
 	};
 

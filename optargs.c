@@ -25,8 +25,6 @@
 #include <string.h>
 #include "optargs.h"
 
-#define DEFAULT_VALUE_ADDRESS_MASK (((unsigned char *)-1) - 0xffff)
-
 enum constants
 {
 	MAX_WIDTH = 79,
@@ -239,16 +237,13 @@ locate_long_option(struct optargs_opt **o, const char *l, int ll)
 	}
 }
 
-static int
+static void
 mark_default_option(struct optargs_opt *opt)
 {
 	assert(opt);
 
-	if ((size_t)opt->result < (size_t)(unsigned char *)-1)
-		opt->result = (const char *)
-			(((size_t)DEFAULT_VALUE_ADDRESS_MASK) + 1 + optargs_is_default(opt->result));
-
-	return 0;
+	opt->result.type = optargs_count;
+	opt->result.value.count++;
 }
 
 static int
@@ -259,19 +254,22 @@ mark_no_argument_option(struct optargs_opt *opt, bool assign)
 	if (assign)
 		return non_wanted_argument_error(opt);
 
-	return mark_default_option(opt);
+	mark_default_option(opt);
+
+	return 0;
 }
 
 static int
 mark_argument_option(struct optargs_opt *opt, const char *arg)
 {
-	if (opt->result)
+	if (optargs_result_type(&opt->result))
 		return redefine_option_argument_error(opt);
 
 	if (!arg)
 		return opt_missing_arg_error(opt);
 
-	opt->result = arg;
+	opt->result.type = optargs_string;
+	opt->result.value.string = arg;
 
 	return 1;
 }
@@ -284,10 +282,12 @@ mark_optional_argument_option(struct optargs_opt *opt, const char *arg, bool ass
 	if (assign && arg)
 		return mark_argument_option(opt, arg);
 
-	if (opt->result && !optargs_is_default(opt->result))
+	if (optargs_result_type(&opt->result) == optargs_string)
 		return redefine_option_argument_error(opt);
 
-	return mark_default_option(opt);
+	mark_default_option(opt);
+
+	return 0;
 }
 
 static int
@@ -374,6 +374,15 @@ parse_long_option(const char *c, const char *n, struct optargs_opt *o)
 	return r;
 }
 
+static void
+clear_results(struct optargs_opt * o)
+{
+	assert(o);
+
+	for ( ; option_is_valid(o) ; o++)
+		memset(&o->result, 0, sizeof(o->result));
+}
+
 int
 optargs_parse(int ac, const char **av, struct optargs_opt *opts)
 {
@@ -383,6 +392,8 @@ optargs_parse(int ac, const char **av, struct optargs_opt *opts)
 
 	int i, j;
 	const char *o, *n;
+
+	clear_results(opts);
 
 	for (i = 1; i < ac; i += j)
 	{
@@ -410,7 +421,7 @@ optargs_parse(int ac, const char **av, struct optargs_opt *opts)
 			return j;
 	}
 
-	return i == ac ? 0 : i;
+	return i;
 }
 
 static void
@@ -441,7 +452,7 @@ print_arg_names(const struct optargs_arg *args)
 		print_arg_name(args);
 }
 
-static int 
+static int
 calc_line_length(const char *src, int cols)
 {
 	assert(src);
@@ -836,30 +847,32 @@ optargs_arg_index(const struct optargs_arg *args, const char *name)
 	return -EINVAL;
 }
 
-const char *
-optargs_opt_by_long(const struct optargs_opt *opts, const char *l)
+const struct optargs_result *
+optargs_result_by_long(const struct optargs_opt *opts, const char *l)
 {
 	assert(opts);
+	assert(l);
 
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].long_option == l)
-			return opts[i].result;
+			return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
 	abort();
 }
 
-const char *
-optargs_opt_by_short(const struct optargs_opt *opts, const char s)
+const struct optargs_result *
+optargs_result_by_short(const struct optargs_opt *opts, const char s)
 {
 	assert(opts);
+	assert(s);
 
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].short_option == s)
-			return opts[i].result;
+			return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
 	abort();
 }
 
-const char *
-optargs_opt_by_index(const struct optargs_opt *opts, int i)
+const struct optargs_result *
+optargs_result_by_index(const struct optargs_opt *opts, int i)
 {
 	assert(opts);
 
@@ -869,14 +882,88 @@ optargs_opt_by_index(const struct optargs_opt *opts, int i)
 	for (j = 0; j <= i; j++)
 		assert(option_is_valid(&opts[j]));
 #endif
-	return opts[i].result;
+	return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
 }
 
-int
-optargs_is_default(const char *v)
+static const char *
+get_result_string(const struct optargs_result *r)
 {
-	if (((size_t)DEFAULT_VALUE_ADDRESS_MASK & (size_t)v) == (size_t)DEFAULT_VALUE_ADDRESS_MASK)
-		return (size_t)v & ~(size_t)DEFAULT_VALUE_ADDRESS_MASK;
-	else
+	if (!r)
+		return NULL;
+
+	assert(r->type == optargs_string);
+
+	return r->value.string;
+}
+
+static unsigned int
+get_result_count(const struct optargs_result *r)
+{
+	if (!r)
 		return 0;
+
+	assert(r->type == optargs_count);
+
+	return r->value.count;
+}
+
+const char *
+optargs_string_by_short(const struct optargs_opt *opts, const char s)
+{
+	assert(opts);
+	assert(s);
+
+	return get_result_string(optargs_result_by_short(opts, s));
+}
+
+const char *
+optargs_string_by_long(const struct optargs_opt *opts, const char *l)
+{
+	assert(opts);
+	assert(l);
+
+	return get_result_string(optargs_result_by_long(opts, l));
+}
+
+const char *
+optargs_string_by_index(const struct optargs_opt *opts, int i)
+{
+	assert(opts);
+
+	return get_result_string(optargs_result_by_index(opts, i));
+}
+
+unsigned int
+optargs_count_by_short(const struct optargs_opt *opts, const char s)
+{
+	assert(opts);
+	assert(s);
+
+	return get_result_count(optargs_result_by_short(opts, s));
+}
+
+unsigned int
+optargs_count_by_long(const struct optargs_opt *opts, const char *l)
+{
+	assert(opts);
+	assert(l);
+
+	return get_result_count(optargs_result_by_long(opts, l));
+}
+
+unsigned int
+optargs_count_by_index(const struct optargs_opt *opts, int i)
+{
+	assert(opts);
+
+	return get_result_count(optargs_result_by_index(opts, i));
+}
+
+enum optargs_result_type
+optargs_result_type(struct optargs_result const * const r)
+{
+	if (!r)
+		return optargs_undef;
+
+	return r->type;
 }

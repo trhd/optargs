@@ -25,53 +25,87 @@
 	"ever written and you ought to know that."
 
 int
-main(int ac, char **av)
+main(int ac, char ** av)
 {
 	int verbosity, debug;
-	const char *tmp;
+	const char * str;
+	const struct optargs_result * res;
+	enum option
+	{
+		OPTION_HELP,
+		OPTION_QUIET,
+		OPTION_SOCKET,
+		OPTION_VERBOSE,
+		OPTION_DEBUG,
+		OPTION_SECRET,
+		_OPTION_COUNT
+	};
 	struct optargs_opt opts[] =
 	{
+		[OPTION_HELP] =
 		{
 			.description = "Help text",
 			.long_option = "help",
 			.short_option = 'h',
 		},
+
+		[OPTION_QUIET] =
 		{
 			.description = "Be quiet.",
 			.long_option = "quiet",
 		},
+
+		[OPTION_SOCKET] =
 		{
 			.description = "Path to imaginary socket file.",
 			.long_option = "socket",
-			.argument = {
+			.argument =
+			{
 				.name = "file",
 				.mandatory = optargs_yes
 			}
 		},
+
+		[OPTION_VERBOSE] =
 		{
 			.description = "Be verbose.",
 			.long_option = "verbose",
 			.short_option = 'v',
-			.argument = {
+			.argument =
+			{
 				.name = "level",
 				.description = "The level of the desired verbosity.",
 				.mandatory = optargs_maybe
 			}
 		},
+
+		[OPTION_DEBUG] =
 		{
 			.description = "Output debug info (can be given several times).",
 			.short_option = 'd',
 		},
+
+		[OPTION_SECRET] =
 		{
 			.long_option = "secret-option",
 		},
-		optargs_opt_eol
+
+		[_OPTION_COUNT] = optargs_opt_eol
 	};
 	struct optargs_arg args[] =
 	{
-		{ "COMMAND", NULL, optargs_yes },
-		{ "start", "Start doing stuff.", optargs_no },
-		{ "stop", "Stop doing stuff.", optargs_no },
+		{
+			.name = "COMMAND",
+			.mandatory = optargs_yes
+		}, {
+			.name = "start",
+			.description = "Start doing stuff.",
+			.mandatory = optargs_no
+		}, {
+			.name = "stop",
+			.description = "Stop doing stuff.",
+			.mandatory = optargs_no
+		},
 		optargs_arg_eol
 	};
 
@@ -81,27 +115,31 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_by_long(opts, "help"))
+	if (optargs_count_by_long(opts, "help"))
 	{
 		optargs_print_help(av[0], ABOUT, opts, args);
 		return EXIT_SUCCESS;
 	}
 
-	debug = optargs_is_default(optargs_opt_by_short(opts, 'd'));
+	debug = optargs_count_by_short(opts, 'd');
 
-	tmp = optargs_opt_by_long(opts, "verbose");
-	if (!tmp)
+	res = optargs_result_by_index(opts, OPTION_VERBOSE);
+	if (!res)
 		verbosity = 0;
-	else if (optargs_is_default(tmp))
+	else if (optargs_result_type(res) == optargs_count)
 		verbosity = 100;
 	else
-		verbosity = atoi(tmp);
+		verbosity = atoi(res->value.string);
 
-	if (!optargs_opt_by_long(opts, "quiet"))
+	if (!optargs_count_by_index(opts, OPTION_QUIET))
 	{
 		printf("Doing stuff with %d%% verbosity.\n", verbosity);
 		printf("Debug level defined to %d.\n", debug);
+
+		str = optargs_string_by_index(opts, OPTION_SOCKET);
+		if (str)
+			printf("Socket file: %s.\n", str);
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
