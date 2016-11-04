@@ -14,7 +14,7 @@ main(int ac, char **av)
 	};
 	unsigned t;
 
-	if (optargs_parse(ac, (const char **)av, opts) < 0)
+	if (optargs_parse(ac, (char const **)av, opts) < 0)
 	{
 		printf("WTF m8!?!?\n");
 		return EXIT_FAILURE;

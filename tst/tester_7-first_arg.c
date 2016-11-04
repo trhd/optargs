@@ -54,7 +54,7 @@ main(int ac, char **av)
 		optargs_opt_eol
 	};
 
-	i = optargs_parse(ac, (const char **)av, opts);
+	i = optargs_parse(ac, (char const **)av, opts);
 
 	if (i < 0)
 	{

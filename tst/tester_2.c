@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include "optargs.h"
 
-static const char about[] = "foobar";
+static char const about[] = "foobar";
 
 int
 main(int ac __attribute__((unused)), char **av)

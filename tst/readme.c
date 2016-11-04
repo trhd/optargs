@@ -28,8 +28,8 @@ int
 main(int ac, char ** av)
 {
 	int verbosity, debug;
-	const char * str;
-	const struct optargs_result * res;
+	char const * str;
+	struct optargs_result const * res;
 	enum option
 	{
 		OPTION_HELP,
@@ -109,7 +109,7 @@ main(int ac, char ** av)
 		optargs_arg_eol
 	};
 
-	if (optargs_parse(ac, (const char **)av, opts) < 0)
+	if (optargs_parse(ac, (char const **)av, opts) < 0)
 	{
 		printf("Something went wrong.\n");
 		return EXIT_FAILURE;

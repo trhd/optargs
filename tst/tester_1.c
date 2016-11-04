@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include "optargs.h"
 
-static const char about[] =
+static char const about[] =
 "1. This is a tester program for optargs. "
 "2. This is a tester program for optargs. "
 "3. This is a tester program for optargs."
@@ -65,7 +65,7 @@ int
 main(int ac, char **av)
 {
 	int idx;
-	const char *t;
+	char const * t;
 
 	struct optargs_opt opts[] =
 	{
@@ -276,9 +276,9 @@ main(int ac, char **av)
 			.description = "Some non-relevant description #4."
 		}, optargs_arg_eol
 	};
-	const struct optargs_result *r;
+	struct optargs_result const * r;
 
-	if ((idx = optargs_parse(ac, (const char **)av, opts)) < 0)
+	if ((idx = optargs_parse(ac, (char const **)av, opts)) < 0)
 		return EXIT_FAILURE;
 
 	if (optargs_count_by_long(opts, "help"))

@@ -42,7 +42,7 @@ main(int ac, char **av)
 		optargs_opt_eol
 	};
 
-	if (optargs_parse(ac, (const char **)av, opts) < 0)
+	if (optargs_parse(ac, (char const **)av, opts) < 0)
 	{
 		fprintf(stderr, "Something went wron while parsing.\n");
 		return EXIT_FAILURE;

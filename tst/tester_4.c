@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include "optargs.h"
 
-static const char about[] = "skibidiwaynow!";
+static char const about[] = "skibidiwaynow!";
 
 int
 main(int ac __attribute__((unused)), char **av)
@@ -82,7 +82,7 @@ main(int ac __attribute__((unused)), char **av)
 		optargs_opt_eol
 	};
 
-	const struct optargs_arg args[] =
+	struct optargs_arg const args[] =
 	{
 		{
 			.name = "MY_ARGUMENT",

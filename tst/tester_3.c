@@ -55,7 +55,7 @@ main(int ac, char **av)
 	};
 	int i, j, k;
 
-	if ((k = optargs_parse(ac, (const char **)av, opts)) < 0)
+	if ((k = optargs_parse(ac, (char const **)av, opts)) < 0)
 	{
 		printf("Error\n");
 		return -1;

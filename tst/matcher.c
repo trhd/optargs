@@ -29,14 +29,15 @@
 #include "optargs.h"
 
 static void __attribute__((noreturn))
-error(const char *msg)
+error(char const * msg)
 {
 	fprintf(stderr, "ERROR: %s\n", msg);
 	exit(EXIT_FAILURE);
 }
 
 static void
-compare_outputs(const char *a, const char *b, size_t l, bool fail)
+compare_outputs(char const * const a, char const * const b,
+		size_t const l, bool const fail)
 {
 	if (strncmp(a, b, l) && !fail)
 	{
@@ -50,13 +51,13 @@ compare_outputs(const char *a, const char *b, size_t l, bool fail)
 }
 
 static int
-min(int a, int b)
+min(int const a, int const b)
 {
 	return a < b ? a : b;
 }
 
 int
-main(int ac, char **av)
+main(int ac, char ** av)
 {
 	pid_t chld;
 	int pp[2], idx;
@@ -84,7 +85,7 @@ main(int ac, char **av)
 		optargs_opt_eol
 	};
 
-	if ((idx = optargs_parse(ac, (const char **)av, opts)) < 0)
+	if ((idx = optargs_parse(ac, (char const **)av, opts)) < 0)
 	{
 		printf("\n");
 		optargs_print_help(av[0], "", opts, NULL);
