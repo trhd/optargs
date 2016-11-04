@@ -34,6 +34,8 @@ README = executable(
 	link_with : OPTARGS_LIB,
 	include_directories : OPTARGS_HDR
 )
+README_PATH = meson.current_build_dir() + '/readme'
+CONF_DATA.set('README_PATH', README_PATH)
 
 TESTER_1_PATH = meson.current_build_dir() + '/tester_1'
 CONF_DATA.set('TESTER_1_PATH', TESTER_1_PATH)
@@ -138,6 +140,12 @@ configure_file(
 configure_file(
 	input : 'help_text_sample_8.txt.in',
 	output : 'help_text_sample_8.txt',
+	configuration : CONF_DATA
+)
+
+configure_file(
+	input : 'help_text_sample_readme.txt.in',
+	output : 'help_text_sample_readme.txt',
 	configuration : CONF_DATA
 )
 
@@ -1165,12 +1173,13 @@ foreach t : [
 			[ '3', TESTER_3_PATH ],
 			[ '4', TESTER_4_PATH ],
 			[ '8', TESTER_8_PATH ],
+			[ 'readme', README_PATH ],
 		]
 	test(
-		'Ensure help text integrity for TESTER_@0@.'.format(t.get(0)),
+		'Ensure help text integrity @0@.'.format(t.get(0)),
 		MATCHER,
 		valgrind_args : VALGRIND_ARGS,
-		args : [ '--file', meson.current_build_dir() + '/help_text_sample_@0@.txt'.format(t.get(0)),
+		args : [ '--file', '@0@/help_text_sample_@1@.txt'.format(meson.current_build_dir(), t.get(0)),
 				t.get(1), '--help' ]
 	)
 endforeach
