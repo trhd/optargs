@@ -1210,4 +1210,23 @@ test('Count mixed verbose and wanha options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
 	args : [ 'Got: v=4 w=5 ', TESTER_9_PATH, '--verbose', '--wanha', '--verbose', '-v', '-www', '-vw' ])
                                                                          #
+#### Unit testing ########################################################
+                                                                         #
+CMOCKA = meson.get_compiler('c').find_library('cmocka', required : false)
+
+if CMOCKA.found()
+	test('Unit tests',
+		executable('unit_tests',
+			[ OPTARGS_SRC, 'unit_tests.c' ],
+			dependencies : CMOCKA,
+			c_args : [
+				'-DUNIT_TESTING',
+				'-isystem', meson.current_source_dir() + '/system'
+			],
+			include_directories : OPTARGS_HDR),
+		valgrind_args : VALGRIND_ARGS)
+else
+	message('Failed to find CMocka; disabling unit tests.')
+endif
+                                                                         #
 ##########################################################################
