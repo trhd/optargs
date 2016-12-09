@@ -1,31 +1,82 @@
-# Travis CI configuration.
-
-language: c
-
 sudo: required
 dist: trusty
-
-compiler:
-    - clang
-    - gcc
-
-addons:
-  apt:
-    packages:
-      - valgrind
-      - python3
-
-before_script:
-  - wget https://github.com/mesonbuild/meson/releases/download/0.31.0/meson-0.31.0.tar.gz
-  - wget https://github.com/ninja-build/ninja/releases/download/v1.5.3/ninja-linux.zip
-  - tar -xf meson-*.tar.gz
-  - unzip ninja-linux.zip
-
+language: c
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - valgrind
+            - python3
+      env:
+        - _CXX=g++-4.9
+        - _CC=gcc-4.9
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - valgrind
+            - python3
+      env:
+        - _CXX=g++-5
+        - _CC=gcc-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - valgrind
+            - python3
+      env:
+        - _CXX=g++-6
+        - _CC=gcc-6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+            - valgrind
+            - python3
+      env:
+        - _CXX=clang++-3.6
+        - _CC=clang-3.6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+            - valgrind
+            - python3
+      env:
+        - _CXX=clang++-3.7
+        - _CC=clang-3.7
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+            - valgrind
+            - python3
+      env:
+        - _CXX=clang++-3.8
+        - _CC=clang-3.8
 script:
-    - PATH=$PWD/meson-0.31.0:$PWD:$PATH
-    - BDIR=$(mktemp -d)
-    - meson.py $BDIR
-    - mesonconf.py -Derrorlogs=true $BDIR
-    - ninja -v -C $BDIR
-    - ninja -v -C $BDIR test
-    - ninja -v -C $BDIR test-valgrind
+    - CXX=$_CXX CC=$_CC ./.travis.sh --verbose
