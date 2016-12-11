@@ -57,7 +57,7 @@ main(int ac, char ** av)
 
 		[OPTION_SOCKET] =
 		{
-			.description = "Path to imaginary socket file.",
+			.description = "Path to an imaginary socket file.",
 			.long_option = "socket",
 			.argument =
 			{

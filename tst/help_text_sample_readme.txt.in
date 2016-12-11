@@ -3,7 +3,7 @@ Usage: @README_PATH@ [OPTIONS] COMMAND
 OPTIONS:
   -h,--help             Help text
   --quiet               Be quiet.
-  --socket file         Path to imaginary socket file.
+  --socket file         Path to an imaginary socket file.
   -v,--verbose[=level]  Be verbose.
                         level: The level of the desired verbosity.
   -d                    Output debug info (can be given several times).

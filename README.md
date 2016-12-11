@@ -64,7 +64,7 @@ To use, write something like this:
 
 			[OPTION_SOCKET] =
 			{
-				.description = "Path to imaginary socket file.",
+				.description = "Path to an imaginary socket file.",
 				.long_option = "socket",
 				.argument =
 				{
