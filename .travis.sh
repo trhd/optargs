@@ -2,6 +2,7 @@
 
 MESON=meson
 MESONCONF=mesonconf
+MESONTEST=mesontest
 
 get_meson()
 {
@@ -23,6 +24,7 @@ get_meson()
 
 	MESON+=.py
 	MESONCONF+=.py
+	MESONTEST+=.py
 
 	popd &>/dev/null
 }
@@ -97,7 +99,9 @@ main()
 	# Print the whole config to the build log.
 	$MESONCONF "$BDIR"
 
-	ninja -v -C "$BDIR" ${@:-test $(! which valgrind &>/dev/null || echo test-valgrind)}
+	ninja -v -C "$BDIR"
+	$MESONTEST -C "$BDIR"
+	which valgrind &>/dev/null && $MESONTEST -C "$BDIR" --wrap valgrind
 }
 
 main "$@"
