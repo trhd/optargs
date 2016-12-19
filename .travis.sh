@@ -81,7 +81,7 @@ prepare_env()
 
 	which $MESON &>/dev/null || get_meson
 	which ninja &>/dev/null || get_ninja
-	[ ! /usr/lib/libcmocka.so ] || get_cmocka
+	[ -e /usr/lib/libcmocka.so ] || get_cmocka
 }
 
 main()
