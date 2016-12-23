@@ -755,9 +755,7 @@ main()
 
 		cmocka_unit_test(UT_optargs_result_by_index),
 		cmocka_unit_test(UT_optargs_result_by_index__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
 		cmocka_unit_test(UT_optargs_result_by_index__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_string_by_long),
 		cmocka_unit_test(UT_optargs_string_by_long__NULL),
@@ -767,9 +765,7 @@ main()
 
 		cmocka_unit_test(UT_optargs_string_by_index),
 		cmocka_unit_test(UT_optargs_string_by_index__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
 		cmocka_unit_test(UT_optargs_string_by_index__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_count_by_long),
 		cmocka_unit_test(UT_optargs_count_by_long__NULL),
@@ -779,9 +775,7 @@ main()
 
 		cmocka_unit_test(UT_optargs_count_by_index),
 		cmocka_unit_test(UT_optargs_count_by_index__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
 		cmocka_unit_test(UT_optargs_count_by_index__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_arg_index),
 		cmocka_unit_test(UT_optargs_arg_index__NULL),
