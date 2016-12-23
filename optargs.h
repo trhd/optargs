@@ -284,7 +284,7 @@ optargs_result_by_index(struct optargs_opt const * opts, int index);
  * Find the result string for the given long option.
  *
  * The given long option must exist in the given list of options. The type
- * of the result struct must be optargs_string (or optargs_none).
+ * of the result struct must be optargs_string (or optargs_undef).
  *
  * Arguments:
  *  options:     Null terminated array of options from where to search
@@ -303,7 +303,7 @@ optargs_string_by_long(struct optargs_opt const * opts, char const * long_option
  * Find the result string for the given short option.
  *
  * The given short option must exist in the given list of options. The
- * type of the result struct must be optargs_string (or optargs_none).
+ * type of the result struct must be optargs_string (or optargs_undef).
  *
  * Arguments:
  *  options:      Null terminated array of options from where to search
@@ -324,7 +324,7 @@ optargs_string_by_short(struct optargs_opt const * opts, char short_option);
  * Simply returns the (index + 1)th option's result (pointer) from the
  * given array. The given index number must match an element in the given
  * list of options. The type of the result struct must be optargs_string
- * (or optargs_none).
+ * (or optargs_undef).
  *
  * Arguments:
  *  options: Null terminated array of options from where to get the sought option.
@@ -341,7 +341,7 @@ optargs_string_by_index(struct optargs_opt const * opts, int index);
  * Find the result count for the given long option.
  *
  * The given long option must exist in the given list of options. The type
- * of the result struct must be optargs_count (or optargs_none).
+ * of the result struct must be optargs_count (or optargs_undef).
  *
  * Arguments:
  *  options:     Null terminated array of options from where to search
@@ -359,7 +359,7 @@ optargs_count_by_long(struct optargs_opt const * opts, char const * long_option)
  * Find the result count for the given short option.
  *
  * The given short option must exist in the given list of options. The
- * type of the result struct must be optargs_count (or optargs_none).
+ * type of the result struct must be optargs_count (or optargs_undef).
  *
  * Arguments:
  *  options:      Null terminated array of options from where to search
@@ -379,7 +379,7 @@ optargs_count_by_short(struct optargs_opt const * opts, char short_option);
  * Simply returns the (index + 1)th option's result (pointer) from the
  * given array. The given index number must match an element in the given
  * list of options. The type of the result struct must be optargs_count
- * (or optargs_none).
+ * (or optargs_undef).
  *
  * Arguments:
  *  options: Null terminated array of options from where to get the sought option.
