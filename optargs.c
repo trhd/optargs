@@ -193,7 +193,7 @@ argument_is_header(struct optargs_arg const * const arg)
 	assert(arg);
 	assert(arg->name);
 
-	return !arg->description && arg->name;
+	return !arg->description;
 }
 
 static bool
@@ -201,7 +201,7 @@ argument_is_divider(struct optargs_arg const * const arg)
 {
 	assert(arg);
 
-	return !(arg->description || arg->name);
+	return !arg->name;
 }
 
 static struct optargs_opt *
@@ -331,7 +331,6 @@ parse_short_option(char const * c, char const * n, struct optargs_opt * const o)
 
 	for (r = 0 ; r == 0 && *c != '\0'; c++)
 	{
-		r = 0;
 		t = locate_short_option(o, *c);
 
 		if (!t)
@@ -839,7 +838,8 @@ optargs_arg_index(struct optargs_arg const * const args, char const * const name
 
 	for (int r = 0, l ; argument_is_valid(&args[r]) ; r++)
 	{
-		if (argument_is_header(&args[r]))
+		if (argument_is_divider(&args[r])
+				|| argument_is_header(&args[r]))
 			continue;
 
 		if ((l = word_length(args[r].name)) != word_length(name))
