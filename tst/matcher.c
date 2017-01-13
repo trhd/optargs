@@ -36,18 +36,18 @@ error(char const * msg)
 }
 
 static void
-compare_outputs(char const * const a, char const * const b,
+compare_outputs(char const * const got, char const * const expected,
 		size_t const l, bool const fail)
 {
-	if (strncmp(a, b, l) && !fail)
+	if (strncmp(got, expected, l) && !fail)
 	{
 		fflush(NULL);
-		fprintf(stderr, "-%.*s-\n+%.*s+\n", (int)l, a, (int)l, b);
+		fprintf(stderr, "Got:      \"%.*s\"\nExpected: \"%.*s\"\n", (int)l, got, (int)l, expected);
 		error("Outputs differ.");
 	}
 
 	if (!fail)
-		printf("=%s", a);
+		printf("=%s", got);
 }
 
 static int
