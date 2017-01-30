@@ -31,14 +31,14 @@ main(int ac __attribute__((unused)), char **av)
 		{ .description = "AAA", .short_option = 'a', .long_option = "aaa" },
 		{ .short_option = 'x', .long_option = "secret" },
 		{ .description = "BBB", .short_option = 'b', .long_option = "bbb" },
-		optargs_opt_nil,
+		optargs_opt_div,
 		{ .description = "CCC", .short_option = 'c', .long_option = "ccc" },
 		optargs_opt_eol
 	};
 	struct optargs_arg args[] =
 	{
-		{ .name = "Name_0", .mandatory = optargs_yes },
-		{ .name = "Name_1", .mandatory = optargs_yes },
+		{ .name = "Name_0", .type = optargs_arg_any, .description = "Jottain 0." },
+		{ .name = "Name_1", .type = optargs_arg_any, .description = "Jottain 1." },
 		optargs_arg_eol
 	};
 

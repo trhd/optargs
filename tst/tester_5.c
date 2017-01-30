@@ -25,7 +25,7 @@ main(int ac __attribute__((unused)), char **av)
 {
 	struct optargs_opt opts[] =
 	{
-		{ "blaa", 'b', "Blaablaa.", { .mandatory = optargs_yes }, optargs_result_nil },
+		{ "blaa", 'b', "Blaablaa.", optargs_res_null, (struct optargs_arg []){{.name = "BLOB", .type = optargs_arg_any}, optargs_arg_eol}},
 		optargs_opt_eol
 	};
 

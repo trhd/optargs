@@ -5,7 +5,7 @@ OPTIONS:
   --quiet               Be quiet.
   --socket file         Path to an imaginary socket file.
   -v,--verbose[=level]  Be verbose.
-                        level: The level of the desired verbosity.
+    level:               The level of the desired verbosity.
   -d                    Output debug info (can be given several times).
 
 COMMAND:

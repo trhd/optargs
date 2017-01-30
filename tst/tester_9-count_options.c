@@ -14,7 +14,7 @@ main(int ac, char **av)
 	};
 	unsigned t;
 
-	if (optargs_parse(ac, (char const **)av, opts) < 0)
+	if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
 	{
 		printf("WTF m8!?!?\n");
 		return EXIT_FAILURE;
@@ -22,11 +22,11 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	t = optargs_count_by_long(opts, "verbose");
+	t = optargs_opt_count_by_long(opts, "verbose");
 	if (t)
 		printf("v=%u ", t);
 
-	t = optargs_count_by_long(opts, "wanha");
+	t = optargs_opt_count_by_long(opts, "wanha");
 	if (t)
 		printf("w=%u ", t);
 

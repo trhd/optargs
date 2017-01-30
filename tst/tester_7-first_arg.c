@@ -44,17 +44,17 @@ main(int ac, char **av)
 			.description = "Description D.",
 			.long_option = "dddd",
 			.short_option = 'd',
-			.argument = { .mandatory = optargs_yes},
+			.argument = (struct optargs_arg []){{.name = "d-arg", .type = optargs_arg_any}, optargs_arg_eol},
 		}, {
 			.description = "Description E.",
 			.long_option = "eeee",
 			.short_option = 'e',
-			.argument = { .mandatory = optargs_maybe},
+			.argument = (struct optargs_arg []){{.name = "e-arg", .type = optargs_arg_any_opt}, optargs_arg_eol},
 		},
 		optargs_opt_eol
 	};
 
-	i = optargs_parse(ac, (char const **)av, opts);
+	i = optargs_parse_opts(ac, (char const **)av, opts);
 
 	if (i < 0)
 	{

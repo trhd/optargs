@@ -37,42 +37,45 @@ README = executable(
 README_PATH = meson.current_build_dir() + '/readme'
 CONF_DATA.set('README_PATH', README_PATH)
 
-TESTER_1_PATH = meson.current_build_dir() + '/tester_1'
-CONF_DATA.set('TESTER_1_PATH', TESTER_1_PATH)
 TESTER_1 = executable(
 	'tester_1',
 	'tester_1.c',
 	link_with : OPTARGS_LIB,
 	include_directories : OPTARGS_HDR
 )
+CONF_DATA.set('TESTER_1_PATH', TESTER_1.full_path())
 
-TESTER_2_PATH = meson.current_build_dir() + '/tester_2'
-CONF_DATA.set('TESTER_2_PATH', TESTER_2_PATH)
+OPTION_TESTER = executable(
+	'option_tester',
+	'option_tester.c',
+	link_with : OPTARGS_LIB,
+	include_directories : OPTARGS_HDR
+)
+CONF_DATA.set('OPTION_TESTER', OPTION_TESTER.full_path())
+
+ARGUMENT_TESTER = executable(
+	'argument_tester',
+	'argument_tester.c',
+	link_with : OPTARGS_LIB,
+	include_directories : OPTARGS_HDR
+)
+CONF_DATA.set('ARGUMENT_TESTER', ARGUMENT_TESTER.full_path())
+
 TESTER_2 = executable('tester_2',
 	'tester_2.c',
 	link_with : OPTARGS_LIB,
 	include_directories : OPTARGS_HDR
 )
+CONF_DATA.set('TESTER_2_PATH', TESTER_2.full_path())
 
-TESTER_3_PATH = meson.current_build_dir() + '/tester_3'
-CONF_DATA.set('TESTER_3_PATH', TESTER_3_PATH)
-TESTER_3 = executable(
-	'tester_3',
-	'tester_3.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
-)
-
-TESTER_4_PATH = meson.current_build_dir() + '/tester_4'
-CONF_DATA.set('TESTER_4_PATH', TESTER_4_PATH)
 TESTER_4 = executable(
 	'tester_4',
 	'tester_4.c',
 	link_with : OPTARGS_LIB,
 	include_directories : OPTARGS_HDR
 )
+CONF_DATA.set('TESTER_4_PATH', TESTER_4.full_path())
 
-TESTER_5_PATH = meson.current_build_dir() + '/tester_5'
 TESTER_5 = executable(
 	'tester_5',
 	'tester_5.c',
@@ -80,7 +83,6 @@ TESTER_5 = executable(
 	include_directories : OPTARGS_HDR
 )
 
-TESTER_6_PATH = meson.current_build_dir() + '/tester_6-common_prefix'
 TESTER_6 = executable(
 	'tester_6-common_prefix',
 	'tester_6-common_prefix.c',
@@ -88,7 +90,6 @@ TESTER_6 = executable(
 	include_directories : OPTARGS_HDR
 )
 
-TESTER_7_PATH = meson.current_build_dir() + '/tester_7-first_arg'
 TESTER_7 = executable(
 	'tester_7-first_arg',
 	'tester_7-first_arg.c',
@@ -96,16 +97,14 @@ TESTER_7 = executable(
 	include_directories : OPTARGS_HDR
 )
 
-TESTER_8_PATH = meson.current_build_dir() + '/tester_8-ignore_hidden_option_length'
-CONF_DATA.set('TESTER_8_PATH', TESTER_8_PATH)
 TESTER_8 = executable(
 	'tester_8-ignore_hidden_option_length',
 	'tester_8-ignore_hidden_option_length.c',
 	link_with : OPTARGS_LIB,
 	include_directories : OPTARGS_HDR
 )
+CONF_DATA.set('TESTER_8_PATH', TESTER_8.full_path())
 
-TESTER_9_PATH = meson.current_build_dir() + '/tester_9-count_options'
 TESTER_9 = executable(
 	'tester_9-count_options',
 	'tester_9-count_options.c',
@@ -113,41 +112,26 @@ TESTER_9 = executable(
 	include_directories : OPTARGS_HDR
 )
 
-configure_file(
-	input : 'help_text_sample_1.txt.in',
-	output : 'help_text_sample_1.txt',
-	configuration : CONF_DATA
-)
+MINIMAL = executable('minimal', 'minimal.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+CONF_DATA.set('MINIMAL_PATH', MINIMAL.full_path())
 
-configure_file(
-	input : 'help_text_sample_2.txt.in',
-	output : 'help_text_sample_2.txt',
-	configuration : CONF_DATA
-)
+ALL_HIDDEN = executable('all_hidden', 'all_hidden.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+CONF_DATA.set('ALL_HIDDEN_PATH', ALL_HIDDEN.full_path())
 
-configure_file(
-	input : 'help_text_sample_3.txt.in',
-	output : 'help_text_sample_3.txt',
-	configuration : CONF_DATA
-)
-
-configure_file(
-	input : 'help_text_sample_4.txt.in',
-	output : 'help_text_sample_4.txt',
-	configuration : CONF_DATA
-)
-
-configure_file(
-	input : 'help_text_sample_8.txt.in',
-	output : 'help_text_sample_8.txt',
-	configuration : CONF_DATA
-)
-
-configure_file(
-	input : 'help_text_sample_readme.txt.in',
-	output : 'help_text_sample_readme.txt',
-	configuration : CONF_DATA
-)
+foreach f : [
+		'help_text_sample_1.txt',
+		'help_text_sample_2.txt',
+		'help_text_sample_4.txt',
+		'help_text_sample_8.txt',
+		'help_text_sample_readme.txt',
+		'help_text_sample_minimal.txt',
+		'help_text_sample_all_hidden.txt' ]
+	configure_file(
+		input : f + '.in',
+		output : f,
+		configuration : CONF_DATA
+	)
+endforeach
 
 SHORT_OPT = '-@0@'
 SHORT_OPT_EQ = '-@0@=@1@'
@@ -163,390 +147,393 @@ A_STRING = 'This"is#some=random\'string-with|funny`characters.'
                                                                          #
 test('Ensure short option -a works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '-a' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '-a' ])
 test('Ensure short option -b works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '-b' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '-b' ])
 test('Ensure short option -c works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '-c' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '-c' ])
 test('Ensure short option -d works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '-d' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '-d' ])
                                                                          #
 #### Give a single long option. ##########################################
                                                                          #
 test('Ensure long option --aaaa works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '--aaaa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '--aaaa' ])
 test('Ensure long option --bbbb works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '--bbbb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '--bbbb' ])
 test('Ensure long option --cccc works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '--cccc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '--cccc' ])
 test('Ensure long option --dddd works on its own.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '--dddd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '--dddd' ])
                                                                          #
 # Specify a short option twice in a single argument . ####################
                                                                          #
 test('Ensure short option -a can be given twice in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '-aa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '-aa' ])
 test('Ensure short option -b can be given twice in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '-bb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '-bb' ])
 test('Ensure short option -c can be given twice in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '-cc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '-cc' ])
 test('Ensure short option -d can be given twice in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '-dd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '-dd' ])
                                                                          #
 #### Specify an option twice. ############################################
                                                                          #
 test('Ensure short option -a can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '-a', '-a' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '-a', '-a' ])
 test('Ensure short option -b can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '-b', '-b' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '-b', '-b' ])
 test('Ensure short option -c can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '-c', '-c' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '-c', '-c' ])
 test('Ensure short option -d can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '-d', '-d' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '-d', '-d' ])
 
 test('Ensure long option --aaaa can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '--aaaa', '--aaaa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '--aaaa', '--aaaa' ])
 test('Ensure long option --bbbb can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '--bbbb', '--bbbb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '--bbbb', '--bbbb' ])
 test('Ensure long option --cccc can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '--cccc', '--cccc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '--cccc', '--cccc' ])
 test('Ensure long option --dddd can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '--dddd', '--dddd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '--dddd', '--dddd' ])
                                                                          #
 #### Specify a single short option four times. ###########################
                                                                          #
 test('Ensure short option -a can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '-a', '-a', '-a', '-a' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '-a', '-a', '-a', '-a' ])
 test('Ensure short option -b can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '-b', '-b', '-b', '-b' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '-b', '-b', '-b', '-b' ])
 test('Ensure short option -c can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '-c', '-c', '-c', '-c' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '-c', '-c', '-c', '-c' ])
 test('Ensure short option -d can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '-d', '-d', '-d', '-d' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '-d', '-d', '-d', '-d' ])
                                                                          #
 #### Specify a single long option four times. ############################
                                                                          #
 test('Ensure long option --aaaa can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '--aaaa', '--aaaa', '--aaaa', '--aaaa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '--aaaa', '--aaaa', '--aaaa', '--aaaa' ])
 test('Ensure long option --bbbb can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '--bbbb', '--bbbb', '--bbbb', '--bbbb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '--bbbb', '--bbbb', '--bbbb', '--bbbb' ])
 test('Ensure long option --cccc can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '--cccc', '--cccc', '--cccc', '--cccc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '--cccc', '--cccc', '--cccc', '--cccc' ])
 test('Ensure long option --dddd can be given four times.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '--dddd', '--dddd', '--dddd', '--dddd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '--dddd', '--dddd', '--dddd', '--dddd' ])
                                                                          #
 #### Specify single short option four times in a single argument. ########
                                                                          #
 test('Ensure short option -a can be given four times in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '-aaaa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '-aaaa' ])
 test('Ensure short option -b can be given four times in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '-bbbb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '-bbbb' ])
 test('Ensure short option -c can be given four times in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '-cccc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '-cccc' ])
 test('Ensure short option -d can be given four times in one argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '-dddd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '-dddd' ])
                                                                          #
 #### Mix identical double and single short options. ######################
                                                                          #
 test('Mix long option --aaaa and -a short option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '--aaaa', '-a', '--aaaa', '-a' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '--aaaa', '-a', '--aaaa', '-a' ])
 test('Mix long option --bbbb and -b short option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '--bbbb', '-b', '--bbbb', '-b' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '--bbbb', '-b', '--bbbb', '-b' ])
 test('Mix long option --cccc and -c short option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '--cccc', '-c', '--cccc', '-c' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '--cccc', '-c', '--cccc', '-c' ])
 test('Mix long option --dddd and -d short option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '--dddd', '-d', '--dddd', '-d' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '--dddd', '-d', '--dddd', '-d' ])
                                                                          #
 #### Mix different short options. ########################################
                                                                          #
 test('Mix -a and -b short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ab', TESTER_1_PATH, '-a', '-b' ])
+	args : [ 'Got: ab', OPTION_TESTER.full_path(), '-a', '-b' ])
 test('Mix -a, -cccc and -b short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abc', TESTER_1_PATH, '-a', '-cccc', '-b' ])
+	args : [ 'Got: abc', OPTION_TESTER.full_path(), '-a', '-cccc', '-b' ])
 
 test('Mix -a, -b, -c and -d options #1.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-a', '-b', '-c', '-d' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-a', '-b', '-c', '-d' ])
 test('Mix -a, -b, -c and -d options #2.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-b', '-c', '-d', '-a' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-b', '-c', '-d', '-a' ])
 test('Mix -a, -b, -c and -d options #3.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-b', '-a', '-d', '-c' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-b', '-a', '-d', '-c' ])
 test('Mix -a, -b, -c and -d options #4.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-bb', '-a', '-ddddd', '-c', '-a' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-bb', '-a', '-ddddd', '-c', '-a' ])
                                                                          #
 #### Try to give an argument for a non-argument short option. ############
                                                                          #
 test('Try -a short option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar,barfoo', TESTER_1_PATH, '-a', 'foobar', 'barfoo' ])
+	args : [ 'Got: a,foobar,barfoo', OPTION_TESTER.full_path(), '-a', 'foobar', 'barfoo' ])
 test('Try -b short option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar,barfoo', TESTER_1_PATH, '-b', 'foobar', 'barfoo' ])
+	args : [ 'Got: b,foobar,barfoo', OPTION_TESTER.full_path(), '-b', 'foobar', 'barfoo' ])
 test('Try -c short option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c,foobar,barfoo', TESTER_1_PATH, '-c', 'foobar', 'barfoo' ])
+	args : [ 'Got: c,foobar,barfoo', OPTION_TESTER.full_path(), '-c', 'foobar', 'barfoo' ])
 test('Try -d short option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d,foobar,barfoo', TESTER_1_PATH, '-d', 'foobar', 'barfoo' ])
+	args : [ 'Got: d,foobar,barfoo', OPTION_TESTER.full_path(), '-d', 'foobar', 'barfoo' ])
                                                                          #
 #### Try to give an argument for a non-argument long option. ############
                                                                          #
 test('Try --aaaa long option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar,barfoo', TESTER_1_PATH, '--aaaa', 'foobar', 'barfoo' ])
+	args : [ 'Got: a,foobar,barfoo', OPTION_TESTER.full_path(), '--aaaa', 'foobar', 'barfoo' ])
 test('Try --bbbb long option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar,barfoo', TESTER_1_PATH, '--bbbb', 'foobar', 'barfoo' ])
+	args : [ 'Got: b,foobar,barfoo', OPTION_TESTER.full_path(), '--bbbb', 'foobar', 'barfoo' ])
 test('Try --cccc long option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c,foobar,barfoo', TESTER_1_PATH, '--cccc', 'foobar', 'barfoo' ])
+	args : [ 'Got: c,foobar,barfoo', OPTION_TESTER.full_path(), '--cccc', 'foobar', 'barfoo' ])
 test('Try --dddd long option with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d,foobar,barfoo', TESTER_1_PATH, '--dddd', 'foobar', 'barfoo' ])
+	args : [ 'Got: d,foobar,barfoo', OPTION_TESTER.full_path(), '--dddd', 'foobar', 'barfoo' ])
                                                                          #
 #### Try to give an argument for a non-argument short option twice. ######
                                                                          #
 test('Try -a short option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar,-a,barfoo', TESTER_1_PATH, '-a', 'foobar', '-a', 'barfoo' ])
+	args : [ 'Got: a,foobar,-a,barfoo', OPTION_TESTER.full_path(), '-a', 'foobar', '-a', 'barfoo' ])
 test('Try -b short option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar,-b,barfoo', TESTER_1_PATH, '-b', 'foobar', '-b', 'barfoo' ])
+	args : [ 'Got: b,foobar,-b,barfoo', OPTION_TESTER.full_path(), '-b', 'foobar', '-b', 'barfoo' ])
 test('Try -c short option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c,foobar,-c,barfoo', TESTER_1_PATH, '-c', 'foobar', '-c', 'barfoo' ])
+	args : [ 'Got: c,foobar,-c,barfoo', OPTION_TESTER.full_path(), '-c', 'foobar', '-c', 'barfoo' ])
 test('Try -d short option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d,foobar,-d,barfoo', TESTER_1_PATH, '-d', 'foobar', '-d', 'barfoo' ])
+	args : [ 'Got: d,foobar,-d,barfoo', OPTION_TESTER.full_path(), '-d', 'foobar', '-d', 'barfoo' ])
                                                                          #
 #### Try to give an argument for a non-argument long option twice. #######
                                                                          #
 test('Try --aaaa long option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar,--aaaa,barfoo', TESTER_1_PATH, '--aaaa', 'foobar', '--aaaa', 'barfoo' ])
+	args : [ 'Got: a,foobar,--aaaa,barfoo', OPTION_TESTER.full_path(), '--aaaa', 'foobar', '--aaaa', 'barfoo' ])
 test('Try --bbbb long option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar,--bbbb,barfoo', TESTER_1_PATH, '--bbbb', 'foobar', '--bbbb', 'barfoo' ])
+	args : [ 'Got: b,foobar,--bbbb,barfoo', OPTION_TESTER.full_path(), '--bbbb', 'foobar', '--bbbb', 'barfoo' ])
 test('Try --cccc long option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c,foobar,--cccc,barfoo', TESTER_1_PATH, '--cccc', 'foobar', '--cccc', 'barfoo' ])
+	args : [ 'Got: c,foobar,--cccc,barfoo', OPTION_TESTER.full_path(), '--cccc', 'foobar', '--cccc', 'barfoo' ])
 test('Try --dddd long option twice with arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d,foobar,--dddd,barfoo', TESTER_1_PATH, '--dddd', 'foobar', '--dddd', 'barfoo' ])
+	args : [ 'Got: d,foobar,--dddd,barfoo', OPTION_TESTER.full_path(), '--dddd', 'foobar', '--dddd', 'barfoo' ])
                                                                          #
 #### Ensure empty argument is ignored before options. ####################
                                                                          #
 test('Empty argument before short -a option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '', '-a' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '', '-a' ])
 test('Empty argument before short -b option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '', '-b' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '', '-b' ])
 test('Empty argument before short -c option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '', '-c' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '', '-c' ])
 test('Empty argument before short -d option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '', '-d' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '', '-d' ])
 
 test('Empty argument before long --aaaa option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a', TESTER_1_PATH, '', '--aaaa' ])
+	args : [ 'Got: a', OPTION_TESTER.full_path(), '', '--aaaa' ])
 test('Empty argument before long --bbbb option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b', TESTER_1_PATH, '', '--bbbb' ])
+	args : [ 'Got: b', OPTION_TESTER.full_path(), '', '--bbbb' ])
 test('Empty argument before long --cccc option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: c', TESTER_1_PATH, '', '--cccc' ])
+	args : [ 'Got: c', OPTION_TESTER.full_path(), '', '--cccc' ])
 test('Empty argument before long --dddd option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: d', TESTER_1_PATH, '', '--dddd' ])
+	args : [ 'Got: d', OPTION_TESTER.full_path(), '', '--dddd' ])
                                                                          #
 #### Ensure empty argument is ignored between options. ###################
                                                                          #
 test('Empty argument between short -b and -a options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ab', TESTER_1_PATH, '-b', '', '-a' ])
+	args : [ 'Got: ab', OPTION_TESTER.full_path(), '-b', '', '-a' ])
 test('Empty argument between short -b and -c options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: bc', TESTER_1_PATH, '-b', '', '-c' ])
+	args : [ 'Got: bc', OPTION_TESTER.full_path(), '-b', '', '-c' ])
 test('Empty argument between short -c and -a options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ac', TESTER_1_PATH, '-c', '', '-a' ])
+	args : [ 'Got: ac', OPTION_TESTER.full_path(), '-c', '', '-a' ])
 test('Empty argument between short -a and -d options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ad', TESTER_1_PATH, '-a', '', '-d' ])
+	args : [ 'Got: ad', OPTION_TESTER.full_path(), '-a', '', '-d' ])
 
 test('Empty argument between long --aaaa and --cccc options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ac', TESTER_1_PATH, '--aaaa', '', '--cccc' ])
+	args : [ 'Got: ac', OPTION_TESTER.full_path(), '--aaaa', '', '--cccc' ])
 test('Empty argument between long --bbbb and --aaaa options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ab', TESTER_1_PATH, '--bbbb', '', '--aaaa' ])
+	args : [ 'Got: ab', OPTION_TESTER.full_path(), '--bbbb', '', '--aaaa' ])
 test('Empty argument between long --bbbb and --cccc options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: bc', TESTER_1_PATH, '--bbbb', '', '--cccc' ])
+	args : [ 'Got: bc', OPTION_TESTER.full_path(), '--bbbb', '', '--cccc' ])
 test('Empty argument between long --aaaa and --dddd options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ad', TESTER_1_PATH, '--aaaa', '', '--dddd' ])
+	args : [ 'Got: ad', OPTION_TESTER.full_path(), '--aaaa', '', '--dddd' ])
 
 test('Empty argument between long --aaaa and short -c options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ac', TESTER_1_PATH, '--aaaa', '', '-c' ])
+	args : [ 'Got: ac', OPTION_TESTER.full_path(), '--aaaa', '', '-c' ])
 test('Empty argument between short -b and long --aaaa options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ab', TESTER_1_PATH, '-b', '', '--aaaa' ])
+	args : [ 'Got: ab', OPTION_TESTER.full_path(), '-b', '', '--aaaa' ])
 test('Empty argument between long --bbbb and short -c options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: bc', TESTER_1_PATH, '--bbbb', '', '-c' ])
+	args : [ 'Got: bc', OPTION_TESTER.full_path(), '--bbbb', '', '-c' ])
 test('Empty argument between short -a and long --dddd options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ad', TESTER_1_PATH, '-a', '', '--dddd' ])
+	args : [ 'Got: ad', OPTION_TESTER.full_path(), '-a', '', '--dddd' ])
                                                                          #
 #### Ensure empty argument is ignored between options and arguments. #####
                                                                          #
 test('Empty argument between long --aaaa and argument foobar.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar', TESTER_1_PATH, '--aaaa', '', 'foobar' ])
+	args : [ 'Got: a,foobar', OPTION_TESTER.full_path(), '--aaaa', '', 'foobar' ])
 test('Empty argument between short -b and argument foobar.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar', TESTER_1_PATH, '-b', '', 'foobar' ])
+	args : [ 'Got: b,foobar', OPTION_TESTER.full_path(), '-b', '', 'foobar' ])
 test('Empty argument between long --bbbb and argument foobar.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: b,foobar', TESTER_1_PATH, '--bbbb', '', 'foobar' ])
+	args : [ 'Got: b,foobar', OPTION_TESTER.full_path(), '--bbbb', '', 'foobar' ])
 test('Empty argument between short -a and argument foobar.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: a,foobar', TESTER_1_PATH, '-a', '', 'foobar' ])
+	args : [ 'Got: a,foobar', OPTION_TESTER.full_path(), '-a', '', 'foobar' ])
+test('Empty argument after --.',
+	MATCHER, valgrind_args : VALGRIND_ARGS,
+	args : [ 'Got: ab,,foobar', OPTION_TESTER.full_path(), '-b', '-a', '--', '', 'foobar' ])
                                                                          #
 #### Mix simple short an long options. ###################################
                                                                          #
 test('Mix a, b, c, and d long and short options #1.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '--aaaa', '--bbbb', '--cccc', '--dddd' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '--aaaa', '--bbbb', '--cccc', '--dddd' ])
 test('Mix a, b, c, and d long and short options #2.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '--bbbb', '--cccc', '-da' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '--bbbb', '--cccc', '-da' ])
 test('Mix a, b, c, and d long and short options #3.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '--bbbb', '-a', '--dddd', '--aaaa', '--cccc' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '--bbbb', '-a', '--dddd', '--aaaa', '--cccc' ])
 test('Mix a, b, c, and d long and short options #4.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-b', '--aaaa', '-d', '-c', '--aaaa' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-b', '--aaaa', '-d', '-c', '--aaaa' ])
 test('Mix a, b, c, and d long and short options #5.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcd', TESTER_1_PATH, '-abcd', '--aaaa', '--bbbb', '--cccc', '--dddd' ])
+	args : [ 'Got: abcd', OPTION_TESTER.full_path(), '-abcd', '--aaaa', '--bbbb', '--cccc', '--dddd' ])
                                                                          #
 #### Test mandatory argument handling. ###################################
                                                                          #
 test('Try -i short option with mandatory argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '-i', 'foobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '-i', 'foobar' ])
 test('Try -i short option with mandatory argument in the same argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '-ifoobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '-ifoobar' ])
 test('Try -i short option with assigned mandatory argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '-i=foobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '-i=foobar' ])
 test('Try --iiii long option with mandatory argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '--iiii', 'foobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '--iiii', 'foobar' ])
 test('Try --iiii long option with assigned mandatory argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '--iiii=foobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '--iiii=foobar' ])
                                                                          #
 #### Test mandatory argument handling with extra argument. ###############
                                                                          #
 test('Try -i short option with mandatory argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '-i', 'foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '-i', 'foobar', 'barfoo' ])
 test('Try -i short option with mandatory argument in the same argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '-ifoobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '-ifoobar', 'barfoo' ])
 test('Try -i short option with assigned mandatory argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '-i=foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '-i=foobar', 'barfoo' ])
 test('Try --iiii long option with mandatory argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '--iiii', 'foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '--iiii', 'foobar', 'barfoo' ])
 test('Try --iiii long option with assigned mandatory argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '--iiii=foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '--iiii=foobar', 'barfoo' ])
                                                                          #
 #### Test mandatory argument handling with extra options. ################
                                                                          #
 test('Try -i short option with mandatory argument and -ab short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abi{foobar}', TESTER_1_PATH, '-i', 'foobar', '-ab' ])
+	args : [ 'Got: abi{foobar}', OPTION_TESTER.full_path(), '-i', 'foobar', '-ab' ])
 test('Try -i short option with mandatory argument in the same argument and -a and -b short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abi{foobar}', TESTER_1_PATH, '-b', '-ifoobar', '-a' ])
+	args : [ 'Got: abi{foobar}', OPTION_TESTER.full_path(), '-b', '-ifoobar', '-a' ])
 test('Try -i short option with assigned mandatory argument and --cccc long option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: ci{foobar}', TESTER_1_PATH, '-i=foobar', '--cccc' ])
+	args : [ 'Got: ci{foobar}', OPTION_TESTER.full_path(), '-i=foobar', '--cccc' ])
 test('Try --iiii long option with mandatory argument and --bbbb and -a options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: aci{foobar}', TESTER_1_PATH, '--iiii', 'foobar', '-a', '--cccc' ])
+	args : [ 'Got: aci{foobar}', OPTION_TESTER.full_path(), '--iiii', 'foobar', '-a', '--cccc' ])
 test('Try --iiii long option with assigned mandatory argument and -abc options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar}', TESTER_1_PATH, '-abc', '--iiii=foobar', '-abc' ])
+	args : [ 'Got: abci{foobar}', OPTION_TESTER.full_path(), '-abc', '--iiii=foobar', '-abc' ])
                                                                          #
 #### Test mandatory argument handling with extra options and arguments. ##
                                                                          #
 test('Try -i short option with mandatory argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '-ifoobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abci{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-ifoobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try -i short option with mandatory argument in the same argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '-i', 'foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abci{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-i', 'foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try -i short option with assigned mandatory argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '-i=foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abci{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-i=foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try --iiii long option with mandatory argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '--iiii', 'foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abci{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '--iiii', 'foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try --iiii long option with assigned mandatory argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abci{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '--iiii=foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abci{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '--iiii=foobar', '-abc', 'barfoo', '--bbbb' ])
                                                                          #
 #### Test conflicting mandatory arguments. ###############################
                                                                          #
@@ -615,102 +602,102 @@ test('Try short -i option with long --iiii option with conflicting arguments and
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '--bbbb', '-i', 'foobar', '-a', '--iiii', 'barfoo' ])
 test('Try long --iiii option with short -i option with conflicting arguments and extra options.',
-	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
+	OPTION_TESTER, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-b', '--iiii', 'foobar', '--cccc', '-i', 'barfoo' ])
                                                                          #
 #### Test optional argument handling. ####################################
                                                                          #
 test('Try -j short option without optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!}', TESTER_1_PATH, '-j' ])
+	args : [ 'Got: j{Oujea!}', OPTION_TESTER.full_path(), '-j' ])
 test('Try -j short option with optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar', TESTER_1_PATH, '-j', 'foobar' ])
+	args : [ 'Got: j{Oujea!},foobar', OPTION_TESTER.full_path(), '-j', 'foobar' ])
 test('Try -j short option with optional argument in the same argument.',
-	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
+	OPTION_TESTER, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-jfoobar' ])
 test('Try -j short option with assigned optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar}', TESTER_1_PATH, '-j=foobar' ])
+	args : [ 'Got: j{foobar}', OPTION_TESTER.full_path(), '-j=foobar' ])
 test('Try --jjjj long option without optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!}', TESTER_1_PATH, '--jjjj' ])
+	args : [ 'Got: j{Oujea!}', OPTION_TESTER.full_path(), '--jjjj' ])
 test('Try --jjjj long option with optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar', TESTER_1_PATH, '--jjjj', 'foobar' ])
+	args : [ 'Got: j{Oujea!},foobar', OPTION_TESTER.full_path(), '--jjjj', 'foobar' ])
 test('Try --jjjj long option with assigned optional argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar}', TESTER_1_PATH, '--jjjj=foobar' ])
+	args : [ 'Got: j{foobar}', OPTION_TESTER.full_path(), '--jjjj=foobar' ])
                                                                          #
 #### Test optional argument handling with extra argument. ################
                                                                          #
 test('Try -j short option with optional argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,barfoo', TESTER_1_PATH, '-j', 'foobar', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,barfoo', OPTION_TESTER.full_path(), '-j', 'foobar', 'barfoo' ])
 test('Try -j short option with optional argument in the same argument and extra argument.',
-	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
+	OPTION_TESTER, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-jfoobar', 'barfoo' ])
 test('Try -j short option with assigned optional argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar},barfoo', TESTER_1_PATH, '-j=foobar', 'barfoo' ])
+	args : [ 'Got: j{foobar},barfoo', OPTION_TESTER.full_path(), '-j=foobar', 'barfoo' ])
 test('Try --jjjj long option with optional argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,barfoo', TESTER_1_PATH, '--jjjj', 'foobar', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,barfoo', OPTION_TESTER.full_path(), '--jjjj', 'foobar', 'barfoo' ])
 test('Try --jjjj long option with assigned optional argument and extra argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar},barfoo', TESTER_1_PATH, '--jjjj=foobar', 'barfoo' ])
+	args : [ 'Got: j{foobar},barfoo', OPTION_TESTER.full_path(), '--jjjj=foobar', 'barfoo' ])
                                                                          #
 #### Test optional argument handling with extra options. #################
                                                                          #
 test('Try -j short option with assigned optional argument and -ab short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abj{foobar}', TESTER_1_PATH, '-j=foobar', '-ab' ])
+	args : [ 'Got: abj{foobar}', OPTION_TESTER.full_path(), '-j=foobar', '-ab' ])
 test('Try -j short option with default value and -a and -b short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abj{Oujea!}', TESTER_1_PATH, '-b', '-j', '-a' ])
+	args : [ 'Got: abj{Oujea!}', OPTION_TESTER.full_path(), '-b', '-j', '-a' ])
 test('Try --jjjj long option with default value and -a and -b short options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abj{Oujea!}', TESTER_1_PATH, '-b', '--jjjj', '-a' ])
+	args : [ 'Got: abj{Oujea!}', OPTION_TESTER.full_path(), '-b', '--jjjj', '-a' ])
 test('Try -j short option with assigned optional argument and --cccc long option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: cj{foobar}', TESTER_1_PATH, '-j=foobar', '--cccc' ])
+	args : [ 'Got: cj{foobar}', OPTION_TESTER.full_path(), '-j=foobar', '--cccc' ])
 test('Try --jjjj long option with assigned optional argument and --bbbb and -a options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: acj{foobar}', TESTER_1_PATH, '--jjjj=foobar', '-a', '--cccc' ])
+	args : [ 'Got: acj{foobar}', OPTION_TESTER.full_path(), '--jjjj=foobar', '-a', '--cccc' ])
 test('Try --jjjj long option with assigned optional argument and -abc options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{foobar}', TESTER_1_PATH, '-abc', '--jjjj=foobar', '-abc' ])
+	args : [ 'Got: abcj{foobar}', OPTION_TESTER.full_path(), '-abc', '--jjjj=foobar', '-abc' ])
                                                                          #
 #### Test optional argument handling with extra options and arguments. ###
                                                                          #
 test('Try -j short option with default value and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{Oujea!},barfoo,--bbbb', TESTER_1_PATH, '-abc', '-j', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abcj{Oujea!},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-j', '-abc', 'barfoo', '--bbbb' ])
 test('Try -j short option with optional argument in the same argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{Oujea!},foobar,-abc,barfoo,--bbbb', TESTER_1_PATH, '-abc', '-j', 'foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abcj{Oujea!},foobar,-abc,barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-j', 'foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try -j short option with assigned optional argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '-j=foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abcj{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '-j=foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try --jjjj long option with optional argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{Oujea!},foobar,-abc,barfoo,--bbbb', TESTER_1_PATH, '-abc', '--jjjj', 'foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abcj{Oujea!},foobar,-abc,barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '--jjjj', 'foobar', '-abc', 'barfoo', '--bbbb' ])
 test('Try --jjjj long option with assigned optional argument and extra options and arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abcj{foobar},barfoo,--bbbb', TESTER_1_PATH, '-abc', '--jjjj=foobar', '-abc', 'barfoo', '--bbbb' ])
+	args : [ 'Got: abcj{foobar},barfoo,--bbbb', OPTION_TESTER.full_path(), '-abc', '--jjjj=foobar', '-abc', 'barfoo', '--bbbb' ])
                                                                          #
 #### Test conflicting optional arguments. ################################
                                                                          #
 test('Try -j short option twice with conflicting arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,-j,barfoo', TESTER_1_PATH, '-j', 'foobar', '-j', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,-j,barfoo', OPTION_TESTER.full_path(), '-j', 'foobar', '-j', 'barfoo' ])
 test('Try -j short option assigned twice with conflicting arguments.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-j=foobar', '-j=barfoo' ])
 
 test('Try --jjjj long option twice with conflicting arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,--jjjj,barfoo', TESTER_1_PATH, '--jjjj', 'foobar', '--jjjj', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,--jjjj,barfoo', OPTION_TESTER.full_path(), '--jjjj', 'foobar', '--jjjj', 'barfoo' ])
 test('Try --jjjj long option assigned twice with conflicting arguments.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '--jjjj=foobar', '--jjjj=barfoo' ])
@@ -768,276 +755,276 @@ test('Try --jjjj long option with conflicting default value (reverse) #2.',
                                                                          #
 test('Give foobar as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '-i', 'foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '-i', 'foobar', 'barfoo' ])
 test('Give foobar as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,barfoo', TESTER_1_PATH, '-j', 'foobar', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,barfoo', OPTION_TESTER.full_path(), '-j', 'foobar', 'barfoo' ])
 test('Give foobar as an optional argument for short option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '--iiii', 'foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '--iiii', 'foobar', 'barfoo' ])
 test('Give foobar as an optional argument for short option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar,barfoo', TESTER_1_PATH, '--jjjj', 'foobar', 'barfoo' ])
+	args : [ 'Got: j{Oujea!},foobar,barfoo', OPTION_TESTER.full_path(), '--jjjj', 'foobar', 'barfoo' ])
                                                                          #
 #### Ensure appended arguments are handled correctly. ####################
                                                                          #
 test('Appending an argument for the long option --iiii should fail.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '--iiiifoobar'])
+	args : [ '--iiiifoobar', '1', '2', '3', '4', '5'])
 test('Appending an (mandatory) argument for the short option -i should succeed.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar}', TESTER_1_PATH, '-ifoobar' ])
+	args : [ 'Got: i{foobar}', OPTION_TESTER.full_path(), '-ifoobar' ])
 test('Appending an (optional) argument for the short option -j should fail.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-jfoobar' ])
 test('Append an argument for the long option --jjjj.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '--jjjjfoobar'])
+	args : [ '--jjjjfoobar', '1', '2', '3', '4', '5'])
                                                                          #
 #### Ensure assigning a value works. #####################################
                                                                          #
 test('Assign "foobar" as mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '-i=foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '-i=foobar', 'barfoo' ])
 test('Assign "foobar" as optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar},barfoo', TESTER_1_PATH, '-j=foobar', 'barfoo' ])
+	args : [ 'Got: j{foobar},barfoo', OPTION_TESTER.full_path(), '-j=foobar', 'barfoo' ])
 test('Assign "foobar" as mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{foobar},barfoo', TESTER_1_PATH, '--iiii=foobar', 'barfoo' ])
+	args : [ 'Got: i{foobar},barfoo', OPTION_TESTER.full_path(), '--iiii=foobar', 'barfoo' ])
 test('Assign "foobar" as optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{foobar},barfoo', TESTER_1_PATH, '--jjjj=foobar', 'barfoo' ])
+	args : [ 'Got: j{foobar},barfoo', OPTION_TESTER.full_path(), '--jjjj=foobar', 'barfoo' ])
                                                                          #
 #### Ensure assigning empty argument results in an empty value. ##########
                                                                          #
 test('Assign empty argument as mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{},foobar', TESTER_1_PATH, '-i=', 'foobar' ])
+	args : [ 'Got: i{},foobar', OPTION_TESTER.full_path(), '-i=', 'foobar' ])
 test('Assign empty argument as optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{},foobar', TESTER_1_PATH, '-j=', 'foobar' ])
+	args : [ 'Got: j{},foobar', OPTION_TESTER.full_path(), '-j=', 'foobar' ])
 test('Assign empty argument as mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{},foobar', TESTER_1_PATH, '--iiii=', 'foobar' ])
+	args : [ 'Got: i{},foobar', OPTION_TESTER.full_path(), '--iiii=', 'foobar' ])
 test('Assign empty argument as optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{},foobar', TESTER_1_PATH, '--jjjj=', 'foobar' ])
+	args : [ 'Got: j{},foobar', OPTION_TESTER.full_path(), '--jjjj=', 'foobar' ])
                                                                          #
 #### Ensure an empty argument can be given (as mandatory argument).#######
                                                                          #
 test('Give an empty argument as mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{},foobar', TESTER_1_PATH, '-i', '', 'foobar' ])
+	args : [ 'Got: i{},foobar', OPTION_TESTER.full_path(), '-i', '', 'foobar' ])
 test('Give an empty argument as mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{},foobar', TESTER_1_PATH, '--iiii', '', 'foobar' ])
+	args : [ 'Got: i{},foobar', OPTION_TESTER.full_path(), '--iiii', '', 'foobar' ])
                                                                          #
 #### Ensure an empty argument is ignored (as optional argument).##########
                                                                          #
 test('Give an empty argument as optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar', TESTER_1_PATH, '-j', '', 'foobar' ])
+	args : [ 'Got: j{Oujea!},foobar', OPTION_TESTER.full_path(), '-j', '', 'foobar' ])
 test('Give an empty argument as optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{Oujea!},foobar', TESTER_1_PATH, '--jjjj', '', 'foobar' ])
+	args : [ 'Got: j{Oujea!},foobar', OPTION_TESTER.full_path(), '--jjjj', '', 'foobar' ])
                                                                          #
 #### Use an option as an argument. #######################################
                                                                          #
 test('Give --foobar as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--foobar},barfoo', TESTER_1_PATH, '-i', '--foobar', 'barfoo' ])
+	args : [ 'Got: i{--foobar},barfoo', OPTION_TESTER.full_path(), '-i', '--foobar', 'barfoo' ])
 test('Give --foobar as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--foobar},barfoo', TESTER_1_PATH, '--iiii', '--foobar', 'barfoo' ])
+	args : [ 'Got: i{--foobar},barfoo', OPTION_TESTER.full_path(), '--iiii', '--foobar', 'barfoo' ])
 
 test('Give -F as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-F},barfoo', TESTER_1_PATH, '-i', '-F', 'barfoo' ])
+	args : [ 'Got: i{-F},barfoo', OPTION_TESTER.full_path(), '-i', '-F', 'barfoo' ])
 test('Give -F as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-F},barfoo', TESTER_1_PATH, '--iiii', '-F', 'barfoo' ])
+	args : [ 'Got: i{-F},barfoo', OPTION_TESTER.full_path(), '--iiii', '-F', 'barfoo' ])
 
 test('Assign -F as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-F},barfoo', TESTER_1_PATH, '-i=-F', 'barfoo' ])
+	args : [ 'Got: i{-F},barfoo', OPTION_TESTER.full_path(), '-i=-F', 'barfoo' ])
 test('Assign -F as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-F},barfoo', TESTER_1_PATH, '--iiii=-F', 'barfoo' ])
+	args : [ 'Got: i{-F},barfoo', OPTION_TESTER.full_path(), '--iiii=-F', 'barfoo' ])
 
 test('Append --foobar as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--foobar},barfoo', TESTER_1_PATH, '-i--foobar', 'barfoo' ])
+	args : [ 'Got: i{--foobar},barfoo', OPTION_TESTER.full_path(), '-i--foobar', 'barfoo' ])
 test('Append -F as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-F},barfoo', TESTER_1_PATH, '-i-F', 'barfoo' ])
+	args : [ 'Got: i{-F},barfoo', OPTION_TESTER.full_path(), '-i-F', 'barfoo' ])
 
 test('Assign -F as an optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-F},barfoo', TESTER_1_PATH, '-j=-F', 'barfoo' ])
+	args : [ 'Got: j{-F},barfoo', OPTION_TESTER.full_path(), '-j=-F', 'barfoo' ])
 test('Assign -F as an optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-F},barfoo', TESTER_1_PATH, '--jjjj=-F', 'barfoo' ])
+	args : [ 'Got: j{-F},barfoo', OPTION_TESTER.full_path(), '--jjjj=-F', 'barfoo' ])
                                                                          #
 #### Use an non-existing option as an argument. ##########################
                                                                          #
 test('Give --xxxx as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--xxxx},barfoo', TESTER_1_PATH, '-i', '--xxxx', 'barfoo' ])
+	args : [ 'Got: i{--xxxx},barfoo', OPTION_TESTER.full_path(), '-i', '--xxxx', 'barfoo' ])
 test('Give --xxxx as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--xxxx},barfoo', TESTER_1_PATH, '--iiii', '--xxxx', 'barfoo' ])
+	args : [ 'Got: i{--xxxx},barfoo', OPTION_TESTER.full_path(), '--iiii', '--xxxx', 'barfoo' ])
 
 test('Give -x as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-x},barfoo', TESTER_1_PATH, '-i', '-x', 'barfoo' ])
+	args : [ 'Got: i{-x},barfoo', OPTION_TESTER.full_path(), '-i', '-x', 'barfoo' ])
 test('Give -x as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-x},barfoo', TESTER_1_PATH, '--iiii', '-x', 'barfoo' ])
+	args : [ 'Got: i{-x},barfoo', OPTION_TESTER.full_path(), '--iiii', '-x', 'barfoo' ])
 
 test('Assign -x as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-x},barfoo', TESTER_1_PATH, '-i=-x', 'barfoo' ])
+	args : [ 'Got: i{-x},barfoo', OPTION_TESTER.full_path(), '-i=-x', 'barfoo' ])
 test('Assign -x as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-x},barfoo', TESTER_1_PATH, '--iiii=-x', 'barfoo' ])
+	args : [ 'Got: i{-x},barfoo', OPTION_TESTER.full_path(), '--iiii=-x', 'barfoo' ])
 
 test('Append --xxxx as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--xxxx},barfoo', TESTER_1_PATH, '-i--xxxx', 'barfoo' ])
+	args : [ 'Got: i{--xxxx},barfoo', OPTION_TESTER.full_path(), '-i--xxxx', 'barfoo' ])
 test('Append -x as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-x},barfoo', TESTER_1_PATH, '-i-x', 'barfoo' ])
+	args : [ 'Got: i{-x},barfoo', OPTION_TESTER.full_path(), '-i-x', 'barfoo' ])
 
 test('Assign -x as an optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-x},barfoo', TESTER_1_PATH, '-j=-x', 'barfoo' ])
+	args : [ 'Got: j{-x},barfoo', OPTION_TESTER.full_path(), '-j=-x', 'barfoo' ])
 test('Assign -x as an optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-x},barfoo', TESTER_1_PATH, '--jjjj=-x', 'barfoo' ])
+	args : [ 'Got: j{-x},barfoo', OPTION_TESTER.full_path(), '--jjjj=-x', 'barfoo' ])
                                                                          #
 #### Use dash / double dash as an argument. ##############################
                                                                          #
 test('Give -- as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '-i', '--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '-i', '--', 'barfoo' ])
 test('Give -- as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '--iiii', '--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '--iiii', '--', 'barfoo' ])
 
 test('Give - as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '-i', '-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '-i', '-', 'barfoo' ])
 test('Give - as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '--iiii', '-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '--iiii', '-', 'barfoo' ])
 
 test('Assign - as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '-i=-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '-i=-', 'barfoo' ])
 test('Assign - as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '--iiii=-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '--iiii=-', 'barfoo' ])
 
 test('Append -- as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '-i--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '-i--', 'barfoo' ])
 test('Append - as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '-i-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '-i-', 'barfoo' ])
 
 test('Assign - as an optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-},barfoo', TESTER_1_PATH, '-j=-', 'barfoo' ])
+	args : [ 'Got: j{-},barfoo', OPTION_TESTER.full_path(), '-j=-', 'barfoo' ])
 test('Assign - as an optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-},barfoo', TESTER_1_PATH, '--jjjj=-', 'barfoo' ])
+	args : [ 'Got: j{-},barfoo', OPTION_TESTER.full_path(), '--jjjj=-', 'barfoo' ])
                                                                          #
 #### Use A_STRING as an argument. ########################################
                                                                          #
 test('Give A_STRING as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '-i', '--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '-i', '--', 'barfoo' ])
 test('Give A_STRING as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '--iiii', '--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '--iiii', '--', 'barfoo' ])
 
 test('Assign - as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '-i=-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '-i=-', 'barfoo' ])
 test('Assign - as a mandatory argument for long option --iiii.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '--iiii=-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '--iiii=-', 'barfoo' ])
 
 test('Append -- as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{--},barfoo', TESTER_1_PATH, '-i--', 'barfoo' ])
+	args : [ 'Got: i{--},barfoo', OPTION_TESTER.full_path(), '-i--', 'barfoo' ])
 test('Append - as a mandatory argument for short option -i.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: i{-},barfoo', TESTER_1_PATH, '-i-', 'barfoo' ])
+	args : [ 'Got: i{-},barfoo', OPTION_TESTER.full_path(), '-i-', 'barfoo' ])
 
 test('Assign - as an optional argument for short option -j.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-},barfoo', TESTER_1_PATH, '-j=-', 'barfoo' ])
+	args : [ 'Got: j{-},barfoo', OPTION_TESTER.full_path(), '-j=-', 'barfoo' ])
 test('Assign - as an optional argument for long option --jjjj.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: j{-},barfoo', TESTER_1_PATH, '--jjjj=-', 'barfoo' ])
+	args : [ 'Got: j{-},barfoo', OPTION_TESTER.full_path(), '--jjjj=-', 'barfoo' ])
                                                                          #
 #### Test invalid options. ###############################################
                                                                          #
 test('Ensure assigning an argument to a regular long option --aaaa fails.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '--aaaa=foobar'])
+	args : [ '--aaaa=foobar', '1', '2', '3', '4', '5'])
 test('Ensure assigning an argument to a regular short option -a fails.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-a=foobar'])
+	args : [ '-a=foobar', '1', '2', '3', '4', '5'])
 test('Ensure extra dashes in long option causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '---aaaa'])
+	args : [ '---aaaa', '1', '2', '3', '4', '5'])
 test('Ensure non-existing short option -x causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-x'])
+	args : [ '-x', '1', '2', '3', '4', '5'])
 test('Ensure non-existing long option --xxxx causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '--xxxx'])
+	args : [ '--xxxx', '1', '2', '3', '4', '5'])
 test('Ensure non-existing short option -x causes an error when mixed with other options.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-a', '-bc', '-x', '-d'])
+	args : [ '-a', '-bc', '-x', '-d', '1', '2', '3', '4', '5'])
 test('Ensure non-existing short option -x causes an error when mixed with other options #2.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-abxcd'])
+	args : [ '-abxcd', '1', '2', '3', '4', '5'])
 test('Ensure non-existing long option --xxxx causes an error when mixed with other options.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-ab', '--cccc', '--xxxx', '-d'])
+	args : [ '-ab', '--cccc', '--xxxx', '-d', '1', '2', '3', '4', '5'])
 test('Ensure a single dash option causes an error #1.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-'])
+	args : [ '-', '1', '2', '3', '4', '5'])
 test('Ensure a single dash option causes an error #2.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-', '--'])
+	args : [ '-', '--', '1', '2', '3', '4', '5'])
 test('Ensure a single dash option causes an error #3.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-ab', '-', '--cccc'])
+	args : [ '-ab', '-', '--cccc', '1', '2', '3', '4', '5'])
 test('Ensure a single dash option causes an error #4.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '--aaaa', '-', '-cd'])
+	args : [ '--aaaa', '-', '-cd', '1', '2', '3', '4', '5'])
 test('Ensure appending a dash to a short option causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-a-'])
+	args : [ '-a-', '1', '2', '3', '4', '5'])
 test('Ensure appending two short options together causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-a-b'])
+	args : [ '-a-b', '1', '2', '3', '4', '5'])
 test('Ensure mixing a dash into a combined option argument causes an error.',
 	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
-	args : [ '-ab-cd'])
+	args : [ '-ab-cd', '1', '2', '3', '4', '5'])
                                                                          #
 #### Test missing arguments. #############################################
                                                                          #
 test('Ensure missing mandatory argument from short option -i causes an error.',
-	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
+	OPTION_TESTER, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '-i' ])
 test('Ensure missing mandatory argument from long option --iiii causes an error.',
-	TESTER_1, valgrind_args : VALGRIND_ARGS, should_fail : true,
+	OPTION_TESTER, valgrind_args : VALGRIND_ARGS, should_fail : true,
 	args : [ '--iiii' ])
                                                                          #
 #### Test double hyphen. #################################################
@@ -1045,17 +1032,17 @@ test('Ensure missing mandatory argument from long option --iiii causes an error.
 foreach my_args : [
 			[ 'a,-b', [ '-a', '--', '-b' ]],
 			[ 'ab,-cd', [ '-ab', '--', '-cd' ]],
-			[ 'a,--bbbb', [ '--aaaa', '--', '--bbbb' ]],
-			[ 'ac,--bbbb,-d', [ '--aaaa', '-c', '--', '--bbbb', '-d' ]],
+			[ 'a,--bbbb', [ '-aaaa', '--', '--bbbb' ]],
+			[ 'ac,--bbbb,-d', [ '-aaaa', '-c', '--', '--bbbb', '-d' ]],
 			[ 'i{foobar},--jjjj=barfoo', [ '--iiii', 'foobar', '--', '--jjjj=barfoo' ]],
-			[ 'abc,A,-d,--,-ab', [ '-a', '-bc', 'A', '-d', '--', '-ab' ]],
-			[ ',A,--iiii,foobar,--,--jjjj,barfoo', [ 'A', '--iiii', 'foobar', '--', '--jjjj', 'barfoo' ]],
+			[ 'abc,A,-d,--,-ab,1,2,3,4', [ '-a', '-bc', 'A', '-d', '--', '-ab' ] + [ '1', '2', '3', '4' ]],
+			[ ',A,--iiii,foobar,--,--jjjj,barfoo,1,2', [ 'A', '--iiii', 'foobar', '--', '--jjjj', 'barfoo' ] + [ '1', '2' ]],
 		]
 	test(
 		'Ensure double dash stops option processing: @0@'.format(my_args.get(1)),
 		MATCHER,
 		valgrind_args : VALGRIND_ARGS,
-		args : [ 'Got: @0@'.format(my_args.get(0)), TESTER_1_PATH ] + my_args.get(1)
+		args : [ 'Got: @0@'.format(my_args.get(0)), OPTION_TESTER.full_path() ] + my_args.get(1)
 	)
 endforeach
                                                                          #
@@ -1080,7 +1067,7 @@ foreach my_args : [
 		'First non-option argument in @0@ should be @1@'.format(my_args.get(1), my_args.get(0)),
 		MATCHER,
 		valgrind_args : VALGRIND_ARGS,
-		args : [ 'First argument: @0@'.format(my_args.get(0)), TESTER_7_PATH ] + my_args.get(1)
+		args : [ 'First argument: @0@'.format(my_args.get(0)), TESTER_7.full_path() ] + my_args.get(1)
 	)
 endforeach
                                                                          #
@@ -1088,101 +1075,71 @@ endforeach
                                                                          #
 test('Ensure hidden option --hidden-option is recognized.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: hidden!', TESTER_1_PATH, '--hidden-option' ])
+	args : [ 'Got: hidden!', OPTION_TESTER.full_path(), '--hidden-option' ])
 test('Ensure hidden option --hidden-option is recognized even with other options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abchidden!', TESTER_1_PATH, '-ac', '--hidden-option', '--bbbb' ])
+	args : [ 'Got: abchidden!', OPTION_TESTER.full_path(), '-ac', '--hidden-option', '--bbbb' ])
 test('Ensure hidden option --hidden-option can be given twice.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: abchidden!', TESTER_1_PATH, '-ac', '--hidden-option', '--bbbb', '--hidden-option' ])
+	args : [ 'Got: abchidden!', OPTION_TESTER.full_path(), '-ac', '--hidden-option', '--bbbb', '--hidden-option' ])
                                                                          #
 #### Test options with common prefix. ####################################
                                                                          #
 test('Ensure a long option is recognized even if it matches the prefix of another option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'got basic', TESTER_6_PATH, '--help' ])
+	args : [ 'got basic', TESTER_6.full_path(), '--help' ])
 test('Ensure a long option is recognized even if it matches the prefix of another option (inverse).',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ '--fail-match', 'got full', TESTER_6_PATH, '--help' ])
+	args : [ '--fail-match', 'got full', TESTER_6.full_path(), '--help' ])
 test('Ensure a long option is recognized when its prefix matches another option.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'got full', TESTER_6_PATH, '--help-full' ])
+	args : [ 'got full', TESTER_6.full_path(), '--help-full' ])
 test('Ensure a long option is recognized when its prefix matches another option (inverse).',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ '--fail-match', 'got basic', TESTER_6_PATH, '--help-full' ])
-                                                                         #
-#### Test (non option) argument handling. ################################
-                                                                         #
-test('Ensure TESTER_3 works with no arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ '--', '', TESTER_3_PATH ])
-test('Ensure TESTER_3 doesn\'t recognize invalid argument arg1aa.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ '--', '', TESTER_3_PATH,
-		'arg1aa' ])
-test('Ensure TESTER_3 recognizes argument arg1a.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg1a,', TESTER_3_PATH,
-		'arg1a' ])
-test('Ensure TESTER_3 recognizes arg1b from arguments arg1aa and arg1b.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg1b,', TESTER_3_PATH,
-		'arg1aa', 'arg1b' ])
-test('Ensure TESTER_3 recognizes the arguments arg1a and arg1b.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg1a,arg1b,', TESTER_3_PATH,
-		'arg1a', 'arg1b' ])
-test('Ensure TESTER_3 recognizes the arguments arg1b, arg1c and arg1a.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg1b,arg1c,arg1a,', TESTER_3_PATH,
-		'arg1b', 'arg1c', 'arg1a' ])
-test('Ensure TESTER_3 recognizes the arguments arg1b, arg1c and arg1a from a bigger set of arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg1b,arg1c,arg1a,', TESTER_3_PATH,
-		'arg1b', 'foobar', 'arg1c', 'ARGS2A', 'arg1a', 'ARGS2B' ])
-test('Ensure TESTER_3 recognizes the arguments arg2a, arg1b and arg3c from a bigger set of arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg2a,arg1b,arg3c,', TESTER_3_PATH,
-		'arg2a', 'foobar', 'arg1b', 'ARGS1A', 'arg3c', 'ARGS1B' ])
-test('Ensure TESTER_3 recognizes the arguments arg2a and arg3c from a bigger set of arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg2a,arg3c,', TESTER_3_PATH,
-		'arg2a', 'foobar', 'arg1bb', 'ARGS1', 'arg3c', 'ARGS1' ])
-test('Ensure TESTER_3 recognizes the arguments arg2a, arg1a, arg3c and arg1a from a bigger set of arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg2a,arg1a,arg3c,arg1a,', TESTER_3_PATH,
-		'arg2a', 'foobar', 'arg1a', 'ARGS2', 'arg3c', 'ARGS1', 'arg1a' ])
-test('Ensure TESTER_3 recognizes the arguments arg4a from a bigger set of arguments.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg4a foo,', TESTER_3_PATH,
-		'arg4a' ])
-test('Ensure TESTER_3 recognizes a bunch of arguments correctly #1.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg2a,arg4b bar,arg3c,arg4c keke,arg1c,', TESTER_3_PATH,
-		'arg2a', 'foobar', 'arg4b', 'arg3c', 'arg4c', 'ARGS1', '--kurwa', 'arg1c' ])
-test('Ensure TESTER_3 recognizes a bunch of arguments correctly #2.',
-	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'arg2a,arg3c,arg4c keke,arg1c,', TESTER_3_PATH,
-		'arg2a', 'foobar', 'arg4bb', 'arg3c', 'arg4c', 'ARGS1', '--kurwa', 'arg1c' ])
+	args : [ '--fail-match', 'got basic', TESTER_6.full_path(), '--help-full' ])
                                                                          #
 #### Ensure generated help texts don't change unintentionally. ###########
                                                                          #
 foreach t : [
-			[ '1', TESTER_1_PATH ],
-			[ '2', TESTER_2_PATH ],
-			[ '3', TESTER_3_PATH ],
-			[ '4', TESTER_4_PATH ],
-			[ '8', TESTER_8_PATH ],
-			[ 'readme', README_PATH ],
+			[ '1', TESTER_1.full_path() ],
+			[ '2', TESTER_2.full_path() ],
+			[ '4', TESTER_4.full_path() ],
+			[ '8', TESTER_8.full_path() ],
+			[ 'readme', README.full_path()],
+			[ 'minimal', MINIMAL.full_path() ],
 		]
 	test(
 		'Ensure help text integrity @0@.'.format(t.get(0)),
 		MATCHER,
 		valgrind_args : VALGRIND_ARGS,
-		args : [ '--file', '@0@/help_text_sample_@1@.txt'.format(meson.current_build_dir(), t.get(0)),
-				t.get(1), '--help' ]
+		args : [ '--file', '@0@/help_text_sample_@1@.txt'.format(meson.current_build_dir(),
+				t.get(0)), t.get(1), '--help' ]
 	)
 endforeach
+
+                                                                         #
+#### Ensure correct output with all hidden options. ######################
+                                                                         #
+test(
+	'Ensure help text integrity all_hidden.',
+	MATCHER,
+	valgrind_args : VALGRIND_ARGS,
+	args : [ '--file', '@0@/help_text_sample_all_hidden.txt'.format(meson.current_build_dir(), t.get(0)), ALL_HIDDEN.full_path(), 'help' ]
+)
+
+test(
+	'Ensure hidden option works in all_hidden #1.',
+	MATCHER,
+	valgrind_args : VALGRIND_ARGS,
+	args : [ 'hidden option invoked', ALL_HIDDEN.full_path(), '--hidden-option' ]
+)
+
+test(
+	'Ensure hidden option works in all_hidden #2.',
+	MATCHER,
+	valgrind_args : VALGRIND_ARGS,
+	args : [ 'second hidden option invoked', ALL_HIDDEN.full_path(), '--second-hidden-option' ]
+)
                                                                          #
 #### Ensure NULL about string can be used. ###############################
                                                                          #
@@ -1190,25 +1147,25 @@ test('Ensure NULL about string can be used.', TESTER_5, valgrind_args : VALGRIND
                                                                          #
 #### Ensure the reame progjems "works". ##################################
                                                                          #
-test('Try to execute the readme program.', README, valgrind_args : VALGRIND_ARGS)
+test('Try to execute the readme program.', README, args : 'start', valgrind_args : VALGRIND_ARGS)
                                                                          #
 #### Count given options. ################################################
                                                                          #
-test('Count three short verbose options from a single argument.',
+test('Count three short verbose options from a single option argument.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: v=3 ', TESTER_9_PATH, '-vvv' ])
+	args : [ 'Got: v=3 ', TESTER_9.full_path(), '-vvv' ])
 test('Count two short verbose options from a individual arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: v=2 ', TESTER_9_PATH, '-v', '-v' ])
+	args : [ 'Got: v=2 ', TESTER_9.full_path(), '-v', '-v' ])
 test('Count two long verbose options from a individual arguments.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: v=2 ', TESTER_9_PATH, '--verbose', '--verbose' ])
+	args : [ 'Got: v=2 ', TESTER_9.full_path(), '--verbose', '--verbose' ])
 test('Count five mixed verbose options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: v=5 ', TESTER_9_PATH, '--verbose', '--verbose', '-v', '-vv' ])
+	args : [ 'Got: v=5 ', TESTER_9.full_path(), '--verbose', '--verbose', '-v', '-vv' ])
 test('Count mixed verbose and wanha options.',
 	MATCHER, valgrind_args : VALGRIND_ARGS,
-	args : [ 'Got: v=4 w=5 ', TESTER_9_PATH, '--verbose', '--wanha', '--verbose', '-v', '-www', '-vw' ])
+	args : [ 'Got: v=4 w=5 ', TESTER_9.full_path(), '--verbose', '--wanha', '--verbose', '-v', '-www', '-vw' ])
                                                                          #
 #### Unit testing ########################################################
                                                                          #
@@ -1228,5 +1185,61 @@ if CMOCKA.found()
 else
 	message('Failed to find CMocka; disabling unit tests.')
 endif
+                                                                         #
+#### Test argument parising ##############################################
+                                                                         #
+test('Missing all mandatory arguments.',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true)
+
+test('Missing a mandatory argument.',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true,
+	args : [ 'a' ])
+
+test('Incorrect mandatory argument.',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true,
+	args : [ 'a', 'X' ])
+
+test('Header name as a mandatory argument.',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true,
+	args : [ 'a', 'TOKA' ])
+
+test('All mandatory arguments.',
+	MATCHER,
+	suite : 'arguments',
+	args : [ 'EKA=a,TOKA=TOKA.1,TOKA.1,', ARGUMENT_TESTER.full_path(), 'a', 'TOKA.1' ])
+
+test('All mandatory + an optional argument.',
+	MATCHER,
+	suite : 'arguments',
+	args : [ 'EKA=a,TOKA=TOKA.2,TOKA.2,KOLMAS=b,', ARGUMENT_TESTER.full_path(), 'a', 'TOKA.2', 'b' ])
+
+test('All mandatory, an optional and an invalid argument .',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true,
+	args : [ 'a', 'TOKA.1', 'b', 'c' ])
+
+test('All mandatory and all optional arguments.',
+	MATCHER,
+	suite : 'arguments',
+	args : [ 'EKA=x,TOKA=TOKA.3,TOKA.3,KOLMAS=b,NELJAS=NELJAS.1,NELJAS.1,', ARGUMENT_TESTER.full_path(), 'x', 'TOKA.3', 'b', 'NELJAS.1' ])
+
+test('All mandatory and all optional arguments + extra (for sink).',
+	ARGUMENT_TESTER,
+	suite : 'arguments',
+	args : [ 'a', 'TOKA.1', 'b', 'NELJAS.1', '1', '2', '3', '4' ])
+
+test('Ensure double hyphen doesn\'t break anything.',
+	ARGUMENT_TESTER,
+	suite : 'arguments',
+	args : [ '--', 'a', 'TOKA.1' ])
+
+test('...unless we want it to.',
+	ARGUMENT_TESTER,
+	suite : 'arguments', should_fail : true,
+	args : [ 'a', '--', 'TOKA.1' ])
                                                                          #
 ##########################################################################

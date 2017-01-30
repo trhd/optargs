@@ -1,4 +1,4 @@
-Usage: @TESTER_1_PATH@ [OPTIONS] [Name_3] Name_2 Name_4 COMMANDS [command_1] command_2 curse_words [perkele] args argument argument
+Usage: @TESTER_1_PATH@ [OPTIONS] Name_1 Name_3 Name_2 Name_4 COMMANDS [curse_words [args]] argument argument argument
 
 OPTIONS:
   -a,--aaaa                             Description A.
@@ -81,6 +81,7 @@ curse_words:
 
 args with long name:
   argument usb-argument                 Some non-relevant description.
+
   argument name eq LEFT_COLUMN_MAX_WIDTH
                                         Some non-relevant description #2.
   argument name just less than in above Some non-relevant description #3.

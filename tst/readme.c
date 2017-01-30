@@ -27,10 +27,10 @@
 int
 main(int ac, char ** av)
 {
-	int verbosity, debug;
+	int verbosity, debug, t;
 	char const * str;
-	struct optargs_result const * res;
-	enum option
+	struct optargs_res const * res;
+	enum
 	{
 		OPTION_HELP,
 		OPTION_QUIET,
@@ -60,9 +60,12 @@ main(int ac, char ** av)
 			.description = "Path to an imaginary socket file.",
 			.long_option = "socket",
 			.argument =
-			{
-				.name = "file",
-				.mandatory = optargs_yes
+			(struct optargs_arg []) {
+				{
+					.name = "file",
+					.type = optargs_arg_any
+				},
+				optargs_arg_eol
 			}
 		},
 
@@ -71,11 +74,14 @@ main(int ac, char ** av)
 			.description = "Be verbose.",
 			.long_option = "verbose",
 			.short_option = 'v',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "level",
-				.description = "The level of the desired verbosity.",
-				.mandatory = optargs_maybe
+				{
+					.name = "level",
+					.description = "The level of the desired verbosity.",
+					.type = optargs_arg_any_opt
+				},
+				optargs_arg_eol
 			}
 		},
 
@@ -92,53 +98,85 @@ main(int ac, char ** av)
 
 		[_OPTION_COUNT] = optargs_opt_eol
 	};
+	enum
+	{
+		COMMAND,
+		COMMAND_START,
+		COMMAND_STOP,
+		_COMMAND_COUNT
+	};
 	struct optargs_arg args[] =
 	{
+		[COMMAND] =
 		{
 			.name = "COMMAND",
-			.mandatory = optargs_yes
-		}, {
+			.type = optargs_arg_group
+		},
+
+		[COMMAND_START] =
+		{
 			.name = "start",
 			.description = "Start doing stuff.",
-			.mandatory = optargs_no
-		}, {
+			.type = optargs_arg_group_member
+		},
+
+		[COMMAND_STOP] = {
 			.name = "stop",
 			.description = "Stop doing stuff.",
-			.mandatory = optargs_no
+			.type = optargs_arg_group_member
 		},
 		optargs_arg_eol
 	};
 
-	if (optargs_parse(ac, (char const **)av, opts) < 0)
+	if ((t = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
 	{
-		printf("Something went wrong.\n");
+		printf("Something went wrong when parsing options.\n");
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_count_by_long(opts, "help"))
+	if (optargs_opt_count_by_long(opts, "help"))
 	{
 		optargs_print_help(av[0], ABOUT, opts, args);
 		return EXIT_SUCCESS;
 	}
 
-	debug = optargs_count_by_short(opts, 'd');
+	if (optargs_parse_args(ac - t, (char const **)av + t, args))
+	{
+		printf("Something went wrong when parsing arguments.\n");
+		return EXIT_FAILURE;
+	}
 
-	res = optargs_result_by_index(opts, OPTION_VERBOSE);
+	debug = optargs_opt_count_by_short(opts, 'd');
+
+	res = optargs_res_by_index(opts, OPTION_VERBOSE);
 	if (!res)
 		verbosity = 0;
-	else if (optargs_result_type(res) == optargs_count)
+	else if (optargs_res_type(res) == optargs_count)
 		verbosity = 100;
 	else
 		verbosity = atoi(res->value.string);
 
-	if (!optargs_count_by_index(opts, OPTION_QUIET))
+	if (!optargs_opt_count_by_index(opts, OPTION_QUIET))
 	{
 		printf("Doing stuff with %d%% verbosity.\n", verbosity);
 		printf("Debug level defined to %d.\n", debug);
 
-		str = optargs_string_by_index(opts, OPTION_SOCKET);
+		str = optargs_opt_value_by_index(opts, OPTION_SOCKET);
 		if (str)
 			printf("Socket file: %s.\n", str);
+	}
+
+	switch (optargs_arg_value_index(args, COMMAND))
+	{
+		case COMMAND_START:
+			printf("Starting stuff.\n");
+			break;
+		case COMMAND_STOP:
+			printf("Stopping stuff.\n");
+			break;
+		default:
+			printf("Nope, optargs_parse_args() would have returned an error.\n");
+			break;
 	}
 
 	return EXIT_SUCCESS;

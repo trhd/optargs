@@ -30,28 +30,28 @@ main(int ac, char **av)
 			"help",
 			'h',
 			"Print help.",
-			optargs_arg_nil,
-			optargs_result_nil
+			optargs_res_null,
+			NULL
 		}, {
 			"help-full",
 			'h',
 			"Print full help.",
-			optargs_arg_nil,
-			optargs_result_nil
+			optargs_res_null,
+			NULL
 		},
 		optargs_opt_eol
 	};
 
-	if (optargs_parse(ac, (char const **)av, opts) < 0)
+	if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
 	{
 		fprintf(stderr, "Something went wron while parsing.\n");
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_result_by_long(opts, "help"))
+	if (optargs_res_by_long(opts, "help"))
 		printf("got basic\n");
 
-	if (optargs_result_by_long(opts, "help-full"))
+	if (optargs_res_by_long(opts, "help-full"))
 		printf("got full\n");
 
 	return EXIT_SUCCESS;

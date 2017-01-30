@@ -25,8 +25,8 @@ main(int ac __attribute__((unused)), char **av)
 {
 	struct optargs_opt opts[] =
 	{
-		{ "opt", 'b', "Blaablaa.", optargs_arg_nil, optargs_result_nil },
-		{ "hidden-option-with-long-name", 'h', NULL, optargs_arg_nil, optargs_result_nil },
+		{ .long_option = "opt", .description = "Blaablaa.", .short_option = 'b'},
+		{ .long_option = "hidden-option-with-long-name", .short_option = 'h' },
 		optargs_opt_eol
 	};
 

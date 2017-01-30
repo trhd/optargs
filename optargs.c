@@ -20,7 +20,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include "optargs.h"
@@ -58,11 +57,9 @@ is_word_separator(char const c)
 }
 
 static bool
-argument_is_valid(struct optargs_arg const * const o)
+argument_is_valid(struct optargs_arg const * const arg)
 {
-	assert(o);
-
-	return o->mandatory != _optargs_eol;
+	return !arg || (arg->type != _optargs_arg_eol && arg->type != _optargs_arg_sink);
 }
 
 static bool
@@ -70,7 +67,7 @@ option_is_valid(struct optargs_opt const * const o)
 {
 	assert(o);
 
-	return argument_is_valid(&o->argument);
+	return argument_is_valid(o->argument);
 }
 
 static int
@@ -118,6 +115,27 @@ redefine_option_argument_error(struct optargs_opt const * const opt)
 	return -EINVAL;
 }
 
+static int
+unmatching_optional_argument_error(char const * const opt, char const * const hdr)
+{
+	assert(opt);
+	assert(hdr);
+
+	fprintf(stderr, "'%s' is not a valid value for optional argument '%s'.\n",
+			opt, hdr);
+	return -EINVAL;
+}
+
+static int
+unmatching_mandatory_argument_error(char const * const opt, char const * const hdr)
+{
+	assert(opt);
+	assert(hdr);
+
+	fprintf(stderr, "'%s' is not a valid value for mandatory argument '%s'.\n",
+			opt, hdr);
+	return -EINVAL;
+}
 
 static bool
 starts_with_single_hyphen(char const * const str)
@@ -149,7 +167,7 @@ is_double_hyphen(char const * const opt)
 {
 	assert(opt);
 
-	return !strcmp(opt, "--");
+	return opt[0] == '-' && opt[1] == '-' && opt[2] == '\0';
 }
 
 static int
@@ -191,9 +209,16 @@ static bool
 argument_is_header(struct optargs_arg const * const arg)
 {
 	assert(arg);
-	assert(arg->name);
 
-	return !arg->description;
+	return arg->type == optargs_arg_group || arg->type == optargs_arg_group_opt;
+}
+
+static bool
+argument_is_mandatory(struct optargs_arg const * const arg)
+{
+	assert(arg);
+
+	return arg->type == optargs_arg_any || arg->type == optargs_arg_group;
 }
 
 static bool
@@ -201,7 +226,15 @@ argument_is_divider(struct optargs_arg const * const arg)
 {
 	assert(arg);
 
-	return !arg->name;
+	return arg->type == _optargs_arg_div;
+}
+
+static bool
+argument_is_fixed(struct optargs_arg const * const arg)
+{
+	assert(arg);
+
+	return arg->type == optargs_arg_any || arg->type == optargs_arg_any_opt;
 }
 
 static struct optargs_opt *
@@ -262,7 +295,7 @@ mark_no_argument_option(struct optargs_opt * opt, bool const assign)
 static int
 mark_argument_option(struct optargs_opt * opt, char const * const arg)
 {
-	if (optargs_result_type(&opt->result))
+	if (optargs_res_type(&opt->result))
 		return redefine_option_argument_error(opt);
 
 	if (!arg)
@@ -283,7 +316,7 @@ mark_optional_argument_option(struct optargs_opt * opt,
 	if (assign && arg)
 		return mark_argument_option(opt, arg);
 
-	if (optargs_result_type(&opt->result) == optargs_string)
+	if (optargs_res_type(&opt->result) == optargs_string)
 		return redefine_option_argument_error(opt);
 
 	mark_default_option(opt);
@@ -296,24 +329,24 @@ mark_option(struct optargs_opt * opt, char const * const arg, bool const force)
 {
 	assert(opt);
 
-	int rv = 0;
+	if (!opt->argument)
+		return mark_no_argument_option(opt, force);
 
-	switch (opt->argument.mandatory)
+	switch (opt->argument->type)
 	{
-		case optargs_no:
-			rv = mark_no_argument_option(opt, force);
+		case optargs_arg_any:
+		case optargs_arg_group:
+			return mark_argument_option(opt, arg);
+		case _optargs_arg_eol:
+		case _optargs_arg_sink:
+		case _optargs_arg_div:
+		case optargs_arg_any_opt:
+		case optargs_arg_group_opt:
+			return mark_optional_argument_option(opt, arg, force);
+		case optargs_arg_group_member:
 			break;
-		case optargs_yes:
-			rv = mark_argument_option(opt, arg);
-			break;
-		case optargs_maybe:
-			rv = mark_optional_argument_option(opt, arg, force);
-			break;
-		default:
-			abort();
 	}
-
-	return rv;
+	abort();
 }
 
 static int
@@ -375,25 +408,147 @@ parse_long_option(char const * c, char const * n, struct optargs_opt * o)
 }
 
 static void
-clear_results(struct optargs_opt * o)
+clear_opts(struct optargs_opt * o)
 {
 	assert(o);
 
-	for ( ; option_is_valid(o) ; o++)
-		memset(&o->result, 0, sizeof(o->result));
+	if (o)
+		for ( ; option_is_valid(o) ; o++)
+			memset(&o->result, 0, sizeof(o->result));
 }
 
+static void
+clear_args(struct optargs_arg * a)
+{
+	assert(a);
+
+	for ( ; argument_is_valid(a) ; a++)
+		memset(&a->result, 0, sizeof(a->result));
+}
+
+#if !defined(NDEBUG) || defined(UNIT_TESTING)
+
+static void
+assert_argument_required_fields(struct optargs_arg const * const arg)
+{
+	switch (arg->type)
+	{
+		case optargs_arg_any:
+		case optargs_arg_any_opt:
+		case optargs_arg_group_member:
+			assert(arg->name);
+			assert(arg->description);
+			break;
+		case optargs_arg_group:
+		case optargs_arg_group_opt:
+			assert(arg->name);
+			break;
+		case _optargs_arg_div:
+			assert(!arg->description);
+			break;
+		default:
+			break;
+	}
+}
+
+static void
+assert_option_argument_required_fields(struct optargs_arg const * const arg)
+{
+	switch (arg->type)
+	{
+		case optargs_arg_any:
+		case optargs_arg_any_opt:
+		case optargs_arg_group_member:
+			assert(arg->name);
+			break;
+		case optargs_arg_group:
+		case optargs_arg_group_opt:
+			assert(arg->name);
+			break;
+		case _optargs_arg_div:
+			assert(!arg->description);
+			break;
+		default:
+			break;
+	}
+}
+
+static void
+assert_single_set_of_optional_arguments(struct optargs_arg const * args)
+{
+	assert(args);
+
+	for (int n = -1 ; argument_is_valid(args) ; args++)
+	{
+		if (args->type == optargs_arg_group_member
+				|| args->type == _optargs_arg_div)
+			continue;
+
+		if (args->type == optargs_arg_any_opt
+				|| args->type == optargs_arg_group_opt)
+		{
+			assert(n);
+
+			if (n == -1)
+				n = 1;
+			else
+				n++;
+		}
+		else if (n > 0)
+			n--;
+	}
+}
+
+static void
+assert_argument_sanity(struct optargs_arg const * args)
+{
+	assert(args);
+
+	assert_single_set_of_optional_arguments(args);
+
+	for ( ; argument_is_valid(args) ; args++)
+		assert_argument_required_fields(args);
+}
+
+static void
+assert_option_sanity(struct optargs_opt const * opts)
+{
+	assert(opts);
+
+	for ( ; option_is_valid(opts) ; opts++)
+	{
+		if (opts->argument)
+		{
+			struct optargs_arg const * arg = opts->argument;
+
+			assert_option_argument_required_fields(arg);
+			assert_single_set_of_optional_arguments(arg);
+
+			for ( ; argument_is_valid(arg) ; arg++ );
+			assert(arg->type != _optargs_arg_sink);
+		}
+	}
+}
+
+#else
+
+# define assert_argument_sanity(...)
+# define assert_option_sanity(...)
+
+#endif
+
 int
-optargs_parse(int const ac, char const * const * const av, struct optargs_opt * const opts)
+optargs_parse_opts(int const ac, char const * const * const av, struct optargs_opt * const opts)
 {
 	assert(ac > 0);
 	assert(av);
 	assert(opts);
+	assert_option_sanity(opts);
 
 	int i, j;
 	char const *o, *n;
 
-	clear_results(opts);
+	clear_opts(opts);
 
 	for (i = 1; i < ac; i += j)
 	{
@@ -425,21 +580,174 @@ optargs_parse(int const ac, char const * const * const av, struct optargs_opt * 
 }
 
 static void
-print_arg_name(struct optargs_arg const * const arg)
+count_mandatory_and_optinal_arguments(struct optargs_arg const * args, int * mand, int * opts)
+{
+	assert(args);
+	assert(mand);
+	assert(opts);
+
+	for (*mand = 0, *opts = 0 ; argument_is_valid(args) ; args++)
+	{
+		switch (args->type)
+		{
+			case optargs_arg_group:
+			case optargs_arg_any:
+				++*mand;
+				break;
+			case optargs_arg_group_opt:
+			case optargs_arg_any_opt:
+				++*opts;
+				break;
+			case optargs_arg_group_member:
+			case _optargs_arg_div:
+				break;
+			case _optargs_arg_eol:
+			case _optargs_arg_sink:
+				abort();
+		}
+	}
+
+	if (args->type == _optargs_arg_sink)
+		*opts = -1;
+}
+
+bool
+optargs_parse_args(int const ac, char const * const * const av, struct optargs_arg * args)
+{
+	assert(ac >= 0);
+	assert(!ac || av);
+	assert(args);
+	assert_argument_sanity(args);
+
+	int m, o, i;
+	struct optargs_arg * hdr = NULL;
+
+	if (args)
+		clear_args(args);
+	count_mandatory_and_optinal_arguments(args, &m, &o);
+
+	if (ac < m)
+	{
+		fprintf(stderr, "Missing mandatory arguments; got %d, expected %s%d.\n",
+				ac, o > 0 ? "at least " : "", m);
+		return -EINVAL;
+	}
+
+	if (o >= 0 && ac > m + o)
+	{
+		fprintf(stderr, "Got excess arguments; got %d, expected %s%d.\n",
+				ac, o > 0 ? "at most " : "", m + o);
+		return -EINVAL;
+	}
+
+	for (i = 0 ; argument_is_valid(args) && i < ac; args++)
+	{
+		if (args->type == _optargs_arg_div)
+			continue;
+
+		if (hdr)
+		{
+			if (args->type != optargs_arg_group_member)
+			{
+				if (hdr->type == optargs_arg_group)
+					return unmatching_mandatory_argument_error(av[i], hdr->name);
+				hdr = NULL;
+			}
+			else
+			{
+				if (!strcmp(args->name, av[i]))
+				{
+					args->result.value = av[i];
+					hdr->result.match = args;
+					hdr = NULL;
+					i++;
+				}
+				continue;
+			}
+		}
+		else if (args->type == optargs_arg_group_member)
+			continue;
+
+		switch (args->type)
+		{
+			case optargs_arg_group_opt:
+				if (hdr)
+					return unmatching_optional_argument_error(av[i], hdr->name);
+				hdr = args;
+				break;
+			case optargs_arg_group:
+				if (hdr)
+					return unmatching_mandatory_argument_error(av[i], hdr->name);
+				hdr = args;
+				break;
+			case optargs_arg_any_opt:
+				if (!o)
+					break;
+				o--;
+			case optargs_arg_any:
+				args->result.value = av[i];
+				i++;
+				break;
+			case optargs_arg_group_member:
+			case _optargs_arg_div:
+			case _optargs_arg_eol:
+			case _optargs_arg_sink:
+				abort();
+		}
+	}
+
+	if (hdr)
+	{
+		if (hdr->type == optargs_arg_group)
+			return unmatching_mandatory_argument_error(av[i], hdr->name);
+		else
+		{
+			assert(hdr->type == optargs_arg_group_opt);
+
+			if (i < ac)
+			{
+				assert(args->type == _optargs_arg_sink);
+				return unmatching_optional_argument_error(av[i], hdr->name);
+			}
+		}
+	}
+
+	return 0;
+}
+
+static void
+close_optionality_brackets(int * l)
+{
+	assert(l);
+
+	for ( ; *l ; --*l)
+		printf("]");
+}
+
+static void
+print_arg_name(struct optargs_arg const * const arg, int * l)
 {
 	assert(arg);
 
-	if (arg->name && arg->mandatory != optargs_no)
+	switch (arg->type)
 	{
-		int l = word_length(arg->name);
-
-		if (arg->mandatory == optargs_yes)
-			printf(" %.*s", l, arg->name);
-		else
-		{
-			assert(arg->mandatory == optargs_maybe);
-			printf(" [%.*s]", l, arg->name);
-		}
+		case optargs_arg_group:
+		case optargs_arg_any:
+			assert(arg->name);
+			printf(" %.*s", word_length(arg->name), arg->name);
+			break;
+		case optargs_arg_group_opt:
+		case optargs_arg_any_opt:
+			++*l;
+			assert(arg->name);
+			printf(" [%.*s", word_length(arg->name), arg->name);
+			break;
+		case optargs_arg_group_member:
+		case _optargs_arg_div:
+			break;
+		case _optargs_arg_eol:
+		case _optargs_arg_sink:
+			abort();
 	}
 }
 
@@ -448,8 +756,16 @@ print_arg_names(struct optargs_arg const * args)
 {
 	assert(args);
 
+	int l = 0;
+
 	for ( ; argument_is_valid(args) ; args++)
-		print_arg_name(args);
+	{
+		if (argument_is_mandatory(args))
+			close_optionality_brackets(&l);
+		print_arg_name(args, &l);
+	}
+
+	close_optionality_brackets(&l);
 }
 
 static int
@@ -497,21 +813,44 @@ print_wrapped(char const * src, int width, int const indent)
 }
 
 static int
+get_argument_name_length(struct optargs_arg const * arg)
+{
+	assert(arg);
+
+	int i = 0, j;
+
+	for ( ; argument_is_valid(arg) ; arg++)
+	{
+		if (!arg->name)
+			continue;
+
+		j = strlen(arg->name);
+		if (i < j)
+			i = j;
+	}
+
+	return i;
+}
+
+static int
 get_long_opt_length(struct optargs_opt const * const opt)
 {
 	assert(opt);
 
-	int r;
+	int r, t;
 
 	if (!opt->long_option)
 		return 0;
 
 	r = strlen(opt->long_option);
 
-	if (opt->argument.name)
-		r += strlen(opt->argument.name);
-	else
+	if (!opt->argument)
 		r += 3;
+	else
+	{
+		t = get_argument_name_length(opt->argument);
+		r += t ? t : 3;
+	}
 
 	return r;
 }
@@ -527,6 +866,9 @@ find_longest_opt(struct optargs_opt const * opts)
 	for (r = 0 ; option_is_valid(opts) ; opts++)
 	{
 		if (option_is_hidden(opts))
+			continue;
+
+		if (option_is_divider(opts))
 			continue;
 
 		t = get_long_opt_length(opts);
@@ -607,44 +949,24 @@ static int
 print_mandatory_option_argument(struct optargs_opt const * const opt)
 {
 	assert(opt);
+	assert(opt->argument);
+	assert(opt->argument->name);
 
-	int z;
-
-	if (opt->argument.name)
-	{
-		z = word_length(opt->argument.name);
-		printf(" %.*s", (int)z, opt->argument.name);
-		z += 1;
-	}
-	else
-	{
-		printf(" ARG");
-		z = 4;
-	}
-
-	return z;
+	int z = word_length(opt->argument->name);
+	printf(" %.*s", (int)z, opt->argument->name);
+	return z + 1;
 }
 
 static int
 print_optional_option_argument(struct optargs_opt const * const opt)
 {
 	assert(opt);
+	assert(opt->argument);
+	assert(opt->argument->name);
 
-	int z;
-
-	if (opt->argument.name)
-	{
-		z = word_length(opt->argument.name);
-		printf("[=%.*s]", z, opt->argument.name);
-		z += 3;
-	}
-	else
-	{
-		printf("[=ARG]");
-		z = 6;
-	}
-
-	return z;
+	int z = word_length(opt->argument->name);
+	printf("[=%.*s]", z, opt->argument->name);
+	return z + 3;
 }
 
 static int
@@ -652,12 +974,24 @@ print_option_argument(struct optargs_opt const * const opt)
 {
 	assert(opt);
 
-	if (opt->argument.mandatory == optargs_yes)
-		return print_mandatory_option_argument(opt);
-	else if (opt->argument.mandatory == optargs_maybe)
-		return print_optional_option_argument(opt);
-	else
+	if (!opt->argument)
 		return 0;
+
+	switch (opt->argument->type)
+	{
+		case optargs_arg_any:
+		case optargs_arg_group:
+			return print_mandatory_option_argument(opt);
+		case optargs_arg_any_opt:
+		case optargs_arg_group_opt:
+			return print_optional_option_argument(opt);
+		case _optargs_arg_eol:
+		case _optargs_arg_sink:
+		case _optargs_arg_div:
+		case optargs_arg_group_member:
+			return 0;
+	}
+	abort();
 }
 
 static void
@@ -687,43 +1021,57 @@ print_argument(struct optargs_arg const * const arg, int const left_column)
 			printf("\n%*s", left_column, "");
 
 		print_wrapped(arg->description, MAX_WIDTH, left_column);
+
+		if (arg->type == optargs_arg_group_member && argument_is_fixed(arg + 1))
+			printf("\n");
 	}
 }
 
 static void
-print_option_argument_description(struct optargs_arg const * const arg,
-		int const left_column)
+print_option_argument_desc(struct optargs_arg const * const arg, int left_column)
 {
-	char buf[MAX_WIDTH];
-	int l = left_column + strlen(arg->name) + 1, o, d = strlen(arg->description);
+	assert(arg);
+	assert(arg->name);
+	assert(arg->description);
 
-	printf("%*s%s:%s", left_column, "", arg->name, l < MAX_WIDTH ? " " : "");
-
-	if (l >= MAX_WIDTH)
-	{
-		printf("\n%*s", left_column, "");
-		print_wrapped(arg->description, MAX_WIDTH, left_column);
-	}
-	else if (l + d <= MAX_WIDTH)
-		printf("%s\n", arg->description);
+	if (!arg->description)
+		printf("    %s:\n", arg->name);
 	else
 	{
-		o = MAX_WIDTH - l;
-		strncpy(buf, arg->description, o);
+		printf("    %s:%*s", arg->name, left_column - 4 - (int)strlen(arg->name), "");
+		print_wrapped(arg->description, MAX_WIDTH, left_column + 1);
+	}
 
-		for (--o ; o >= 0 ; o--)
-			if (is_word_separator(buf[o]))
-				break;
+}
 
-		if (o > 0)
-		{
-			buf[o] = '\0';
-			print_wrapped(buf, MAX_WIDTH, l);
-			++o;
-		}
+static void
+print_option_argument_header_item_desc(struct optargs_arg const * const arg, int left_column)
+{
+	assert(arg);
+	assert(arg->name);
 
-		printf("%*s", left_column, "");
-		print_wrapped(arg->description + o, MAX_WIDTH, left_column);
+	if (!arg->description)
+	{
+		printf("   %s\n", arg->name);
+		return;
+	}
+
+	printf("     %s%*s", arg->name, left_column - 5 - (int)strlen(arg->name) + 2, "");
+	print_wrapped(arg->description, MAX_WIDTH, left_column + 2);
+}
+
+static void
+print_option_argument_description(struct optargs_arg const * arg,
+		int const left_column)
+{
+	assert(arg);
+
+	for ( ; argument_is_valid(arg) ; arg++)
+	{
+		if (arg->type == optargs_arg_group_member)
+			print_option_argument_header_item_desc(arg, left_column);
+		else if (arg->description)
+			print_option_argument_desc(arg, left_column);
 	}
 }
 
@@ -736,8 +1084,8 @@ print_regular_option(struct optargs_opt const * const opt,
 	print_option_padding(left_column, len);
 	print_wrapped(opt->description, MAX_WIDTH, left_column);
 
-	if (opt->argument.description)
-		print_option_argument_description(&opt->argument, left_column);
+	if (opt->argument)
+		print_option_argument_description(opt->argument, left_column);
 }
 
 
@@ -750,28 +1098,31 @@ print_option(struct optargs_opt const * const opt, int const left_column)
 		print_regular_option(opt, left_column);
 }
 
+static int
+count_printable_options(struct optargs_opt const * opts)
+{
+	assert(opts);
+
+	int rv;
+
+	for (rv = 0 ; option_is_valid(opts) ; opts++)
+		if (!option_is_hidden(opts))
+			rv++;
+
+	return rv;
+}
+
 static void
 print_options(struct optargs_opt const * opts, int const indent)
 {
 	assert(opts);
 	assert(indent > 0);
 
-	printf("\nOPTIONS:\n");
+	if (count_printable_options(opts))
+		printf("\nOPTIONS:\n");
 
 	for ( ; option_is_valid(opts) ; ++opts)
 		print_option(opts, indent);
-}
-
-static bool
-all_args_without_description(struct optargs_arg const * args)
-{
-	assert(args);
-
-	for ( ; argument_is_valid(args) ; args++)
-		if (args->description)
-			return false;
-
-	return true;
 }
 
 static void
@@ -780,10 +1131,7 @@ print_arguments(struct optargs_arg const * args, int const indent)
 	assert(args);
 	assert(indent > 0);
 
-	if (all_args_without_description(args))
-		return;
-
-	if (args->description && args->description[0] != '\0')
+	if (!argument_is_header(args))
 		printf("\nARGUMENTS:\n");
 
 	for ( ; argument_is_valid(args) ; args++)
@@ -798,7 +1146,7 @@ print_usage(char const * const exe, struct optargs_opt const * const opts,
 
 	printf("Usage: %s", exe);
 
-	if (opts)
+	if (opts && count_printable_options(opts))
 		printf(" [OPTIONS]");
 
 	if (args)
@@ -830,68 +1178,46 @@ optargs_print_help(char const * const exe, char const * const about,
 		print_wrapped(about, MAX_WIDTH, 0);
 }
 
-int
-optargs_arg_index(struct optargs_arg const * const args, char const * const name)
-{
-	assert(args);
-	assert(name);
-
-	for (int r = 0, l ; argument_is_valid(&args[r]) ; r++)
-	{
-		if (argument_is_divider(&args[r])
-				|| argument_is_header(&args[r]))
-			continue;
-
-		if ((l = word_length(args[r].name)) != word_length(name))
-			continue;
-
-		if (!strncmp(args[r].name, name, l))
-			return r;
-	}
-
-	return -EINVAL;
-}
-
-struct optargs_result const *
-optargs_result_by_long(struct optargs_opt const * const opts, char const * const l)
+struct optargs_res const *
+optargs_res_by_long(struct optargs_opt const * const opts, char const * const l)
 {
 	assert(opts);
 	assert(l);
 
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].long_option == l)
-			return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
+			return optargs_res_type(&opts[i].result) ? &opts[i].result : NULL;
 	abort();
 }
 
-struct optargs_result const *
-optargs_result_by_short(struct optargs_opt const * const opts, char const s)
+struct optargs_res const *
+optargs_res_by_short(struct optargs_opt const * const opts, char const s)
 {
 	assert(opts);
 	assert(s);
 
 	for (int i = 0; option_is_valid(&opts[i]); ++i)
 		if (opts[i].short_option == s)
-			return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
+			return optargs_res_type(&opts[i].result) ? &opts[i].result : NULL;
 	abort();
 }
 
-struct optargs_result const *
-optargs_result_by_index(struct optargs_opt const * const opts, int const i)
+struct optargs_res const *
+optargs_res_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(UNIT_TESTING)
 	int j;
 
 	for (j = 0; j <= i; j++)
 		assert(option_is_valid(&opts[j]));
 #endif
-	return optargs_result_type(&opts[i].result) ? &opts[i].result : NULL;
+	return optargs_res_type(&opts[i].result) ? &opts[i].result : NULL;
 }
 
 static char const *
-get_result_string(struct optargs_result const * const r)
+get_result_string(struct optargs_res const * const r)
 {
 	if (!r)
 		return NULL;
@@ -902,7 +1228,7 @@ get_result_string(struct optargs_result const * const r)
 }
 
 static unsigned int
-get_result_count(struct optargs_result const * const r)
+get_result_count(struct optargs_res const * const r)
 {
 	if (!r)
 		return 0;
@@ -913,62 +1239,122 @@ get_result_count(struct optargs_result const * const r)
 }
 
 char const *
-optargs_string_by_short(struct optargs_opt const * const opts, char const s)
+optargs_opt_value_by_short(struct optargs_opt const * const opts, char const s)
 {
 	assert(opts);
 	assert(s);
 
-	return get_result_string(optargs_result_by_short(opts, s));
+	return get_result_string(optargs_res_by_short(opts, s));
 }
 
 char const *
-optargs_string_by_long(struct optargs_opt const * const opts, char const * const l)
+optargs_opt_value_by_long(struct optargs_opt const * const opts, char const * const l)
 {
 	assert(opts);
 	assert(l);
 
-	return get_result_string(optargs_result_by_long(opts, l));
+	return get_result_string(optargs_res_by_long(opts, l));
 }
 
 char const *
-optargs_string_by_index(struct optargs_opt const * const opts, int const i)
+optargs_opt_value_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
-	return get_result_string(optargs_result_by_index(opts, i));
+	return get_result_string(optargs_res_by_index(opts, i));
 }
 
 unsigned int
-optargs_count_by_short(struct optargs_opt const * const opts, char const s)
+optargs_opt_count_by_short(struct optargs_opt const * const opts, char const s)
 {
 	assert(opts);
 	assert(s);
 
-	return get_result_count(optargs_result_by_short(opts, s));
+	return get_result_count(optargs_res_by_short(opts, s));
 }
 
 unsigned int
-optargs_count_by_long(struct optargs_opt const * const opts, char const * const l)
+optargs_opt_count_by_long(struct optargs_opt const * const opts, char const * const l)
 {
 	assert(opts);
 	assert(l);
 
-	return get_result_count(optargs_result_by_long(opts, l));
+	return get_result_count(optargs_res_by_long(opts, l));
 }
 
 unsigned int
-optargs_count_by_index(struct optargs_opt const * const opts, int const i)
+optargs_opt_count_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
-	return get_result_count(optargs_result_by_index(opts, i));
+	return get_result_count(optargs_res_by_index(opts, i));
 }
 
-enum optargs_result_type
-optargs_result_type(struct optargs_result const * const r)
+enum optargs_res_type
+optargs_res_type(struct optargs_res const * const r)
 {
 	if (!r)
 		return optargs_undef;
 
 	return r->type;
 }
+
+int
+optargs_parse_args_all(int ac, char const * const * av,
+		struct optargs_arg ** argsv, int argsvc)
+{
+	assert(ac >= 0);
+	assert(argsv);
+	assert(argsvc);
+
+	for (int i = 0 ; i < argsvc ; i++)
+	{
+		if (!optargs_parse_args(ac, av, argsv[i]))
+			return i;
+	}
+
+	return -1;
+}
+
+char const *
+optargs_arg_value(struct optargs_arg const * a)
+{
+	assert(a);
+
+	if (!a->result.defined)
+		return NULL;
+
+	if (argument_is_header(a))
+		return a->result.match->result.value;
+	return a->result.value;
+}
+
+int
+optargs_arg_value_index(struct optargs_arg const * a, int i)
+{
+	assert(a);
+	assert(i >= 0);
+
+	int rv = optargs_arg_value_offset(&a[i]);
+
+	if (rv <= 0)
+		return rv;
+
+	assert(a->result.defined);
+	return i + rv;
+}
+
+int
+optargs_arg_value_offset(struct optargs_arg const * a)
+{
+	assert(a);
+
+	if (!argument_is_header(a))
+		return -1;
+
+	if (!a->result.defined)
+		return 0;
+
+	return ((long)a->result.match - (long)a)/sizeof(struct optargs_arg);
+}
+

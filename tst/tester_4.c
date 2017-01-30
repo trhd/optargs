@@ -32,62 +32,78 @@ main(int ac __attribute__((unused)), char **av)
 			.description = "An option with a named argument.",
 			.long_option = "option1",
 			.short_option = 'o',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "FOOBAR :=",
-				.description = "This is the argument.",
-				.mandatory = optargs_yes
+
+				{
+					.name = "FOOBAR :=",
+					.description = "This is the argument.",
+					.type = optargs_arg_any
+				},
+				optargs_arg_eol
 			}
 		}, {
 			.description = "Another option with a named argument.",
 			.long_option = "option2",
 			.short_option = 'O',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "BARFOO",
-				.description = "This is another argument.",
-				.mandatory = optargs_maybe
+				{
+					.name = "BARFOO",
+					.description = "This is another argument.",
+					.type = optargs_arg_any_opt
+				},
+				optargs_arg_eol
 			}
 		}, {
 			.description = "A third option with a named argument.",
 			.long_option = "option3",
 			.short_option = '0',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "KEKEKE =>",
-				.description = "This a third argument.",
-				.mandatory = optargs_maybe
+
+				{
+					.name = "KEKEKE =>",
+					.description = "This a third argument.",
+					.type = optargs_arg_any_opt
+				},
+				optargs_arg_eol
 			}
 		}, {
 			.description = "A fourth option with a long name argument.",
-				.long_option = "option3",
-				.short_option = '0',
-				.argument =
+			.long_option = "option3",
+			.short_option = '0',
+			.argument = (struct optargs_arg [])
+			{
 				{
 					.name = "This-is-an-option-argument-with-a-really-long-name",
 					.description = "This is the fourth argument.",
-					.mandatory = optargs_maybe
-				}
+					.type = optargs_arg_any_opt
+				},
+				optargs_arg_eol
+			}
 		}, {
 			.description = "Fifth option.",
-				.long_option = "option5",
-				.short_option = '5',
-				.argument =
+			.long_option = "option5",
+			.short_option = '5',
+			.argument = (struct optargs_arg [])
+			{
 				{
 					.name = "YOMAMMA",
 					.description = "This is the fifth option argument with a really long description that will wrap to multiple lines.",
-					.mandatory = optargs_maybe
-				}
+					.type = optargs_arg_any_opt
+				},
+				optargs_arg_eol
+			}
 		},
 		optargs_opt_eol
 	};
-
 	struct optargs_arg const args[] =
 	{
 		{
 			.name = "MY_ARGUMENT",
 			.description = "Just some argument.",
-			.mandatory = optargs_yes
+			.type = optargs_arg_any
 		},
 		optargs_arg_eol
 	};

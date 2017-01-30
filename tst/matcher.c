@@ -68,24 +68,23 @@ main(int ac, char ** av)
 			.description = "Pattern matching shall fail.",
 			.long_option = "fail-match",
 			.short_option = 'f',
-			.argument = { .mandatory = optargs_no },
 		},
 		{
 			.description = "Pattern is a file name.",
 			.long_option = "file",
 			.short_option = 'F',
-			.argument = { .mandatory = optargs_no },
 		},
 		{
 			.description = "The argument shall match the executable's exit code.",
 			.long_option = "exit-code",
 			.short_option = 'e',
-			.argument = { .mandatory = optargs_yes}
+			.argument = (struct optargs_arg []){ { .name = "CODE", .type = optargs_arg_any}, optargs_arg_eol }
 		},
+
 		optargs_opt_eol
 	};
 
-	if ((idx = optargs_parse(ac, (char const **)av, opts)) < 0)
+	if ((idx = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
 	{
 		printf("\n");
 		optargs_print_help(av[0], "", opts, NULL);
@@ -131,7 +130,7 @@ main(int ac, char ** av)
 		if (close(pp[1]))
 			error("Failed to close pipe's writing end.");
 
-		if (!optargs_count_by_short(opts, 'F'))
+		if (!optargs_opt_count_by_short(opts, 'F'))
 		{
 			if (!fgets(buf1, buf_size, fp))
 				error("Failed to read program's output.");
@@ -143,7 +142,7 @@ main(int ac, char ** av)
 
 			compare_outputs(buf1, av[idx],
 					min(strlen(av[idx + 1]) + 1, strlen(buf1) + 1),
-					optargs_count_by_short(opts, 'f'));
+					optargs_opt_count_by_short(opts, 'f'));
 
 		}
 		else
@@ -154,7 +153,7 @@ main(int ac, char ** av)
 				error("fdopen() failed");
 
 			while (fgets(buf1, buf_size, fp) && fgets(buf2, buf_size, ff))
-				compare_outputs(buf1, buf2, buf_size, optargs_count_by_short(opts, 'f'));
+				compare_outputs(buf1, buf2, buf_size, optargs_opt_count_by_short(opts, 'f'));
 		}
 
 
@@ -167,11 +166,11 @@ main(int ac, char ** av)
 		if (!WIFEXITED(i))
 			error("Expected child to return a status.");
 
-		if (WEXITSTATUS(i) != (optargs_string_by_short(opts, 'e') ? atoi(optargs_string_by_short(opts, 'e')) : 0))
+		if (WEXITSTATUS(i) != (optargs_opt_value_by_short(opts, 'e') ? atoi(optargs_opt_value_by_short(opts, 'e')) : 0))
 		{
 			printf("Child returned: %d, expected %s.\n",
 					WEXITSTATUS(i),
-					optargs_string_by_short(opts, 'e') ? optargs_string_by_short(opts, 'e') : "0");
+					optargs_opt_value_by_short(opts, 'e') ? optargs_opt_value_by_short(opts, 'e') : "0");
 			error("Child returned incorrect exit code.");
 		}
 	}
