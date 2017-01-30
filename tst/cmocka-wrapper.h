@@ -12,7 +12,7 @@
 #include <cmocka.h>
 #include <stdbool.h>
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(UNIT_TESTING)
 #undef assert
 #define assert(e) mock_assert((long)(e), #e, __FILE__, __LINE__)
 #endif
