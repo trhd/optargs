@@ -92,6 +92,11 @@ main(int ac, char ** av)
 		return EXIT_FAILURE;
 	}
 
+	printf("Executing command: '%s", av[idx + 1]);
+	for (int i = idx + 2 ; i < ac ; i++)
+		printf(" %s", av[i]);
+	printf("'\n");
+
 	if (pipe(pp))
 		error("Failed to create a pipe.\n");
 
