@@ -1,5 +1,5 @@
 # optargs -- A command line option and argument management library.
-# Copyright (C) 2016 Hemmo Nieminen
+# Copyright (C) 2016-2017 Hemmo Nieminen
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ project(
 	]
 )
 
-OPTARGS_HDR = include_directories(meson.current_source_dir())
-OPTARGS_SRC = meson.current_source_dir() + '/optargs.c'
+OPTARGS_HDR = include_directories('.')
+OPTARGS_SRC = files('optargs.c')
 
 if get_option('buildtype') == 'release'
 	release_flags = [ '-DNDEBUG' ]
