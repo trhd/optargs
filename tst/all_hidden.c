@@ -33,10 +33,10 @@ main(int ac, char ** av)
 			|| optargs_parse_args(ac - t, (char const **)av + t, args))
 		return -1;
 
-	if (optargs_res_by_long(opts, "hidden-option"))
+	if (optargs_opt_res_by_long(opts, "hidden-option"))
 		printf("hidden option invoked\n");
 
-	if (optargs_res_by_long(opts, "second-hidden-option"))
+	if (optargs_opt_res_by_long(opts, "second-hidden-option"))
 		printf("second hidden option invoked\n");
 
 	if (optargs_arg_value(&args[0]))

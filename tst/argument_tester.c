@@ -88,7 +88,7 @@ main(int ac, char ** av)
 	if ((t = optargs_parse_opts(ac, (char const * const *)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_res_by_long(opts, "help"))
+	if (optargs_opt_res_by_long(opts, "help"))
 	{
 		optargs_print_help(av[0], "Yeah!", opts, args);
 		return EXIT_SUCCESS;

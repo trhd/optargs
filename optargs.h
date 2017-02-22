@@ -295,7 +295,7 @@ optargs_print_help(char const * cmd, char const * about,
  *  or NULL if the specified option was not given by the user.
  */
 struct optargs_res const *
-optargs_res_by_long(struct optargs_opt const * options, char const * long_option);
+optargs_opt_res_by_long(struct optargs_opt const * options, char const * long_option);
 
 /**
  * Find the result struct for the given short option.
@@ -313,7 +313,7 @@ optargs_res_by_long(struct optargs_opt const * options, char const * long_option
  *  or NULL if the specified option was not given by the user.
  */
 struct optargs_res const *
-optargs_res_by_short(struct optargs_opt const * options, char short_option);
+optargs_opt_res_by_short(struct optargs_opt const * options, char short_option);
 
 /**
  * Find the result struct for the option in the given index.
@@ -331,7 +331,7 @@ optargs_res_by_short(struct optargs_opt const * options, char short_option);
  *  or NULL if the specified option was not given by the user.
  */
 struct optargs_res const *
-optargs_res_by_index(struct optargs_opt const * opts, int index);
+optargs_opt_res_by_index(struct optargs_opt const * opts, int index);
 
 /**
  * Find the result string for the given long option.
@@ -490,8 +490,9 @@ optargs_arg_value(struct optargs_arg const * argument);
  *             user supplied group member argument.
  *
  * Return value:
- *   The calculated distance (offset) or a negative number if the argument
- *   was not given by the user.
+ *   The calculated distance (offset) or 0 if the argument was not
+ *   given by the user. -1 will be returned for an invalid/non-existing
+ *   argument name.
  */
 int
 optargs_arg_value_offset(struct optargs_arg const * argument);
@@ -510,8 +511,9 @@ optargs_arg_value_offset(struct optargs_arg const * argument);
  *               group member argument belongs to.
  *
  * Return value:
- *   The calculated distance (offset) or a negative number if the argument
- *   was not given by the user.
+ *   The calculated distance (offset) or 0 if the argument was not
+ *   given by the user. -1 will be returned for an invalid/non-existing
+ *   argument name.
  */
 int
 optargs_arg_value_index(struct optargs_arg const * arguments, int base_index);

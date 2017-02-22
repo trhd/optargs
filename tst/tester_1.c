@@ -328,7 +328,7 @@ main(int ac, char **av)
 	if ((t = optargs_opt_value_by_short(opts, 'i')))
 		printf("i{%s}", t);
 
-	if ((r = optargs_res_by_long(opts, "jjjj")))
+	if ((r = optargs_opt_res_by_long(opts, "jjjj")))
 	{
 		if (r->type == optargs_count)
 			t = "Oujea!";

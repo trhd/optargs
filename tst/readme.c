@@ -148,7 +148,7 @@ main(int ac, char ** av)
 
 	debug = optargs_opt_count_by_short(opts, 'd');
 
-	res = optargs_res_by_index(opts, OPTION_VERBOSE);
+	res = optargs_opt_res_by_index(opts, OPTION_VERBOSE);
 	if (!res)
 		verbosity = 0;
 	else if (optargs_res_type(res) == optargs_count)

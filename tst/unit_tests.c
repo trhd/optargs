@@ -907,7 +907,7 @@ UT_optargs_print_help__NULL()
 /************************************************************************/
 
 static void
-UT_optargs_res_by_long()
+UT_optargs_opt_res_by_long()
 {
 	char const * argv[] = { "foo", "-D", "--eeee", "-F", "arg1", "arg2", "g2", "arg3", "arg4", "g5"};
 	int const argc = sizeof(argv)/sizeof(char const *);
@@ -915,82 +915,41 @@ UT_optargs_res_by_long()
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
 	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
 
-	assert_ptr_equal(optargs_res_by_long(opts_sample, "dddd"), &opts_sample[SAMPLE_OPT_D].result);
-	assert_ptr_equal(optargs_res_by_long(opts_sample, "eeee"), &opts_sample[SAMPLE_OPT_E].result);
-	assert_ptr_equal(optargs_res_by_long(opts_sample, "ffff"), &opts_sample[SAMPLE_OPT_F].result);
+	assert_ptr_equal(optargs_opt_res_by_long(opts_sample, "dddd"), &opts_sample[SAMPLE_OPT_D].result);
+	assert_ptr_equal(optargs_opt_res_by_long(opts_sample, "eeee"), &opts_sample[SAMPLE_OPT_E].result);
+	assert_ptr_equal(optargs_opt_res_by_long(opts_sample, "ffff"), &opts_sample[SAMPLE_OPT_F].result);
 
-	assert_null(optargs_res_by_long(opts_sample, "gggg"));
-	assert_null(optargs_res_by_long(opts_sample, "hhhh"));
-	assert_null(optargs_res_by_long(opts_sample, "iiii"));
-	assert_null(optargs_res_by_long(opts_sample, "jjjj"));
-	assert_null(optargs_res_by_long(opts_sample, "kkkk"));
-	assert_null(optargs_res_by_long(opts_sample, "llll"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "gggg"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "hhhh"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "iiii"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "jjjj"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "kkkk"));
+	assert_null(optargs_opt_res_by_long(opts_sample, "llll"));
 }
 
 /************************************************************************/
 
 static void
-UT_optargs_res_by_long__NULL()
+UT_optargs_opt_res_by_long__NULL()
 {
-	expect_assert_failure(optargs_res_by_long(NULL, "--foo"));
-	expect_assert_failure(optargs_res_by_long(opts_sample, NULL));
+	expect_assert_failure(optargs_opt_res_by_long(NULL, "--foo"));
+	expect_assert_failure(optargs_opt_res_by_long(opts_sample, NULL));
 }
 
 /************************************************************************/
 
 static void
-UT_optargs_res_by_long__ENOENT()
+UT_optargs_opt_res_by_long__ENOENT()
 {
-	expect_assert_failure(optargs_res_by_long(opts_sample, "aaaa"));
-	expect_assert_failure(optargs_res_by_long(opts_sample, "non-existing-option"));
+	expect_assert_failure(optargs_opt_res_by_long(opts_sample, "aaaa"));
+	expect_assert_failure(optargs_opt_res_by_long(opts_sample, "non-existing-option"));
 }
 
 /************************************************************************/
 
-// struct optargs_res const * optargs_res_by_short(struct optargs_opt const * options, char short_option);
+// struct optargs_res const * optargs_opt_res_by_short(struct optargs_opt const * options, char short_option);
 static void
-UT_optargs_res_by_short()
-{
-	char const * argv[] = { "foo", "-D", "--eeee", "-F", "arg1", "arg2", "g2", "arg3", "arg4", "g5"};
-	int const argc = sizeof(argv)/sizeof(char const *);
-
-	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
-	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
-
-	assert_ptr_equal(optargs_res_by_short(opts_sample, 'D'), &opts_sample[SAMPLE_OPT_D].result);
-	assert_ptr_equal(optargs_res_by_short(opts_sample, 'E'), &opts_sample[SAMPLE_OPT_E].result);
-	assert_ptr_equal(optargs_res_by_short(opts_sample, 'F'), &opts_sample[SAMPLE_OPT_F].result);
-
-	assert_null(optargs_res_by_short(opts_sample, 'a'));
-	assert_null(optargs_res_by_short(opts_sample, 'b'));
-	assert_null(optargs_res_by_short(opts_sample, 'c'));
-
-	assert_null(optargs_res_by_short(opts_sample, 'k'));
-	assert_null(optargs_res_by_short(opts_sample, 'l'));
-}
-
-/************************************************************************/
-
-static void
-UT_optargs_res_by_short__NULL()
-{
-	expect_assert_failure(optargs_res_by_short(NULL, 'a'));
-	expect_assert_failure(optargs_res_by_short(opts_sample, '\0'));
-}
-
-/************************************************************************/
-
-static void
-UT_optargs_res_by_short__ENOENT()
-{
-	expect_assert_failure(optargs_res_by_short(opts_sample, 'x'));
-	expect_assert_failure(optargs_res_by_short(opts_sample, '1'));
-}
-
-/************************************************************************/
-
-static void
-UT_optargs_res_by_index()
+UT_optargs_opt_res_by_short()
 {
 	char const * argv[] = { "foo", "-D", "--eeee", "-F", "arg1", "arg2", "g2", "arg3", "arg4", "g5"};
 	int const argc = sizeof(argv)/sizeof(char const *);
@@ -998,28 +957,69 @@ UT_optargs_res_by_index()
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
 	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
 
-	assert_ptr_equal(optargs_res_by_index(opts_sample, SAMPLE_OPT_D), &opts_sample[SAMPLE_OPT_D].result);
-	assert_ptr_equal(optargs_res_by_index(opts_sample, SAMPLE_OPT_E), &opts_sample[SAMPLE_OPT_E].result);
-	assert_ptr_equal(optargs_res_by_index(opts_sample, SAMPLE_OPT_F), &opts_sample[SAMPLE_OPT_F].result);
+	assert_ptr_equal(optargs_opt_res_by_short(opts_sample, 'D'), &opts_sample[SAMPLE_OPT_D].result);
+	assert_ptr_equal(optargs_opt_res_by_short(opts_sample, 'E'), &opts_sample[SAMPLE_OPT_E].result);
+	assert_ptr_equal(optargs_opt_res_by_short(opts_sample, 'F'), &opts_sample[SAMPLE_OPT_F].result);
 
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_A));
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_B));
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_C));
+	assert_null(optargs_opt_res_by_short(opts_sample, 'a'));
+	assert_null(optargs_opt_res_by_short(opts_sample, 'b'));
+	assert_null(optargs_opt_res_by_short(opts_sample, 'c'));
 
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_G));
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_H));
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_I));
-
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_K));
-	assert_null(optargs_res_by_index(opts_sample, SAMPLE_OPT_L));
+	assert_null(optargs_opt_res_by_short(opts_sample, 'k'));
+	assert_null(optargs_opt_res_by_short(opts_sample, 'l'));
 }
 
 /************************************************************************/
 
 static void
-UT_optargs_res_by_index__NULL()
+UT_optargs_opt_res_by_short__NULL()
 {
-	expect_assert_failure(optargs_res_by_index(NULL, 0));
+	expect_assert_failure(optargs_opt_res_by_short(NULL, 'a'));
+	expect_assert_failure(optargs_opt_res_by_short(opts_sample, '\0'));
+}
+
+/************************************************************************/
+
+static void
+UT_optargs_opt_res_by_short__ENOENT()
+{
+	expect_assert_failure(optargs_opt_res_by_short(opts_sample, 'x'));
+	expect_assert_failure(optargs_opt_res_by_short(opts_sample, '1'));
+}
+
+/************************************************************************/
+
+static void
+UT_optargs_opt_res_by_index()
+{
+	char const * argv[] = { "foo", "-D", "--eeee", "-F", "arg1", "arg2", "g2", "arg3", "arg4", "g5"};
+	int const argc = sizeof(argv)/sizeof(char const *);
+
+	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
+	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
+
+	assert_ptr_equal(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_D), &opts_sample[SAMPLE_OPT_D].result);
+	assert_ptr_equal(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_E), &opts_sample[SAMPLE_OPT_E].result);
+	assert_ptr_equal(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_F), &opts_sample[SAMPLE_OPT_F].result);
+
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_A));
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_B));
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_C));
+
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_G));
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_H));
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_I));
+
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_K));
+	assert_null(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_L));
+}
+
+/************************************************************************/
+
+static void
+UT_optargs_opt_res_by_index__NULL()
+{
+	expect_assert_failure(optargs_opt_res_by_index(NULL, 0));
 }
 
 /************************************************************************/
@@ -1027,9 +1027,9 @@ UT_optargs_res_by_index__NULL()
 #if !defined(NDEBUG) || defined(UNIT_TESTING)
 
 static void
-UT_optargs_res_by_index__ENOENT()
+UT_optargs_opt_res_by_index__ENOENT()
 {
-	expect_assert_failure(optargs_res_by_index(opts_sample, 99999));
+	expect_assert_failure(optargs_opt_res_by_index(opts_sample, 99999));
 }
 
 #endif
@@ -1493,18 +1493,18 @@ main()
 		cmocka_unit_test(UT_optargs_print_help),
 		cmocka_unit_test(UT_optargs_print_help__NULL),
 
-		cmocka_unit_test(UT_optargs_res_by_long),
-		cmocka_unit_test(UT_optargs_res_by_long__NULL),
-		cmocka_unit_test(UT_optargs_res_by_long__ENOENT),
+		cmocka_unit_test(UT_optargs_opt_res_by_long),
+		cmocka_unit_test(UT_optargs_opt_res_by_long__NULL),
+		cmocka_unit_test(UT_optargs_opt_res_by_long__ENOENT),
 
-		cmocka_unit_test(UT_optargs_res_by_short),
-		cmocka_unit_test(UT_optargs_res_by_short__NULL),
-		cmocka_unit_test(UT_optargs_res_by_short__ENOENT),
+		cmocka_unit_test(UT_optargs_opt_res_by_short),
+		cmocka_unit_test(UT_optargs_opt_res_by_short__NULL),
+		cmocka_unit_test(UT_optargs_opt_res_by_short__ENOENT),
 
-		cmocka_unit_test(UT_optargs_res_by_index),
-		cmocka_unit_test(UT_optargs_res_by_index__NULL),
+		cmocka_unit_test(UT_optargs_opt_res_by_index),
+		cmocka_unit_test(UT_optargs_opt_res_by_index__NULL),
 #if !defined(NDEBUG) || defined(UNIT_TESTING)
-		cmocka_unit_test(UT_optargs_res_by_index__ENOENT),
+		cmocka_unit_test(UT_optargs_opt_res_by_index__ENOENT),
 #endif
 
 		cmocka_unit_test(UT_optargs_opt_value_by_long),

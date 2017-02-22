@@ -48,10 +48,10 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_res_by_long(opts, "help"))
+	if (optargs_opt_res_by_long(opts, "help"))
 		printf("got basic\n");
 
-	if (optargs_res_by_long(opts, "help-full"))
+	if (optargs_opt_res_by_long(opts, "help-full"))
 		printf("got full\n");
 
 	return EXIT_SUCCESS;

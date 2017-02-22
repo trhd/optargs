@@ -1179,7 +1179,7 @@ optargs_print_help(char const * const exe, char const * const about,
 }
 
 struct optargs_res const *
-optargs_res_by_long(struct optargs_opt const * const opts, char const * const l)
+optargs_opt_res_by_long(struct optargs_opt const * const opts, char const * const l)
 {
 	assert(opts);
 	assert(l);
@@ -1191,7 +1191,7 @@ optargs_res_by_long(struct optargs_opt const * const opts, char const * const l)
 }
 
 struct optargs_res const *
-optargs_res_by_short(struct optargs_opt const * const opts, char const s)
+optargs_opt_res_by_short(struct optargs_opt const * const opts, char const s)
 {
 	assert(opts);
 	assert(s);
@@ -1203,7 +1203,7 @@ optargs_res_by_short(struct optargs_opt const * const opts, char const s)
 }
 
 struct optargs_res const *
-optargs_res_by_index(struct optargs_opt const * const opts, int const i)
+optargs_opt_res_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
@@ -1244,7 +1244,7 @@ optargs_opt_value_by_short(struct optargs_opt const * const opts, char const s)
 	assert(opts);
 	assert(s);
 
-	return get_result_string(optargs_res_by_short(opts, s));
+	return get_result_string(optargs_opt_res_by_short(opts, s));
 }
 
 char const *
@@ -1253,7 +1253,7 @@ optargs_opt_value_by_long(struct optargs_opt const * const opts, char const * co
 	assert(opts);
 	assert(l);
 
-	return get_result_string(optargs_res_by_long(opts, l));
+	return get_result_string(optargs_opt_res_by_long(opts, l));
 }
 
 char const *
@@ -1261,7 +1261,7 @@ optargs_opt_value_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
-	return get_result_string(optargs_res_by_index(opts, i));
+	return get_result_string(optargs_opt_res_by_index(opts, i));
 }
 
 unsigned int
@@ -1270,7 +1270,7 @@ optargs_opt_count_by_short(struct optargs_opt const * const opts, char const s)
 	assert(opts);
 	assert(s);
 
-	return get_result_count(optargs_res_by_short(opts, s));
+	return get_result_count(optargs_opt_res_by_short(opts, s));
 }
 
 unsigned int
@@ -1279,7 +1279,7 @@ optargs_opt_count_by_long(struct optargs_opt const * const opts, char const * co
 	assert(opts);
 	assert(l);
 
-	return get_result_count(optargs_res_by_long(opts, l));
+	return get_result_count(optargs_opt_res_by_long(opts, l));
 }
 
 unsigned int
@@ -1287,7 +1287,7 @@ optargs_opt_count_by_index(struct optargs_opt const * const opts, int const i)
 {
 	assert(opts);
 
-	return get_result_count(optargs_res_by_index(opts, i));
+	return get_result_count(optargs_opt_res_by_index(opts, i));
 }
 
 enum optargs_res_type

@@ -15,7 +15,7 @@ main(int ac, char ** av)
 	if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
 		return -1;
 
-	if (optargs_res_by_long(opts, "help"))
+	if (optargs_opt_res_by_long(opts, "help"))
 		optargs_print_help(av[0], 0, opts, 0);
 
 	return 0;
