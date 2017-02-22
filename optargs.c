@@ -611,6 +611,23 @@ count_mandatory_and_optinal_arguments(struct optargs_arg const * args, int * man
 		*opts = -1;
 }
 
+static int
+argument_name_compare(const char * a, const char * b)
+{
+	assert(a);
+	assert(b);
+
+	int al = word_length(a),
+	    bl = word_length(b);
+
+	if (al > bl)
+		return -1;
+	else if (bl > al)
+		return 1;
+	else
+		return strncmp(a, b, min(al, bl));
+}
+
 bool
 optargs_parse_args(int const ac, char const * const * const av, struct optargs_arg * args)
 {
@@ -655,7 +672,7 @@ optargs_parse_args(int const ac, char const * const * const av, struct optargs_a
 			}
 			else
 			{
-				if (!strcmp(args->name, av[i]))
+				if (!argument_name_compare(args->name, av[i]))
 				{
 					args->result.value = av[i];
 					hdr->result.match = args;
@@ -705,10 +722,7 @@ optargs_parse_args(int const ac, char const * const * const av, struct optargs_a
 			assert(hdr->type == optargs_arg_group_opt);
 
 			if (i < ac)
-			{
-				assert(args->type == _optargs_arg_sink);
 				return unmatching_optional_argument_error(av[i], hdr->name);
-			}
 		}
 	}
 
