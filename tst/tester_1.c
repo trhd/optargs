@@ -250,6 +250,16 @@ main(int ac, char **av)
 			.description = "Command 2 is the booomb!",
 			.type = optargs_arg_group_member,
 		}, {
+			.name = "argument name eq LEFT_COLUMN_MAX_WIDTH",
+			.description = "Some non-relevant description #2.",
+			.type = optargs_arg_any,
+		}, {
+			.name = "argument name just less than in above",
+			.description = "Some non-relevant description #3."
+		}, {
+			.name = "argument name greater than LEFT_COLUMN_MAX_WIDTH",
+			.description = "Some non-relevant description #4."
+		}, {
 			.name = "curse_words",
 			.type = optargs_arg_group_opt,
 		}, {
@@ -261,23 +271,21 @@ main(int ac, char **av)
 			.description = "god damn it / devil",
 			.type = optargs_arg_group_member,
 		}, {
-			.name = "args with long name",
-			.description = "tittidii",
+			.name = "argument group name with maximum widt",
+			.description = "tittidisd fksdlf klsdal kdsalkf sdlk flksdflksadkl fsdlk dslka dsakl dlksfakli",
 			.type = optargs_arg_group_opt,
 		}, {
 			.name = "argument usb-argument",
 			.description = "Some non-relevant description.",
 			.type = optargs_arg_group_member,
 		}, {
-			.name = "argument name eq LEFT_COLUMN_MAX_WIDTH",
-			.description = "Some non-relevant description #2.",
-			.type = optargs_arg_any,
+			.name = "argument group name with maximum width",
+			.description = "tittidisd fksdlf klsdal kdsalkf sdlk flksdflksadkl fsdlk dslka dsakl dlksfakli",
+			.type = optargs_arg_group_opt,
 		}, {
-			.name = "argument name just less than in above",
-			.description = "Some non-relevant description #3."
-		}, {
-			.name = "argument name greater than LEFT_COLUMN_MAX_WIDTH",
-			.description = "Some non-relevant description #4."
+			.name = "argument usb-argument",
+			.description = "Some non-relevant description.",
+			.type = optargs_arg_group_member,
 		},
 #endif
 		optargs_arg_eol

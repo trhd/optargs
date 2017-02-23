@@ -124,6 +124,145 @@ struct optargs_arg args_sample[] =
 	optargs_arg_sink
 };
 
+struct optargs_arg * huge_subargs_sample = (struct optargs_arg [])
+{
+	{
+		.type = optargs_arg_any,
+		.name = "WHAEWA",
+		.description = "Frisky first."
+	},
+	{
+		.type = optargs_arg_group,
+		.name = "CMD",
+		.description = "Da command!"
+	},
+	{
+		.type = optargs_arg_group_member,
+		.name = "CMD0",
+		.description = "Da command #0!",
+	},
+	{
+		.type = optargs_arg_group_member,
+		.name = "CMD1",
+		.description = "Da command #1!",
+		.subargument = (struct optargs_arg [])
+		{
+			{
+				.type = optargs_arg_any,
+				.name = "CMD1.ANY",
+				.description = "Anything for CMD1!"
+			},
+			optargs_arg_eol
+		}
+	},
+	{
+		.type = optargs_arg_group_member,
+		.name = "CMD2",
+		.description = "Da command #2!",
+		.subargument = (struct optargs_arg [])
+		{
+			{
+				.type = optargs_arg_group,
+				.name = "CMD2.GROUP",
+				.description = "Group for CMD2."
+			},
+			{
+				.type = optargs_arg_group_member,
+				.name = "CMD2.GROUP.1",
+				.description = "Group for CMD2 #1."
+			},
+			{
+				.type = optargs_arg_group_member,
+				.name = "CMD2.GROUP.2",
+				.description = "Group for CMD2 #2."
+			},
+			{
+				.type = optargs_arg_any,
+				.name = "CMD2.ANY",
+				.description = "Anything for CMD2 #2!"
+			},
+			{
+				.type = optargs_arg_any,
+				.name = "CMD2.ANY",
+				.description = "Anything for CMD2 #3!"
+			},
+			optargs_arg_eol
+		}
+	},
+	{
+		.type = optargs_arg_group_member,
+		.name = "CMD3",
+		.description = "Da command #3!",
+		.subargument = (struct optargs_arg [])
+		{
+			{
+				.type = optargs_arg_group,
+				.name = "CMD3.GROUP",
+				.description = "Group for CMD3."
+			},
+			{
+				.type = optargs_arg_group_member,
+				.name = "CMD3.GROUP.1",
+				.description = "Group for CMD3 #1.",
+				.subargument = (struct optargs_arg [])
+				{
+					{
+						.type = optargs_arg_any,
+						.name = "CMD3.GROUP.1.ANY.1",
+						.description = "Subargception #1."
+					},
+					{
+						.type = optargs_arg_any_opt,
+						.name = "CMD3.GROUP.1.ANY.2",
+						.description = "Subargception #2."
+					},
+					optargs_arg_eol
+				}
+			},
+			{
+				.type = optargs_arg_group_member,
+				.name = "CMD3.GROUP.2",
+				.description = "Group for CMD3 #2.",
+				.subargument = (struct optargs_arg [])
+				{
+					{
+						.type = optargs_arg_group,
+						.name = "CMD3.GROUP.2.GROUP",
+						.description = "Subargception #1."
+					},
+					{
+						.type = optargs_arg_group_member,
+						.name = "CMD3.GROUP.2.GROUP.1",
+						.description = "Subargception #1!!!",
+						.subargument = (struct optargs_arg [])
+						{
+							{
+								.type = optargs_arg_any,
+								.name = "WTF",
+								.description = "How can this even..."
+							},
+							optargs_arg_eol
+						}
+					},
+					{
+						.type = optargs_arg_group_member,
+						.name = "CMD3.GROUP.2.GROUP.2",
+						.description = "Subargception #2!!!"
+					},
+					optargs_arg_eol
+				}
+			},
+			{
+				.type = optargs_arg_group_member,
+				.name = "CMD3.GROUP.3",
+				.description = "Group for CMD3 #3."
+			},
+			optargs_arg_eol
+		}
+	},
+	optargs_arg_eol
+};
+
 /************************************************************************/
 
 static void
@@ -486,12 +625,12 @@ UT_optargs_parse_args()
 		optargs_arg_sink
 	};
 
-	assert_true(optargs_parse_args(0, NULL, args));
-	assert_true(optargs_parse_args(1, (char const * const []){"a"}, args));
-	assert_true(optargs_parse_args(2, (char const * const []){"a", "X"}, args));
-	assert_true(optargs_parse_args(2, (char const * const []){"a", "TOKA"}, args));
+	assert_int_equal(optargs_parse_args(0, NULL, args), -EINVAL);
+	assert_int_equal(optargs_parse_args(1, (char const * const []){"a"}, args), -EINVAL);
+	assert_int_equal(optargs_parse_args(2, (char const * const []){"a", "X"}, args), -EINVAL);
+	assert_int_equal(optargs_parse_args(2, (char const * const []){"a", "TOKA"}, args), -EINVAL);
 
-	assert_false(optargs_parse_args(2, (char const * const []){"a", "TOKA.1"}, args));
+	assert_int_equal(optargs_parse_args(2, (char const * const []){"a", "TOKA.1"}, args), 2);
 	assert_string_equal("a", optargs_arg_value(&args[0]));
 	assert_string_equal("TOKA.1", optargs_arg_value(&args[1]));
 	assert_string_equal("TOKA.1", optargs_arg_value(&args[2]));
@@ -505,7 +644,7 @@ UT_optargs_parse_args()
 	assert_null(optargs_arg_value(&args[10]));
 	assert_null(optargs_arg_value(&args[11]));
 
-	assert_false(optargs_parse_args(3, (char const * const []){"A", "TOKA.2", "b"}, args));
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"A", "TOKA.2", "b"}, args), 3);
 	assert_string_equal("A", optargs_arg_value(&args[0]));
 	assert_string_equal("TOKA.2", optargs_arg_value(&args[1]));
 	assert_null(optargs_arg_value(&args[2]));
@@ -519,9 +658,9 @@ UT_optargs_parse_args()
 	assert_null(optargs_arg_value(&args[10]));
 	assert_null(optargs_arg_value(&args[11]));
 
-	assert_true(optargs_parse_args(4, (char const * const []){"a", "TOKA.1", "b", "c"}, args));
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"a", "TOKA.1", "b", "c"}, args), -EINVAL);
 
-	assert_false(optargs_parse_args(4, (char const * const []){"1", "TOKA.3", "B", "NELJAS.1"}, args));
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"1", "TOKA.3", "B", "NELJAS.1"}, args), 4);
 	assert_string_equal("1", optargs_arg_value(&args[0]));
 	assert_string_equal("TOKA.3", optargs_arg_value(&args[1]));
 	assert_null(optargs_arg_value(&args[2]));
@@ -535,7 +674,7 @@ UT_optargs_parse_args()
 	assert_null(optargs_arg_value(&args[10]));
 	assert_null(optargs_arg_value(&args[11]));
 
-	assert_false(optargs_parse_args(7, (char const * const []){"1", "TOKA.3", "NELJAS.1", "NELJAS.1", "1", "2", "3"}, args));
+	assert_int_equal(optargs_parse_args(7, (char const * const []){"1", "TOKA.3", "NELJAS.1", "NELJAS.1", "1", "2", "3"}, args), 4);
 	assert_string_equal("1", optargs_arg_value(&args[0]));
 	assert_string_equal("TOKA.3", optargs_arg_value(&args[1]));
 	assert_null(optargs_arg_value(&args[2]));
@@ -549,7 +688,103 @@ UT_optargs_parse_args()
 	assert_null(optargs_arg_value(&args[10]));
 	assert_null(optargs_arg_value(&args[11]));
 
-	assert_true(optargs_parse_args(3, (char const * const []){"--", "a", "TOKA.1"}, args));
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"--", "a", "TOKA.1"}, args), -EINVAL);
+}
+
+/************************************************************************/
+
+static void
+UT_optargs_parse_args__subarguments()
+{
+	assert_int_equal(optargs_parse_args(1, (char const * const []){"whaeva"}, huge_subargs_sample), -EINVAL);
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMDX"}, huge_subargs_sample), -EINVAL);
+
+	// No subargument.
+	assert_int_equal(optargs_parse_args(2, (char const * const []){"whaeva", "CMD0"}, huge_subargs_sample), 2);
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[0]), "whaeva");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[1]), "CMD0");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[2]), "CMD0");
+	assert_null(optargs_arg_value(&huge_subargs_sample[3]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[4]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[5]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[6]));
+
+	// Non-expected subargument.
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD0", "foobar"}, huge_subargs_sample), -EINVAL);
+
+	// Mandatory any subargument.
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD1", "matafaka"}, huge_subargs_sample), 3);
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[0]), "whaeva");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[1]), "CMD1");
+	assert_null(optargs_arg_value(&huge_subargs_sample[2]));
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[3]), "CMD1");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[3].subargument[0]), "matafaka");
+	assert_null(optargs_arg_value(&huge_subargs_sample[4]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[5]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[6]));
+
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"whaeva", "CMD2", "hei", "moi"}, huge_subargs_sample), -EINVAL);
+	assert_int_equal(optargs_parse_args(5, (char const * const []){"whaeva", "CMD2", "hei", "moi", "terve"}, huge_subargs_sample), -EINVAL);
+
+	// Mandatory any subarguments.
+	assert_int_equal(optargs_parse_args(5, (char const * const []){"whaeva", "CMD2", "CMD2.GROUP.2", "moi", "terve"}, huge_subargs_sample), 5);
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[0]), "whaeva");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[1]), "CMD2");
+	assert_null(optargs_arg_value(&huge_subargs_sample[2]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[3]));
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[4]), "CMD2");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[4].subargument[0]), "CMD2.GROUP.2");
+	assert_null(optargs_arg_value(&huge_subargs_sample[4].subargument[1]));
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[4].subargument[2]), "CMD2.GROUP.2");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[4].subargument[3]), "moi");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[4].subargument[4]), "terve");
+	assert_null(optargs_arg_value(&huge_subargs_sample[5]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[6]));
+
+	// Subargception...
+	assert_int_equal(optargs_parse_args(2, (char const * const []){"whaeva", "CMD3"}, huge_subargs_sample), -EINVAL);
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD3", "XXX"}, huge_subargs_sample), -EINVAL);
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.1"}, huge_subargs_sample), -EINVAL);
+
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.1", "jeejee"}, huge_subargs_sample), 4);
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[0]), "whaeva");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[1]), "CMD3");
+	assert_null(optargs_arg_value(&huge_subargs_sample[2]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[3]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[4]));
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5]), "CMD3");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[0]), "CMD3.GROUP.1");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[1]), "CMD3.GROUP.1");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[1].subargument[0]), "jeejee");
+	assert_null(optargs_arg_value(&huge_subargs_sample[5].subargument[1].subargument[1]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[5].subargument[2]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[6]));
+
+	assert_int_equal(optargs_parse_args(5, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.1", "jeejee", "oujee"}, huge_subargs_sample), 5);
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[0]), "whaeva");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[1]), "CMD3");
+	assert_null(optargs_arg_value(&huge_subargs_sample[2]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[3]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[4]));
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5]), "CMD3");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[0]), "CMD3.GROUP.1");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[1]), "CMD3.GROUP.1");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[1].subargument[0]), "jeejee");
+	assert_string_equal(optargs_arg_value(&huge_subargs_sample[5].subargument[1].subargument[1]), "oujee");
+	assert_null(optargs_arg_value(&huge_subargs_sample[5].subargument[2]));
+	assert_null(optargs_arg_value(&huge_subargs_sample[6]));
+
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2"}, huge_subargs_sample), -EINVAL);
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2", "XXX"}, huge_subargs_sample), -EINVAL);
+
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2", "CMD3.GROUP.2.GROUP.2"}, huge_subargs_sample), 4);
+
+	assert_int_equal(optargs_parse_args(4, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2", "CMD3.GROUP.2.GROUP.1"}, huge_subargs_sample), -EINVAL);
+
+	assert_int_equal(optargs_parse_args(5, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2", "CMD3.GROUP.2.GROUP.1", "wee!"}, huge_subargs_sample), 5);
+	assert_int_equal(optargs_parse_args(6, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.2", "CMD3.GROUP.2.GROUP.1", "wee!", "too-much"}, huge_subargs_sample), -EINVAL);
+
+	assert_int_equal(optargs_parse_args(3, (char const * const []){"whaeva", "CMD3", "CMD3.GROUP.3"}, huge_subargs_sample), 3);
 }
 
 /************************************************************************/
@@ -566,9 +801,9 @@ UT_optargs_parse_args__mandatory_fixed_argument()
 		},
 		optargs_arg_eol
 	};
-	assert_true(optargs_parse_args(0, NULL, args));
+	assert_int_equal(optargs_parse_args(0, NULL, args), -EINVAL);
 
-	assert_false(optargs_parse_args(1, (char const * []){"argh!"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"argh!"}, args), 1);
 	assert_string_equal(args[0].result.value, "argh!");
 
 
@@ -579,9 +814,9 @@ UT_optargs_parse_args__mandatory_fixed_argument()
 		optargs_arg_eol
 	};
 
-	assert_true(optargs_parse_args(1, (char const * []){"argz"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"argz"}, args), -EINVAL);
 
-	assert_false(optargs_parse_args(2, (char const * []){"argz1", "argz2"}, args));
+	assert_int_equal(optargs_parse_args(2, (char const * []){"argz1", "argz2"}, args), 2);
 	assert_string_equal(args[0].result.value, "argz1");
 	assert_string_equal(args[1].result.value, "argz2");
 }
@@ -598,19 +833,19 @@ UT_optargs_parse_args__mandatory_header_argument()
 		{.name = "b", .type = optargs_arg_group_member, .description = "foobar"},
 		optargs_arg_eol
 	};
-	assert_true(optargs_parse_args(0, NULL, args));
+	assert_int_equal(optargs_parse_args(0, NULL, args), -EINVAL);
 
-	assert_false(optargs_parse_args(1, (char const * []){"a"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"a"}, args), 1);
 	assert_ptr_equal(args[0].result.match, &args[1]);
 	assert_string_equal(args[1].result.value, "a");
 	assert_null(args[2].result.value);
 
-	assert_false(optargs_parse_args(1, (char const * []){"b"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"b"}, args), 1);
 	assert_string_equal(args[0].result.match, &args[2]);
 	assert_null(args[1].result.value);
 	assert_string_equal(args[2].result.value, "b");
 
-	assert_true(optargs_parse_args(1, (char const * []){"c"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"c"}, args), -EINVAL);
 
 
 	args = (struct optargs_arg [])
@@ -624,9 +859,9 @@ UT_optargs_parse_args__mandatory_header_argument()
 		optargs_arg_eol
 	};
 
-	assert_true(optargs_parse_args(1, (char const * []){"a"}, args));
+	assert_int_equal(optargs_parse_args(1, (char const * []){"a"}, args), -EINVAL);
 
-	assert_false(optargs_parse_args(2, (char const * []){"a", "c"}, args));
+	assert_int_equal(optargs_parse_args(2, (char const * []){"a", "c"}, args), 2);
 	assert_ptr_equal(args[0].result.match, &args[1]);
 	assert_string_equal(args[1].result.value, "a");
 	assert_null(args[2].result.value);
@@ -634,7 +869,7 @@ UT_optargs_parse_args__mandatory_header_argument()
 	assert_string_equal(args[4].result.value, "c");
 	assert_null(args[5].result.value);
 
-	assert_false(optargs_parse_args(2, (char const * []){"a", "d"}, args));
+	assert_int_equal(optargs_parse_args(2, (char const * []){"a", "d"}, args), 2);
 	assert_ptr_equal(args[0].result.match, &args[1]);
 	assert_string_equal(args[1].result.value, "a");
 	assert_null(args[2].result.value);
@@ -642,7 +877,7 @@ UT_optargs_parse_args__mandatory_header_argument()
 	assert_null(args[4].result.value);
 	assert_string_equal(args[5].result.value, "d");
 
-	assert_true(optargs_parse_args(2, (char const * []){"a", "e"}, args));
+	assert_int_equal(optargs_parse_args(2, (char const * []){"a", "e"}, args), -EINVAL);
 }
 
 /************************************************************************/
@@ -665,7 +900,7 @@ UT_optargs_parse_args__NULL()
 static void
 UT_optargs_parse_args__sanity_check()
 {
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any_opt, .description = "foobar"},
@@ -676,7 +911,7 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any, .description = "foobar"},
@@ -687,7 +922,8 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any, .description = "foobar"},
@@ -698,18 +934,20 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any, .description = "foobar"},
 				{.name = "B", .type = optargs_arg_any_opt, .description = "foobar"},
+				optargs_arg_div,
 				{.name = "C", .type = optargs_arg_any_opt, .description = "foobar"},
 				optargs_arg_eol
 			}
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any_opt, .description = "foobar"},
@@ -720,7 +958,8 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"1", "2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_any_opt, .description = "foobar"},
@@ -742,7 +981,7 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"b.1", "c.2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_group_opt, .description = "foobar"},
@@ -764,7 +1003,7 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"a.1", "c.2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_group, .description = "foobar"},
@@ -785,7 +1024,8 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"a.1", "b.2"},
 			(struct optargs_arg []) {
 				optargs_arg_div,
@@ -807,7 +1047,8 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"a.1", "b.1"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_group, .description = "foobar"},
@@ -828,7 +1069,7 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	expect_assert_failure(optargs_parse_args(
 			2, (char const * []){"a.1", "c.2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_group_opt, .description = "foobar"},
@@ -848,7 +1089,8 @@ UT_optargs_parse_args__sanity_check()
 		)
 	);
 
-	assert_false(optargs_parse_args(
+	assert_int_equal(2,
+		optargs_parse_args(
 			2, (char const * []){"a.1", "b.2"},
 			(struct optargs_arg []) {
 				{.name = "A", .type = optargs_arg_group_opt, .description = "foobar"},
@@ -932,7 +1174,7 @@ UT_optargs_opt_res_by_long()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
-	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 4, argv + 4, args_sample), 6);
 
 	assert_ptr_equal(optargs_opt_res_by_long(opts_sample, "dddd"), &opts_sample[SAMPLE_OPT_D].result);
 	assert_ptr_equal(optargs_opt_res_by_long(opts_sample, "eeee"), &opts_sample[SAMPLE_OPT_E].result);
@@ -974,7 +1216,7 @@ UT_optargs_opt_res_by_short()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
-	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 4, argv + 4, args_sample), 6);
 
 	assert_ptr_equal(optargs_opt_res_by_short(opts_sample, 'D'), &opts_sample[SAMPLE_OPT_D].result);
 	assert_ptr_equal(optargs_opt_res_by_short(opts_sample, 'E'), &opts_sample[SAMPLE_OPT_E].result);
@@ -1015,7 +1257,7 @@ UT_optargs_opt_res_by_index()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 4);
-	assert_false(optargs_parse_args(argc - 4, argv + 4, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 4, argv + 4, args_sample), 6);
 
 	assert_ptr_equal(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_D), &opts_sample[SAMPLE_OPT_D].result);
 	assert_ptr_equal(optargs_opt_res_by_index(opts_sample, SAMPLE_OPT_E), &opts_sample[SAMPLE_OPT_E].result);
@@ -1062,7 +1304,7 @@ UT_optargs_opt_value_by_long()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 7);
-	assert_false(optargs_parse_args(argc - 7, argv + 7, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 7, argv + 7, args_sample), 6);
 
 	assert_string_equal(optargs_opt_value_by_long(opts_sample, "llll"), "fez");
 	assert_string_equal(optargs_opt_value_by_long(opts_sample, "kkkk"), "bar");
@@ -1097,7 +1339,7 @@ UT_optargs_opt_value_by_short()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 7);
-	assert_false(optargs_parse_args(argc - 7, argv + 7, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 7, argv + 7, args_sample), 6);
 
 	assert_string_equal(optargs_opt_value_by_short(opts_sample, 'l'), "fez");
 	assert_string_equal(optargs_opt_value_by_short(opts_sample, 'k'), "bar");
@@ -1131,7 +1373,7 @@ UT_optargs_opt_value_by_index()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 7);
-	assert_false(optargs_parse_args(argc - 7, argv + 7, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 7, argv + 7, args_sample), 6);
 
 	assert_null(optargs_opt_value_by_index(opts_sample,            SAMPLE_OPT_A));
 	assert_null(optargs_opt_value_by_index(opts_sample,            SAMPLE_OPT_B));
@@ -1178,7 +1420,7 @@ UT_optargs_opt_count_by_long()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 10);
-	assert_false(optargs_parse_args(argc - 10, argv + 10, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 10, argv + 10, args_sample), 6);
 
 	expect_assert_failure(optargs_opt_count_by_long(opts_sample,    "aaaa"));
 	expect_assert_failure(optargs_opt_count_by_long(opts_sample,    "bbbb"));
@@ -1214,7 +1456,7 @@ UT_optargs_opt_count_by_short()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 10);
-	assert_false(optargs_parse_args(argc - 10, argv + 10, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 10, argv + 10, args_sample), 6);
 
 	assert_int_equal(optargs_opt_count_by_short(opts_sample,        'a'), 3);
 	assert_int_equal(optargs_opt_count_by_short(opts_sample,        'b'), 2);
@@ -1253,7 +1495,7 @@ UT_optargs_opt_count_by_index()
 	int const argc = sizeof(argv)/sizeof(char const *);
 
 	assert_int_equal(optargs_parse_opts(argc, argv, opts_sample), 10);
-	assert_false(optargs_parse_args(argc - 10, argv + 10, args_sample));
+	assert_int_equal(optargs_parse_args(argc - 10, argv + 10, args_sample), 6);
 
 	assert_int_equal(optargs_opt_count_by_index(opts_sample,        SAMPLE_OPT_A), 3);
 	assert_int_equal(optargs_opt_count_by_index(opts_sample,        SAMPLE_OPT_B), 2);
@@ -1314,7 +1556,7 @@ UT_optargs_arg_value()
 		optargs_arg_sink
 	};
 
-	assert_false(optargs_parse_args(6, (char const * []){"foo", "bar", "c2", "keke", "d3", "har"}, args));
+	assert_int_equal(optargs_parse_args(6, (char const * []){"foo", "bar", "c2", "keke", "d3", "har"}, args), 6);
 	assert_string_equal(optargs_arg_value(&args[0]), "foo");
 	assert_string_equal(optargs_arg_value(&args[1]), "bar");
 	assert_string_equal(optargs_arg_value(&args[2]), "c2");
@@ -1369,31 +1611,32 @@ UT_optargs_arg_value_offset()
 		optargs_arg_sink
 	};
 
-	assert_false(optargs_parse_args(7,
+	assert_int_equal(7,
+			optargs_parse_args(7,
 				(char const * []){"foo", "bar", "c2", "keke", "d3", "har", "f1"},
 				args));
 
-	assert_int_equal(optargs_arg_value_offset(&args[0]),  -1); // foo
-	assert_int_equal(optargs_arg_value_offset(&args[1]),  -1); // bar
-	assert_int_equal(optargs_arg_value_offset(&args[2]),   2); // C=c2
-	assert_int_equal(optargs_arg_value_offset(&args[3]),  -1); // c1
-	assert_int_equal(optargs_arg_value_offset(&args[4]),  -1); // c2*
-	assert_int_equal(optargs_arg_value_offset(&args[5]),  -1); // c3
-	assert_int_equal(optargs_arg_value_offset(&args[6]),  -1); // d
-	assert_int_equal(optargs_arg_value_offset(&args[7]),   3); // D=d3
-	assert_int_equal(optargs_arg_value_offset(&args[8]),  -1); // d1
-	assert_int_equal(optargs_arg_value_offset(&args[9]),  -1); // d2
-	assert_int_equal(optargs_arg_value_offset(&args[10]), -1); // d3*
-	assert_int_equal(optargs_arg_value_offset(&args[11]), -1); // e=har
-	assert_int_equal(optargs_arg_value_offset(&args[12]),  1); // F=f1
-	assert_int_equal(optargs_arg_value_offset(&args[13]), -1); // f1*
-	assert_int_equal(optargs_arg_value_offset(&args[14]), -1); // f2
-	assert_int_equal(optargs_arg_value_offset(&args[15]), -1); // f3
-	assert_int_equal(optargs_arg_value_offset(&args[16]),  0); // G=
-	assert_int_equal(optargs_arg_value_offset(&args[17]), -1); // g1
-	assert_int_equal(optargs_arg_value_offset(&args[18]), -1); // g2
-	assert_int_equal(optargs_arg_value_offset(&args[19]), -1); // g3
-	assert_int_equal(optargs_arg_value_offset(&args[20]), -1); // -
+	expect_assert_failure(optargs_arg_value_offset(&args[0]));   // foo
+	expect_assert_failure(optargs_arg_value_offset(&args[1]));  // bar
+	assert_int_equal(optargs_arg_value_offset(&args[2]),   2);  // C=c2
+	expect_assert_failure(optargs_arg_value_offset(&args[3]));  // c1
+	expect_assert_failure(optargs_arg_value_offset(&args[4]));  // c2*
+	expect_assert_failure(optargs_arg_value_offset(&args[5]));  // c3
+	expect_assert_failure(optargs_arg_value_offset(&args[6]));  // d
+	assert_int_equal(optargs_arg_value_offset(&args[7]),   3);  // D=d3
+	expect_assert_failure(optargs_arg_value_offset(&args[8]));  // d1
+	expect_assert_failure(optargs_arg_value_offset(&args[9]));  // d2
+	expect_assert_failure(optargs_arg_value_offset(&args[10])); // d3*
+	expect_assert_failure(optargs_arg_value_offset(&args[11])); // e=har
+	assert_int_equal(optargs_arg_value_offset(&args[12]),  1);  // F=f1
+	expect_assert_failure(optargs_arg_value_offset(&args[13])); // f1*
+	expect_assert_failure(optargs_arg_value_offset(&args[14])); // f2
+	expect_assert_failure(optargs_arg_value_offset(&args[15])); // f3
+	assert_int_equal(optargs_arg_value_offset(&args[16]),  -1);  // G=
+	expect_assert_failure(optargs_arg_value_offset(&args[17])); // g1
+	expect_assert_failure(optargs_arg_value_offset(&args[18])); // g2
+	expect_assert_failure(optargs_arg_value_offset(&args[19])); // g3
+	expect_assert_failure(optargs_arg_value_offset(&args[20])); // -
 }
 
 /************************************************************************/
@@ -1434,31 +1677,32 @@ UT_optargs_arg_value_index()
 		optargs_arg_sink
 	};
 
-	assert_false(optargs_parse_args(7,
+	assert_int_equal(7,
+			optargs_parse_args(7,
 				(char const * []){"foo", "bar", "c2", "keke", "d3", "har", "f1"},
 				args));
 
-	assert_int_equal(optargs_arg_value_index(args, 0),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 1),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 2),   4);
-	assert_int_equal(optargs_arg_value_index(args, 3),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 4),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 5),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 6),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 7),  10);
-	assert_int_equal(optargs_arg_value_index(args, 8),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 9),  -1);
-	assert_int_equal(optargs_arg_value_index(args, 10), -1);
-	assert_int_equal(optargs_arg_value_index(args, 11), -1);
-	assert_int_equal(optargs_arg_value_index(args, 12), 13);
-	assert_int_equal(optargs_arg_value_index(args, 13), -1);
-	assert_int_equal(optargs_arg_value_index(args, 14), -1);
-	assert_int_equal(optargs_arg_value_index(args, 15), -1);
-	assert_int_equal(optargs_arg_value_index(args, 16), 16);
-	assert_int_equal(optargs_arg_value_index(args, 17), -1);
-	assert_int_equal(optargs_arg_value_index(args, 18), -1);
-	assert_int_equal(optargs_arg_value_index(args, 19), -1);
-	assert_int_equal(optargs_arg_value_index(args, 20), -1);
+	expect_assert_failure(optargs_arg_value_index(args, 0));  // a
+	expect_assert_failure(optargs_arg_value_index(args, 1));  // b
+	assert_int_equal(optargs_arg_value_index(args, 2),   4);  // C
+	expect_assert_failure(optargs_arg_value_index(args, 3));  // c1
+	expect_assert_failure(optargs_arg_value_index(args, 4));  // c2
+	expect_assert_failure(optargs_arg_value_index(args, 5));  // c3
+	expect_assert_failure(optargs_arg_value_index(args, 6));  // d
+	assert_int_equal(optargs_arg_value_index(args, 7),  10);  // D
+	expect_assert_failure(optargs_arg_value_index(args, 8));  // d1
+	expect_assert_failure(optargs_arg_value_index(args, 9));  // d2
+	expect_assert_failure(optargs_arg_value_index(args, 10)); // d3
+	expect_assert_failure(optargs_arg_value_index(args, 11)); // e
+	assert_int_equal(optargs_arg_value_index(args, 12), 13);  // F
+	expect_assert_failure(optargs_arg_value_index(args, 13)); // f1
+	expect_assert_failure(optargs_arg_value_index(args, 14)); // f2
+	expect_assert_failure(optargs_arg_value_index(args, 15)); // f3
+	assert_int_equal(optargs_arg_value_index(args, 16), -1);  // G
+	expect_assert_failure(optargs_arg_value_index(args, 17)); // g1
+	expect_assert_failure(optargs_arg_value_index(args, 18)); // g2
+	expect_assert_failure(optargs_arg_value_index(args, 19)); // g3
+	expect_assert_failure(optargs_arg_value_index(args, 20)); // sink
 }
 
 /************************************************************************/
@@ -1504,6 +1748,7 @@ main()
 		cmocka_unit_test(UT_optargs_parse_opts__NULL),
 
 		cmocka_unit_test(UT_optargs_parse_args),
+		cmocka_unit_test(UT_optargs_parse_args__subarguments),
 		cmocka_unit_test(UT_optargs_parse_args__mandatory_fixed_argument),
 		cmocka_unit_test(UT_optargs_parse_args__mandatory_header_argument),
 		cmocka_unit_test(UT_optargs_parse_args__NULL),

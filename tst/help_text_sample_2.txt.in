@@ -1,13 +1,13 @@
 Usage: @TESTER_2_PATH@ [OPTIONS] Name_0 Name_1
 
 OPTIONS:
-  -a,--aaa        AAA
-  -b,--bbb        BBB
+  -a,--aaa   AAA
+  -b,--bbb   BBB
 
-  -c,--ccc        CCC
+  -c,--ccc   CCC
 
 ARGUMENTS:
-  Name_0          Jottain 0.
-  Name_1          Jottain 1.
+  Name_0     Jottain 0.
+  Name_1     Jottain 1.
 
 foobar

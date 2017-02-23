@@ -49,7 +49,7 @@ main(int ac, char ** av)
 	int t;
 
 	if ((t = optargs_parse_opts(ac, (char const **)av, opts)) < 0
-			|| optargs_parse_args(ac - t, (char const **)av + t, args))
+			|| optargs_parse_args(ac - t, (char const **)av + t, args) < 0)
 		return -1;
 
 	if (optargs_opt_res_by_long(opts, "hidden-option"))

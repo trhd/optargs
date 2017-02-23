@@ -188,6 +188,8 @@ struct optargs_arg
 		 */
 		struct optargs_arg * match;
 	} result;
+
+	struct optargs_arg * subargument;
 };
 
 /**
@@ -256,9 +258,10 @@ optargs_parse_opts(int argc, char const * const * argv, struct optargs_opt * opt
  *  supported_arguments: The arguments structures defining the accepted arguments.
  *
  * Return value:
- *  A non-zero value is returned in case an error occurred. Zero otherwise.
+ *  The number of successfully parsed argument (not counting what went
+ *  into the sink) or a negative integer in case of an error.
  */
-bool
+int
 optargs_parse_args(int argument_count, char const * const * arguments,
 		struct optargs_arg * supported_arguments);
 
@@ -490,9 +493,8 @@ optargs_arg_value(struct optargs_arg const * argument);
  *             user supplied group member argument.
  *
  * Return value:
- *   The calculated distance (offset) or 0 if the argument was not
- *   given by the user. -1 will be returned for an invalid/non-existing
- *   argument name.
+ *   The calculated distance (offset) or -1 if the argument was not
+ *   given by the user.
  */
 int
 optargs_arg_value_offset(struct optargs_arg const * argument);
@@ -511,9 +513,8 @@ optargs_arg_value_offset(struct optargs_arg const * argument);
  *               group member argument belongs to.
  *
  * Return value:
- *   The calculated distance (offset) or 0 if the argument was not
- *   given by the user. -1 will be returned for an invalid/non-existing
- *   argument name.
+ *   The calculated distance (offset) or -1 if the argument was not
+ *   given by the user.
  */
 int
 optargs_arg_value_index(struct optargs_arg const * arguments, int base_index);

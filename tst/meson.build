@@ -118,6 +118,9 @@ CONF_DATA.set('MINIMAL_PATH', MINIMAL.full_path())
 ALL_HIDDEN = executable('all_hidden', 'all_hidden.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
 CONF_DATA.set('ALL_HIDDEN_PATH', ALL_HIDDEN.full_path())
 
+SUBARGS = executable('subargs', 'subargs.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+CONF_DATA.set('SUBARGS_PATH', SUBARGS.full_path())
+
 foreach f : [
 		'help_text_sample_1.txt',
 		'help_text_sample_2.txt',
@@ -125,7 +128,8 @@ foreach f : [
 		'help_text_sample_8.txt',
 		'help_text_sample_readme.txt',
 		'help_text_sample_minimal.txt',
-		'help_text_sample_all_hidden.txt' ]
+		'help_text_sample_all_hidden.txt',
+		'help_text_sample_subargs.txt' ]
 	configure_file(
 		input : f + '.in',
 		output : f,
@@ -1107,6 +1111,7 @@ foreach t : [
 			[ '8', TESTER_8.full_path() ],
 			[ 'readme', README.full_path()],
 			[ 'minimal', MINIMAL.full_path() ],
+			[ 'subargs', SUBARGS.full_path() ],
 		]
 	test(
 		'Ensure help text integrity @0@.'.format(t.get(0)),

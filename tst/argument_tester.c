@@ -113,7 +113,7 @@ main(int ac, char ** av)
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_parse_args(ac - t, (char const * const *)av + t, args))
+	if (optargs_parse_args(ac - t, (char const * const *)av + t, args) < 0)
 		return EXIT_FAILURE;
 
 	for (int i = 0 ; i < _COUNT ; i++)

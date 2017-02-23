@@ -1,4 +1,4 @@
-Usage: @TESTER_1_PATH@ [OPTIONS] Name_1 Name_3 Name_2 Name_4 COMMANDS [curse_words [args]] argument argument argument
+Usage: @TESTER_1_PATH@ [OPTIONS] Name_1 Name_3 Name_2 Name_4 COMMANDS argument argument argument [curse_words [argument [argument]]]
 
 OPTIONS:
   -a,--aaaa                             Description A.
@@ -75,18 +75,26 @@ COMMANDS:
   command_1                             Command 1 is the shiiit!
   command_2                             Command 2 is the booomb!
 
-curse_words:
-  vittu                                 fuck / vag
-  perkele                               god damn it / devil
-
-args with long name:
-  argument usb-argument                 Some non-relevant description.
-
   argument name eq LEFT_COLUMN_MAX_WIDTH
                                         Some non-relevant description #2.
   argument name just less than in above Some non-relevant description #3.
   argument name greater than LEFT_COLUMN_MAX_WIDTH
                                         Some non-relevant description #4.
+
+curse_words:
+  vittu                                 fuck / vag
+  perkele                               god damn it / devil
+
+argument group name with maximum widt: tittidisd fksdlf klsdal kdsalkf sdlk
+                                       flksdflksadkl fsdlk dslka dsakl
+                                       dlksfakli
+  argument usb-argument                 Some non-relevant description.
+
+argument group name with maximum width:
+                                       tittidisd fksdlf klsdal kdsalkf sdlk
+                                       flksdflksadkl fsdlk dslka dsakl
+                                       dlksfakli
+  argument usb-argument                 Some non-relevant description.
 
 1. This is a tester program for optargs. 2. This is a tester program for
 optargs. 3. This is a tester program for optargs.

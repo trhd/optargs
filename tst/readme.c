@@ -28,7 +28,7 @@ int
 main(int ac, char ** av)
 {
 	int verbosity, debug, t;
-	char const * str;
+	char const * str, * when;
 	struct optargs_res const * res;
 	enum
 	{
@@ -59,8 +59,8 @@ main(int ac, char ** av)
 		{
 			.description = "Path to an imaginary socket file.",
 			.long_option = "socket",
-			.argument =
-			(struct optargs_arg []) {
+			.argument = (struct optargs_arg [])
+			{
 				{
 					.name = "file",
 					.type = optargs_arg_any
@@ -117,7 +117,26 @@ main(int ac, char ** av)
 		{
 			.name = "start",
 			.description = "Start doing stuff.",
-			.type = optargs_arg_group_member
+			.type = optargs_arg_group_member,
+			.subargument = (struct optargs_arg [])
+			{
+				{
+					.type = optargs_arg_group_opt,
+					.name = "WHEN",
+					.description = "When to start doing stuff."
+				},
+				{
+					.type = optargs_arg_group_member,
+					.name = "now",
+					.description = "Start doing stuff now."
+				},
+				{
+					.type = optargs_arg_group_member,
+					.name = "then",
+					.description = "Start doing stuff later."
+				},
+				optargs_arg_eol
+			}
 		},
 
 		[COMMAND_STOP] = {
@@ -125,6 +144,7 @@ main(int ac, char ** av)
 			.description = "Stop doing stuff.",
 			.type = optargs_arg_group_member
 		},
+
 		optargs_arg_eol
 	};
 
@@ -140,7 +160,7 @@ main(int ac, char ** av)
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_parse_args(ac - t, (char const **)av + t, args))
+	if (optargs_parse_args(ac - t, (char const **)av + t, args) < 0)
 	{
 		printf("Something went wrong when parsing arguments.\n");
 		return EXIT_FAILURE;
@@ -169,7 +189,11 @@ main(int ac, char ** av)
 	switch (optargs_arg_value_index(args, COMMAND))
 	{
 		case COMMAND_START:
-			printf("Starting stuff.\n");
+			when = optargs_arg_value(&args[COMMAND_START].subargument[0]);
+			if (when)
+				printf("Start doing stuff '%s'.\n", when);
+			else
+				printf("Casually starting stuff whenever...\n");
 			break;
 		case COMMAND_STOP:
 			printf("Stopping stuff.\n");
