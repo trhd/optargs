@@ -1080,9 +1080,9 @@ print_option_argument_desc(struct optargs_arg const * const arg, int left_column
 	int name_length = strlen(arg->name),
 	    right_indent = 1;
 
-	printf("    %s:", arg->name);
+	printf("    %s", arg->name);
 
-	if (4 + name_length + 1 >= left_column)
+	if (4 + name_length >= left_column)
 		printf("\n%*s", left_column + right_indent, "");
 	else
 		printf("%*s", left_column - 4 - name_length + right_indent, "");
