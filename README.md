@@ -223,14 +223,14 @@ and get something like this:
 	  --quiet                Be quiet.
 	  --socket file          Path to an imaginary socket file.
 	  -v,--verbose[=level]   Be verbose.
-		level                 The level of the desired verbosity.
+	    level                 The level of the desired verbosity.
 	  -d                     Output debug info (can be given several times).
 
 	COMMAND:
 	  start [WHEN]           Start doing stuff.
 	   WHEN:                  When to start doing stuff.
-		now                    Start doing stuff now.
-		then                   Start doing stuff later.
+	    now                    Start doing stuff now.
+	    then                   Start doing stuff later.
 	  stop                   Stop doing stuff.
 
 	About this program. This is the most awesomest program ever written and you
