@@ -29,19 +29,29 @@ project(
 	]
 )
 
-OPTARGS_HDR = include_directories('.')
-OPTARGS_SRC = files('optargs.c')
+config = configuration_data()
+
+if meson.get_compiler('c').get_id() == 'gcc'
+	config.set('FALLTHROUGH', '__attribute__((fallthrough));')
+else
+	config.set('FALLTHROUGH', '')
+endif
 
 if get_option('buildtype') == 'release'
-	release_flags = [ '-DNDEBUG' ]
-else
-	release_flags = []
+	config.set('NDEBUG', true)
 endif
+
+configure_file(
+	output : 'optargs_build_config.h',
+	configuration : config
+)
+
+OPTARGS_HDR = include_directories('.')
+OPTARGS_SRC = files('optargs.c')
 
 OPTARGS_LIB = shared_library(
 	'optargs',
 	OPTARGS_SRC,
-	c_args : release_flags,
 	version : meson.project_version(),
 	install : true
 )
@@ -50,7 +60,6 @@ if meson.is_subproject()
 	OPTARGS_BIN = static_library(
 		'optargs',
 		OPTARGS_SRC,
-		c_args : release_flags
 	)
 endif
 

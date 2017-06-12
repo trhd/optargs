@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "optargs.h"
+#include "optargs_build_config.h"
 
 enum constants
 {
@@ -775,6 +776,7 @@ print_arg_name(struct optargs_arg const * const arg, int * l)
 				rv += 4;
 				break;
 			}
+			FALLTHROUGH
 		case optargs_arg_any:
 			assert(arg->name);
 			printf(" %.*s", word_length(arg->name), arg->name);
@@ -789,6 +791,7 @@ print_arg_name(struct optargs_arg const * const arg, int * l)
 				rv += 4;
 				break;
 			}
+			FALLTHROUGH
 		case optargs_arg_any_opt:
 			++*l;
 			assert(arg->name);
