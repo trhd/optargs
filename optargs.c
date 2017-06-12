@@ -619,7 +619,7 @@ invalid_argument_for_group(char const * a, char const * g)
 	assert(a);
 	assert(g);
 
-	fprintf(stderr, "Invalid argument '%s' for %s.\n", a, g);
+	fprintf(stderr, "Invalid argument '%s' for '%s'.\n", a, g);
 
 	return -EINVAL;
 }
@@ -629,7 +629,7 @@ missing_argument_error(char const * a)
 {
 	assert(a);
 
-	fprintf(stderr, "Missing an argument for %s\n", a);
+	fprintf(stderr, "Missing an argument for '%s'.\n", a);
 
 	return -EINVAL;
 }
