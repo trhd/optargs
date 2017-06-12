@@ -255,7 +255,7 @@ Optargs supports the Meson build tool.
 
 To build and install optargs shared library (using ninja backend):
 
-	$ mkdir build
+	# To "configure" and build.
 	$ meson build
 	$ ninja -C build
 
@@ -265,13 +265,13 @@ To build and install optargs shared library (using ninja backend):
 	# To install the library to the system.
 	$ sudo ninja -C build install
 
-If used as a meson subproject one can use the variables OPTARGS_BIN to get
-optargs as a static library, OPTARGS_HDR to locate the optargs.h header
-file's directory and OPTARGS_SRC to access the optargs' main source file.
+If used as a meson subproject one can use the variables `OPTARGS_BIN` and
+`OPTARGS_LIB` to access optargs as a static and dynamic library,
+`OPTARGS_HDR` to locate the optargs' header files' directory and
+`OPTARGS_SRC` to access the optargs' main source file.
 
-One can also compile optargs into their own program by just including the
-optargs.c file in it. The compiler define NDEBUG can be used disable
-optarg's internal assertions (see "man 3 assert").
+It should be pretty straight forward to just include the `optargs.c` in
+one's own project as well if needed.
 
 
 Reporting Bugs, Sending Patches and Giving Feedback
