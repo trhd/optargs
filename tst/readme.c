@@ -145,7 +145,7 @@ main(int ac, char ** av)
 			.type = optargs_arg_group_member
 		},
 
-		optargs_arg_eol
+		[_COMMAND_COUNT] = optargs_arg_eol
 	};
 
 	if ((t = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
