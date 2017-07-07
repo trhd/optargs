@@ -20,11 +20,13 @@
 add_test_setup('valgrind',
 	exe_wrapper : [
 		'valgrind',
+			'--log-file=@0@/meson-logs/last-valgrind.log'.format(meson.build_root()),
+			'--trace-children=yes',
 			'--leak-check=full',
 			'--show-leak-kinds=all',
 			'--error-exitcode=1'
 	],
-	timeout_multiplier : 10
+	timeout_multiplier : 20
 )
 
 CONF_DATA = configuration_data()
