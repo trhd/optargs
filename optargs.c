@@ -17,13 +17,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "optargs_build_config.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "optargs.h"
-#include "optargs_build_config.h"
 
 enum constants
 {
@@ -478,6 +479,9 @@ assert_option_argument_required_fields(struct optargs_arg const * const arg)
  * All optinal arguments should be at the and of the expected arguments'
  * list
  */
+#ifdef NDEBUG
+# define assert_optional_arguments_at_the_end(...)
+#else
 static void
 assert_optional_arguments_at_the_end(struct optargs_arg const * args)
 {
@@ -495,6 +499,7 @@ assert_optional_arguments_at_the_end(struct optargs_arg const * args)
 			f = true;
 	}
 }
+#endif
 
 /**
  * Only optargs_arg_group_member type arguments should use subarguments.
