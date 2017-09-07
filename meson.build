@@ -45,22 +45,18 @@ configure_file(
 	configuration : config
 )
 
-OPTARGS_HDR = include_directories('.')
-OPTARGS_SRC = files('optargs.c')
-
-OPTARGS_LIB = shared_library(
+lib = library(
 	'optargs',
-	OPTARGS_SRC,
+	files('optargs.c'),
 	version : meson.project_version(),
 	install : true
 )
 
-if meson.is_subproject()
-	OPTARGS_BIN = static_library(
-		'optargs',
-		OPTARGS_SRC,
-	)
-endif
+dep = declare_dependency(
+	include_directories : include_directories('.'),
+	link_with : lib,
+	version : meson.project_version()
+)
 
 install_headers(
 	'optargs.h',
@@ -70,7 +66,7 @@ install_headers(
 subdir('tst')
 
 import('pkgconfig').generate(
-	libraries : OPTARGS_LIB,
+	libraries : lib,
 	subdirs : 'optargs',
 	version : meson.project_version(),
 	name : 'liboptargs',

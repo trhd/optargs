@@ -33,15 +33,13 @@ CONF_DATA = configuration_data()
 MATCHER = executable(
 	'matcher',
 	'matcher.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 
 README = executable(
 	'readme',
 	'readme.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 README_PATH = meson.current_build_dir() + '/readme'
 CONF_DATA.set('README_PATH', README_PATH)
@@ -49,85 +47,75 @@ CONF_DATA.set('README_PATH', README_PATH)
 TESTER_1 = executable(
 	'tester_1',
 	'tester_1.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('TESTER_1_PATH', TESTER_1.full_path())
 
 OPTION_TESTER = executable(
 	'option_tester',
 	'option_tester.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('OPTION_TESTER', OPTION_TESTER.full_path())
 
 ARGUMENT_TESTER = executable(
 	'argument_tester',
 	'argument_tester.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('ARGUMENT_TESTER', ARGUMENT_TESTER.full_path())
 
 TESTER_2 = executable('tester_2',
 	'tester_2.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('TESTER_2_PATH', TESTER_2.full_path())
 
 TESTER_4 = executable(
 	'tester_4',
 	'tester_4.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('TESTER_4_PATH', TESTER_4.full_path())
 
 TESTER_5 = executable(
 	'tester_5',
 	'tester_5.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 
 TESTER_6 = executable(
 	'tester_6-common_prefix',
 	'tester_6-common_prefix.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 
 TESTER_7 = executable(
 	'tester_7-first_arg',
 	'tester_7-first_arg.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 
 TESTER_8 = executable(
 	'tester_8-ignore_hidden_option_length',
 	'tester_8-ignore_hidden_option_length.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 CONF_DATA.set('TESTER_8_PATH', TESTER_8.full_path())
 
 TESTER_9 = executable(
 	'tester_9-count_options',
 	'tester_9-count_options.c',
-	link_with : OPTARGS_LIB,
-	include_directories : OPTARGS_HDR
+	dependencies : dep
 )
 
-MINIMAL = executable('minimal', 'minimal.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+MINIMAL = executable('minimal', 'minimal.c', dependencies : dep)
 CONF_DATA.set('MINIMAL_PATH', MINIMAL.full_path())
 
-ALL_HIDDEN = executable('all_hidden', 'all_hidden.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+ALL_HIDDEN = executable('all_hidden', 'all_hidden.c', dependencies : dep)
 CONF_DATA.set('ALL_HIDDEN_PATH', ALL_HIDDEN.full_path())
 
-SUBARGS = executable('subargs', 'subargs.c', link_with : OPTARGS_LIB, include_directories : OPTARGS_HDR)
+SUBARGS = executable('subargs', 'subargs.c', dependencies : dep)
 CONF_DATA.set('SUBARGS_PATH', SUBARGS.full_path())
 
 foreach f : [
@@ -920,13 +908,13 @@ CMOCKA = meson.get_compiler('c').find_library('cmocka', required : false)
 if CMOCKA.found()
 	test('Unit tests',
 		executable('unit_tests',
-			[ OPTARGS_SRC, 'unit_tests.c' ],
+			files(['unit_tests.c', '../optargs.c']),
+			include_directories : include_directories('..'),
 			dependencies : CMOCKA,
 			c_args : [
 				'-DUNIT_TESTING',
 				'-isystem', meson.current_source_dir() + '/system'
-			],
-			include_directories : OPTARGS_HDR)
+			])
 		)
 else
 	message('Failed to find CMocka; disabling unit tests.')
