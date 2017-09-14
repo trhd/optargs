@@ -265,10 +265,8 @@ To build and install optargs shared library (using ninja backend):
 	# To install the library to the system.
 	$ sudo ninja -C build install
 
-If used as a meson subproject one can use the variables `OPTARGS_BIN` and
-`OPTARGS_LIB` to access optargs as a static and dynamic library,
-`OPTARGS_HDR` to locate the optargs' header files' directory and
-`OPTARGS_SRC` to access the optargs' main source file.
+If used as a meson subproject one should use the declared optargs
+dependency object from the variable `dep`.
 
 It should be pretty straight forward to just include the `optargs.c` in
 one's own project as well if needed.
