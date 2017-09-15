@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "optargs_build_config.h"
-
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
@@ -776,7 +774,7 @@ print_arg_name(struct optargs_arg const * const arg, int * l)
 				rv += 4;
 				break;
 			}
-			FALLTHROUGH
+			// fall through
 		case optargs_arg_any:
 			assert(arg->name);
 			printf(" %.*s", word_length(arg->name), arg->name);
@@ -791,7 +789,7 @@ print_arg_name(struct optargs_arg const * const arg, int * l)
 				rv += 4;
 				break;
 			}
-			FALLTHROUGH
+			// fall through
 		case optargs_arg_any_opt:
 			++*l;
 			assert(arg->name);

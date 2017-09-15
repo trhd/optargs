@@ -28,26 +28,15 @@ project(
 	]
 )
 
-config = configuration_data()
-
-if meson.get_compiler('c').get_id() == 'gcc'
-	config.set('FALLTHROUGH', '__attribute__((fallthrough));')
-else
-	config.set('FALLTHROUGH', '')
-endif
-
+cflags = []
 if get_option('buildtype') == 'release'
-	config.set('NDEBUG', true)
+	cflags += [ '-DNDEBUG' ]
 endif
-
-configure_file(
-	output : 'optargs_build_config.h',
-	configuration : config
-)
 
 lib = library(
 	'optargs',
 	files('optargs.c'),
+	c_args : cflags,
 	version : meson.project_version(),
 	install : true
 )
