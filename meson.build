@@ -28,15 +28,21 @@ project(
 	]
 )
 
-cflags = []
-if get_option('buildtype') == 'release'
-	cflags += [ '-DNDEBUG' ]
-endif
+cc = meson.get_compiler('c')
+
+conf = configuration_data()
+conf.set10('NULLABILITY_SUPPORT', cc.has_argument('-Wnullability'))
+conf.set10('NDEBUG', get_option('buildtype') == 'release')
+
+configure_file(
+	input : 'optargs_config.h.in',
+	output : 'optargs_config.h',
+	configuration : conf
+)
 
 lib = library(
 	'optargs',
 	files('optargs.c'),
-	c_args : cflags,
 	version : meson.project_version(),
 	install : true
 )

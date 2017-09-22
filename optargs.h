@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "optargs_config.h"
+#include "optargs_compiler_attributes.h"
 #include <stdbool.h>
 
 /**
@@ -103,7 +105,7 @@ struct optargs_res
 	 */
 	union
 	{
-		char const * string;
+		char const * NULLABLE string;
 		unsigned long count;
 	} value;
 
@@ -130,13 +132,13 @@ struct optargs_arg
 	/**
 	 * The name of the argument (group).
 	 */
-	char const * const name;
+	char const * const NULLABLE name;
 
 	/**
 	 * Description of the argument. Not necessarily needed for a group
 	 * type argument (individual group members will require descriptions).
 	 */
-	char const * const description;
+	char const * const NULLABLE description;
 
 	/**
 	 * Type of the argument.
@@ -179,16 +181,16 @@ struct optargs_arg
 		/**
 		 * The input given by the user.
 		 */
-		char const * value;
+		char const * NULLABLE value;
 
 		/**
 		 * A pointer to the group member entry that was given by the user.
 		 * This will be used only for group types of arguments.
 		 */
-		struct optargs_arg * match;
+		struct optargs_arg * NULLABLE match;
 	} result;
 
-	struct optargs_arg * subargument;
+	struct optargs_arg * NULLABLE subargument;
 };
 
 /**
@@ -204,7 +206,7 @@ struct optargs_opt
 	/**
 	 * The long name of this option (e.g. "help" would become "--help").
 	 */
-	char const * const long_option;
+	char const * const NULLABLE long_option;
 
 	/**
 	 * The short name of this option (e.g. 'h' would become "-h").
@@ -218,7 +220,7 @@ struct optargs_opt
 	 * An option that has only the argument field defined will cause only
 	 * an empty line (divider) in the help text.
 	 */
-	char const * const description;
+	char const * const NULLABLE description;
 
 	/**
 	 * Will contain the result(s) of this option after parsing.
@@ -228,7 +230,7 @@ struct optargs_opt
 	/**
 	 * Defines a possible argument for this option.
 	 */
-	struct optargs_arg * argument;
+	struct optargs_arg * NULLABLE argument;
 };
 
 /**
@@ -245,8 +247,13 @@ struct optargs_opt
  *  was encountered. The return value equals to argc in case no non-option
  *  arguments were given.
  */
+WARN_UNUSED_RESULT
 int
-optargs_parse_opts(int argc, char const * const * argv, struct optargs_opt * options);
+optargs_parse_opts(
+		int argc,
+		char const * NONNULL const * NONNULL argv,
+		struct optargs_opt * NONNULL options
+		);
 
 /**
  * Parse the optargs arguments from the given set of char * arguments.
@@ -260,9 +267,13 @@ optargs_parse_opts(int argc, char const * const * argv, struct optargs_opt * opt
  *  The number of successfully parsed argument (not counting what went
  *  into the sink) or a negative integer in case of an error.
  */
+WARN_UNUSED_RESULT
 int
-optargs_parse_args(int argument_count, char const * const * arguments,
-		struct optargs_arg * supported_arguments);
+optargs_parse_args(
+		int argument_count,
+		char const * NONNULL const * NONNULL arguments,
+		struct optargs_arg * NONNULL supported_arguments
+		);
 
 /**
  * Print a help text based on the given arguments.
@@ -273,13 +284,17 @@ optargs_parse_args(int argument_count, char const * const * arguments,
  *
  * Arguments:
  *  cmd:       The name/path of the executed file.
- *  about:     Optional (can be null) general description of the executed program.
- *  options:   A null terminated array of supported options.
- *  arguments: A null terminated array of supported arguments.
+ *  about:     A general description of the executed program. Optional.
+ *  options:   A null terminated array of supported options. Optional.
+ *  arguments: A null terminated array of supported arguments. Optional.
  */
 void
-optargs_print_help(char const * cmd, char const * about,
-		struct optargs_opt const * options, struct optargs_arg const * arguments);
+optargs_print_help(
+		char const * NONNULL cmd,
+		char const * NULLABLE about,
+		struct optargs_opt const * NULLABLE options,
+		struct optargs_arg const * NULLABLE arguments
+		);
 
 /**
  * Find the result struct for the given long option.
@@ -296,8 +311,12 @@ optargs_print_help(char const * cmd, char const * about,
  *  A pointer to the result structure from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-struct optargs_res const *
-optargs_opt_res_by_long(struct optargs_opt const * options, char const * long_option);
+WARN_UNUSED_RESULT
+struct optargs_res const * NULLABLE
+optargs_opt_res_by_long(
+		struct optargs_opt const * NONNULL options,
+		char const * NONNULL long_option
+		);
 
 /**
  * Find the result struct for the given short option.
@@ -314,8 +333,11 @@ optargs_opt_res_by_long(struct optargs_opt const * options, char const * long_op
  *  A pointer to the result structure from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-struct optargs_res const *
-optargs_opt_res_by_short(struct optargs_opt const * options, char short_option);
+WARN_UNUSED_RESULT
+struct optargs_res const * NULLABLE
+optargs_opt_res_by_short(
+		struct optargs_opt const * NONNULL options,
+		char short_option);
 
 /**
  * Find the result struct for the option in the given index.
@@ -332,8 +354,12 @@ optargs_opt_res_by_short(struct optargs_opt const * options, char short_option);
  *  A pointer to the result structure from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-struct optargs_res const *
-optargs_opt_res_by_index(struct optargs_opt const * opts, int index);
+WARN_UNUSED_RESULT
+struct optargs_res const * NULLABLE
+optargs_opt_res_by_index(
+		struct optargs_opt const * NONNULL opts,
+		int index
+		);
 
 /**
  * Find the result string for the given long option.
@@ -351,8 +377,12 @@ optargs_opt_res_by_index(struct optargs_opt const * opts, int index);
  *  A pointer to the result string from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-char const *
-optargs_opt_value_by_long(struct optargs_opt const * opts, char const * long_option);
+WARN_UNUSED_RESULT
+char const * NULLABLE
+optargs_opt_value_by_long(
+		struct optargs_opt const * NONNULL opts,
+		char const * NONNULL long_option
+		);
 
 /**
  * Find the result string for the given short option.
@@ -370,8 +400,11 @@ optargs_opt_value_by_long(struct optargs_opt const * opts, char const * long_opt
  *  A pointer to the result string from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-char const *
-optargs_opt_value_by_short(struct optargs_opt const * opts, char short_option);
+WARN_UNUSED_RESULT
+char const * NULLABLE
+optargs_opt_value_by_short(
+		struct optargs_opt const * NONNULL opts,
+		char short_option);
 
 /**
  * Find the result string for the option in the given index.
@@ -389,8 +422,12 @@ optargs_opt_value_by_short(struct optargs_opt const * opts, char short_option);
  *  A pointer to the result string from the matching option structure
  *  or NULL if the specified option was not given by the user.
  */
-char const *
-optargs_opt_value_by_index(struct optargs_opt const * opts, int index);
+WARN_UNUSED_RESULT
+char const * NULLABLE
+optargs_opt_value_by_index(
+		struct optargs_opt const * NONNULL opts,
+		int index
+		);
 
 /**
  * Find the result count for the given long option.
@@ -407,8 +444,12 @@ optargs_opt_value_by_index(struct optargs_opt const * opts, int index);
  * Return value:
  *  A count of how many times the given option was given by the user.
  */
+WARN_UNUSED_RESULT
 unsigned int
-optargs_opt_count_by_long(struct optargs_opt const * opts, char const * long_option);
+optargs_opt_count_by_long(
+		struct optargs_opt const * NONNULL opts,
+		char const * NONNULL long_option
+		);
 
 /**
  * Find the result count for the given short option.
@@ -425,8 +466,12 @@ optargs_opt_count_by_long(struct optargs_opt const * opts, char const * long_opt
  * Return value:
  *  A count of how many times the given option was given by the user.
  */
+WARN_UNUSED_RESULT
 unsigned int
-optargs_opt_count_by_short(struct optargs_opt const * opts, char short_option);
+optargs_opt_count_by_short(
+		struct optargs_opt const * NONNULL opts,
+		char short_option
+		);
 
 /**
  * Find the result count for the option in the given index.
@@ -443,8 +488,12 @@ optargs_opt_count_by_short(struct optargs_opt const * opts, char short_option);
  * Return value:
  *  A count of how many times the given option was given by the user.
  */
+WARN_UNUSED_RESULT
 unsigned int
-optargs_opt_count_by_index(struct optargs_opt const * opts, int index);
+optargs_opt_count_by_index(
+		struct optargs_opt const * NONNULL opts,
+		int index
+		);
 
 /**
  * Check if the given result structure has been defined (it has a value).
@@ -460,8 +509,11 @@ optargs_opt_count_by_index(struct optargs_opt const * opts, int index);
  *  result and the type of the result otherwise).
  */
 
+WARN_UNUSED_RESULT
 enum optargs_res_type
-optargs_res_type(struct optargs_res const * result);
+optargs_res_type(
+		struct optargs_res const * NONNULL result
+		);
 
 /**
  * Get the value of an argument.
@@ -477,8 +529,11 @@ optargs_res_type(struct optargs_res const * result);
  *   The value of the argument or NULL if the argument was not defined by
  *   the user.
  */
-char const *
-optargs_arg_value(struct optargs_arg const * argument);
+WARN_UNUSED_RESULT
+char const * NULLABLE
+optargs_arg_value(
+		struct optargs_arg const * NONNULL argument
+		);
 
 /**
  * Get the offset for a group argument's value.
@@ -495,8 +550,11 @@ optargs_arg_value(struct optargs_arg const * argument);
  *   The calculated distance (offset) or -1 if the argument was not
  *   given by the user.
  */
+WARN_UNUSED_RESULT
 int
-optargs_arg_value_offset(struct optargs_arg const * argument);
+optargs_arg_value_offset(
+		struct optargs_arg const * NONNULL argument
+		);
 
 /**
  * Get the index for a group argument's value.
@@ -515,5 +573,9 @@ optargs_arg_value_offset(struct optargs_arg const * argument);
  *   The calculated distance (offset) or -1 if the argument was not
  *   given by the user.
  */
+WARN_UNUSED_RESULT
 int
-optargs_arg_value_index(struct optargs_arg const * arguments, int base_index);
+optargs_arg_value_index(
+		struct optargs_arg const * NONNULL arguments,
+		int base_index
+		);
