@@ -268,7 +268,7 @@ To build and install optargs shared library (using ninja backend):
 If used as a meson subproject one should use the declared optargs
 dependency object from the variable `dep`.
 
-It should be pretty straight forward to just include the `optargs.c` in
+It should be pretty straightforward to just include the `optargs.c` in
 one's own project as well if needed.
 
 
