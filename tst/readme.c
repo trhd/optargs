@@ -173,7 +173,7 @@ main(int ac, char ** av)
 	else if (optargs_res_type(res) == optargs_count)
 		verbosity = 100;
 	else
-		verbosity = atoi(res->value.string);
+		verbosity = atoi(optargs_res_string(res));
 
 	if (!optargs_opt_count_by_index(opts, OPTION_QUIET))
 	{

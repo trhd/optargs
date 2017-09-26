@@ -630,6 +630,42 @@ optargs_res_type(
 		);
 
 /**
+ * Get the count value of a optargs_res structure.
+ *
+ * The type of the value must be optargs_res_count.
+ *
+ * Arguments:
+ *  result: A pointer to the result structure.
+ *
+ * Return value:
+ *  The count value of the optargs_res structure i.e. the number of times
+ *  the corresponding option was given by the user.
+ */
+WARN_UNUSED_RESULT
+unsigned long
+optargs_res_count(
+		struct optargs_res const * NONNULL result
+		);
+
+/**
+ * Get the string value of a optargs_res structure.
+ *
+ * The type of the value must be optargs_res_string.
+ *
+ * Arguments:
+ *  result: A pointer to the result structure.
+ *
+ * Return value:
+ *  The string value of the optargs_res structure i.e. the (last) argument
+ *  that was given for the corresponding option.
+ */
+WARN_UNUSED_RESULT
+char const * NULLABLE
+optargs_res_string(
+		struct optargs_res const * NONNULL result
+		);
+
+/**
  * Get the value of an argument.
  *
  * The user provided value for an argument is returned or NULL if the

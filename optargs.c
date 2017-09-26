@@ -1505,3 +1505,20 @@ optargs_arg_value_offset(struct optargs_arg const * a)
 	return ((long)a->result.match - (long)a)/sizeof(struct optargs_arg);
 }
 
+unsigned long
+optargs_res_count(struct optargs_res const * NONNULL r)
+{
+	assert(r);
+	assert(optargs_res_type(r) == optargs_count);
+
+	return r->value.count;
+}
+
+char const *
+optargs_res_string(struct optargs_res const * NONNULL r)
+{
+	assert(r);
+	assert(optargs_res_type(r) == optargs_string);
+
+	return r->value.string;
+}
