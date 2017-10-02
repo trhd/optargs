@@ -343,7 +343,7 @@ WARN_UNUSED_RESULT
 int
 optargs_parse_opts(
 		int argc,
-		char const * NONNULL const * NONNULL argv,
+		char const * const NONNULL * NONNULL argv,
 		struct optargs_opt * NONNULL options
 		);
 
@@ -364,7 +364,7 @@ WARN_UNUSED_RESULT
 int
 optargs_parse_args(
 		int argument_count,
-		char const * NONNULL const * NONNULL arguments,
+		char const * const NONNULL * NONNULL arguments,
 		struct optargs_arg * NONNULL supported_arguments
 		);
 
