@@ -18,7 +18,11 @@
 
 #pragma once
 
-#ifndef UNIT_TESTING
+#ifdef UNIT_TESTING
+#  define WARN_UNUSED_RESULT
+#  define NONNULL
+#  define NULLABLE
+#else
 #  define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 #  if NULLABILITY_SUPPORT == 1
 #    pragma clang diagnostic ignored "-Wnullability-extension"
@@ -28,8 +32,4 @@
 #    define NONNULL
 #    define NULLABLE
 #  endif
-#else
-#  define WARN_UNUSED_RESULT
-#  define NONNULL
-#  define NULLABLE
 #endif
