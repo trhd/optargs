@@ -18,7 +18,6 @@
 
 #pragma once
 
-#mesondefine NDEBUG
 #mesondefine NULLABILITY_SUPPORT
 
 #ifdef UNIT_TESTING

@@ -19,12 +19,13 @@ project(
 	'c',
 	license : 'GPLv3',
 	version : '6.0.0',
-	meson_version : '>=0.31.0',
+	meson_version : '>=0.45.0',
 	default_options : [
 		'werror=true',
 		'warning_level=3',
 		'stdsplit=false',
-		'c_std=c11'
+		'c_std=c11',
+		'b_ndebug=if-release'
 	]
 )
 
@@ -32,7 +33,6 @@ cc = meson.get_compiler('c')
 
 conf = configuration_data()
 conf.set10('NULLABILITY_SUPPORT', cc.has_argument('-Wnullability'))
-conf.set10('NDEBUG', get_option('buildtype') == 'release')
 
 configure_file(
 	input : 'optargs_config.h.in',
