@@ -216,7 +216,7 @@ To use, write something like this:
 and get something like this:
 
 	$ readme -h
-	Usage: b/tst/readme [OPTIONS] COMMAND
+	Usage: readme [OPTIONS] COMMAND
 
 	OPTIONS:
 	  -h,--help              Help text
