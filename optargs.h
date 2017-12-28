@@ -19,7 +19,6 @@
 #pragma once
 
 #include "optargs_config.h"
-#include "optargs_compiler_attributes.h"
 #include <stdbool.h>
 
 /**

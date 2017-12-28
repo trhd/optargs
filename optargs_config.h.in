@@ -20,3 +20,19 @@
 
 #mesondefine NDEBUG
 #mesondefine NULLABILITY_SUPPORT
+
+#ifdef UNIT_TESTING
+#  define WARN_UNUSED_RESULT
+#  define NONNULL
+#  define NULLABLE
+#else
+#  define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#  if NULLABILITY_SUPPORT == 1
+#    pragma clang diagnostic ignored "-Wnullability-extension"
+#    define NONNULL _Nonnull
+#    define NULLABLE _Nullable
+#  else
+#    define NONNULL
+#    define NULLABLE
+#  endif
+#endif
