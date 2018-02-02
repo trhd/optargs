@@ -24,6 +24,32 @@ How To Use Optargs
 
 To use, write something like this:
 
+	#include "optargs.h"
+
+	int
+	main(int ac, char ** av)
+	{
+		struct optargs_opt opts[] =
+		{
+			{
+				.long_option = "help",
+				.description = "Print help."
+			},
+			optargs_opt_eol
+		};
+
+		if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
+			return -1;
+
+		if (optargs_opt_res(opts, 0))
+			optargs_print_help(av[0], 0, opts, 0);
+
+		return 0;
+	}
+
+If your needs are a bit more demanding something more like the example
+below might be more to your interest.
+
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include "optargs.h"
