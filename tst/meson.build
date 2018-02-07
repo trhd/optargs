@@ -908,7 +908,7 @@ CMOCKA = meson.get_compiler('c').find_library('cmocka', required : false)
 if CMOCKA.found()
 	test('Unit tests',
 		executable('unit_tests',
-			files(['unit_tests.c', '../optargs.c']),
+			src + files('unit_tests.c'),
 			include_directories : include_directories('..'),
 			dependencies : CMOCKA,
 			c_args : [

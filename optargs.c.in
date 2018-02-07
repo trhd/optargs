@@ -23,6 +23,8 @@
 #include <string.h>
 #include "optargs.h"
 
+#mesondefine WARN_OPTIONS_AS_ARGUMENTS
+
 static int parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args);
 
 enum constants
@@ -128,6 +130,30 @@ redefine_option_argument_error(struct optargs_option const * const opt)
 
 	return -EINVAL;
 }
+
+#if WARN_OPTIONS_AS_ARGUMENTS
+
+static bool
+looks_like_an_option(char const * arg)
+{
+	assert(arg);
+
+	return arg[0] == '-';
+}
+
+static void
+option_as_argument_warning(struct optargs_option const * opt, char const * arg)
+{
+	char buf[5] = "'-";
+
+	fprintf(stderr, "WARNING: The argument '%s' for option %s%s%s%s%s looks like it could\n         have been meant as an option.\n",
+			arg,
+			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
+			opt->long_option && opt->short_option ? " / " : "",
+			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+}
+
+#endif
 
 static int
 unmatching_optional_argument_error(char const * const opt, char const * const hdr)
@@ -315,6 +341,11 @@ mark_argument_option(struct optargs_option * opt, char const * const arg)
 	opt->value_type = optargs_argument;
 	if (parse_arguments(1, &arg, opt->argument) < 0)
 		return -1;
+
+#if WARN_OPTIONS_AS_ARGUMENTS
+	if (looks_like_an_option(arg))
+		option_as_argument_warning(opt, arg);
+#endif
 
 	return 1;
 }

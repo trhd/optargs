@@ -40,9 +40,17 @@ configure_file(
 	configuration : conf
 )
 
+configure_file(
+	input : 'optargs.c.in',
+	output : 'optargs.c',
+	configuration : conf
+)
+
+src = files(meson.build_root() +'/optargs.c')
+
 lib = library(
 	'optargs',
-	files('optargs.c'),
+	src,
 	version : meson.project_version(),
 	install : true
 )
