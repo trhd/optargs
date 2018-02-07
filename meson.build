@@ -18,7 +18,7 @@ project(
 	'optargs',
 	'c',
 	license : 'GPLv3',
-	version : '5.1.0',
+	version : '6.0.0',
 	meson_version : '>=0.31.0',
 	default_options : [
 		'werror=true',
