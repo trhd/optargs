@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,90 +38,90 @@ main(int ac, char ** av)
 		NELJAS_3,
 		_COUNT
 	};
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		{
 			.long_option = "help",
 			.description = "Help..."
 		},
-		optargs_opt_eol
+		optargs_option_eol
 	};
-	struct optargs_arg args[] =
+	struct optargs_argument args[] =
 	{
 		[EKA] = {
-			.type = optargs_arg_any,
+			.type = optargs_argument_any,
 			.name = "EKA",
 			.description = "Desc EKA."
 		},
 		[TOKA] = {
-			.type = optargs_arg_group,
+			.type = optargs_argument_group,
 			.name = "TOKA",
 			.description = "Desc TOKA."
 		},
 		[TOKA_1] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "TOKA.1",
 			.description = "Desc TOKA.1."
 		},
 		[TOKA_2] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "TOKA.2",
 			.description = "Desc TOKA.2."
 		},
-		optargs_arg_div,
+		optargs_argument_divider,
 		[TOKA_3] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "TOKA.3",
 			.description = "Desc TOKA.3."
 		},
 		[KOLMAS] = {
-			.type = optargs_arg_any_opt,
+			.type = optargs_argument_any_opt,
 			.name = "KOLMAS",
 			.description = "Desc KOLMAS."
 		},
 		[NELJAS] = {
-			.type = optargs_arg_group_opt,
+			.type = optargs_argument_group_opt,
 			.name = "NELJAS",
 			.description = "Desc NELJAS."
 		},
 		[NELJAS_1] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "NELJAS.1",
 			.description = "Desc NELJAS.1."
 		},
 		[NELJAS_2] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "NELJAS.2",
 			.description = "Desc NELJAS.2."
 		},
 		[NELJAS_3] = {
-			.type = optargs_arg_group_member,
+			.type = optargs_argument_group_member,
 			.name = "NELJAS.3",
 			.description = "Desc NELJAS.3."
 		},
-		optargs_arg_sink
+		optargs_argument_sink
 	};
 	int t;
 
-	if ((t = optargs_parse_opts(ac, (char const * const *)av, opts)) < 0)
+	if ((t = optargs_parse_options(ac, (char const * const *)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_opt_res_by_long(opts, "help"))
+	if (optargs_option_type(opts, 0))
 	{
 		optargs_print_help(av[0], "Yeah!", opts, args);
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_parse_args(ac - t, (char const * const *)av + t, args) < 0)
+	if (optargs_parse_arguments(ac - t, (char const * const *)av + t, args) < 0)
 		return EXIT_FAILURE;
 
 	for (int i = 0 ; i < _COUNT ; i++)
 		if (args[i].result.defined)
 		{
-			if (args[i].type == optargs_arg_group_member)
+			if (args[i].type == optargs_argument_group_member)
 				printf("%s,", args[i].name);
 			else
-				printf("%s=%s,", args[i].name, optargs_arg_value(&args[i]));
+				printf("%s=%s,", args[i].name, optargs_argument_value(&args[i]));
 		}
 	printf("\n");
 

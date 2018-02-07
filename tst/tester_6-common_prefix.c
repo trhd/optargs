@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,34 +23,41 @@
 int
 main(int ac, char **av)
 {
-	struct optargs_opt opts[] =
+	enum option
 	{
-		{
+		OPTION_HELP,
+		OPTION_HELP_FULL,
+		_OPTION_COUNT
+	};
+	struct optargs_option opts[] =
+	{
+		[OPTION_HELP] = {
 			"help",
 			'h',
 			"Print help.",
-			optargs_res_null,
-			NULL
-		}, {
+			optargs_undef,
+			{NULL}
+		},
+		[OPTION_HELP_FULL] = {
 			"help-full",
 			'h',
 			"Print full help.",
-			optargs_res_null,
-			NULL
+			optargs_undef,
+			{NULL}
 		},
-		optargs_opt_eol
+		[_OPTION_COUNT] = optargs_option_eol
 	};
 
-	if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
+	if (optargs_parse_options(ac, (char const **)av, opts) < 0)
 	{
 		fprintf(stderr, "Something went wron while parsing.\n");
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_res_by_long(opts, "help"))
+	if (optargs_option_count(opts, OPTION_HELP))
 		printf("got basic\n");
 
-	if (optargs_opt_res_by_long(opts, "help-full"))
+	if (optargs_option_count(opts, OPTION_HELP_FULL))
 		printf("got full\n");
 
 	return EXIT_SUCCESS;

@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,29 +61,35 @@ main(int ac, char ** av)
 	pid_t chld;
 	int pp[2], idx;
 
-	struct optargs_opt opts[] =
+	enum option
 	{
-		{
+		OPTION_FAIL,
+		OPTION_FILE,
+		OPTION_EXIT,
+		_OPTION_COUNT
+	};
+	struct optargs_option opts[] =
+	{
+		[OPTION_FAIL] = {
 			.description = "Pattern matching shall fail.",
 			.long_option = "fail-match",
 			.short_option = 'f',
 		},
-		{
+		[OPTION_FILE] = {
 			.description = "Pattern is a file name.",
 			.long_option = "file",
 			.short_option = 'F',
 		},
-		{
+		[OPTION_EXIT] = {
 			.description = "The argument shall match the executable's exit code.",
 			.long_option = "exit-code",
 			.short_option = 'e',
-			.argument = (struct optargs_arg []){ { .name = "CODE", .type = optargs_arg_any}, optargs_arg_eol }
+			.argument = (struct optargs_argument []){ { .name = "CODE", .type = optargs_argument_any}, optargs_argument_eol }
 		},
-
-		optargs_opt_eol
+		[_OPTION_COUNT] = optargs_option_eol
 	};
 
-	if ((idx = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
+	if ((idx = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 	{
 		printf("\n");
 		optargs_print_help(av[0], "", opts, NULL);
@@ -129,7 +135,7 @@ main(int ac, char ** av)
 		if (close(pp[1]))
 			error("Failed to close pipe's writing end.");
 
-		if (!optargs_opt_count_by_short(opts, 'F'))
+		if (!optargs_option_count(opts, OPTION_FILE))
 		{
 			if (!fgets(buf1, buf_size, fp))
 				error("Failed to read program's output.");
@@ -141,7 +147,7 @@ main(int ac, char ** av)
 
 			compare_outputs(buf1, av[idx],
 					min(strlen(av[idx + 1]) + 1, strlen(buf1) + 1),
-					optargs_opt_count_by_short(opts, 'f'));
+					optargs_option_count(opts, OPTION_FAIL));
 
 		}
 		else
@@ -152,7 +158,7 @@ main(int ac, char ** av)
 				error("fdopen() failed");
 
 			while (fgets(buf1, buf_size, fp) && fgets(buf2, buf_size, ff))
-				compare_outputs(buf1, buf2, buf_size, optargs_opt_count_by_short(opts, 'f'));
+				compare_outputs(buf1, buf2, buf_size, optargs_option_count(opts, OPTION_FAIL));
 		}
 
 
@@ -165,11 +171,11 @@ main(int ac, char ** av)
 		if (!WIFEXITED(i))
 			error("Expected child to return a status.");
 
-		if (WEXITSTATUS(i) != (optargs_opt_value_by_short(opts, 'e') ? atoi(optargs_opt_value_by_short(opts, 'e')) : 0))
+		if (WEXITSTATUS(i) != (optargs_option_string(opts, OPTION_EXIT) ? atoi(optargs_option_string(opts, OPTION_EXIT)) : 0))
 		{
 			printf("Child returned: %d, expected %s.\n",
 					WEXITSTATUS(i),
-					optargs_opt_value_by_short(opts, 'e') ? optargs_opt_value_by_short(opts, 'e') : "0");
+					optargs_option_string(opts, OPTION_EXIT) ? optargs_option_string(opts, OPTION_EXIT) : "0");
 			error("Child returned incorrect exit code.");
 		}
 	}

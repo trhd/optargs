@@ -35,13 +35,13 @@ To use, write something like this:
 				.long_option = "help",
 				.description = "Print help."
 			},
-			optargs_opt_eol
+			optargs_option_eol
 		};
 
-		if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
+		if (optargs_parse_options(ac, (char const **)av, opts) < 0)
 			return -1;
 
-		if (optargs_opt_res(opts, 0))
+		if (optargs_option_result(opts, 0))
 			optargs_print_help(av[0], 0, opts, 0);
 
 		return 0;
@@ -98,7 +98,7 @@ below might be more to your interest.
 						.name = "file",
 						.type = optargs_arg_any
 					},
-					optargs_arg_eol
+					optargs_argument_eol
 				}
 			},
 
@@ -114,7 +114,7 @@ below might be more to your interest.
 						.description = "The level of the desired verbosity.",
 						.type = optargs_arg_any_opt
 					},
-					optargs_arg_eol
+					optargs_argument_eol
 				}
 			},
 
@@ -129,7 +129,7 @@ below might be more to your interest.
 				.long_option = "secret-option",
 			},
 
-			[_OPTION_COUNT] = optargs_opt_eol
+			[_OPTION_COUNT] = optargs_option_eol
 		};
 		enum
 		{
@@ -168,7 +168,7 @@ below might be more to your interest.
 						.name = "then",
 						.description = "Start doing stuff later."
 					},
-					optargs_arg_eol
+					optargs_argument_eol
 				}
 			},
 
@@ -178,51 +178,51 @@ below might be more to your interest.
 				.type = optargs_arg_group_member
 			},
 
-			[_COMMAND_COUNT] = optargs_arg_eol
+			[_COMMAND_COUNT] = optargs_argument_eol
 		};
 
-		if ((t = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
+		if ((t = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 		{
 			printf("Something went wrong when parsing options.\n");
 			return EXIT_FAILURE;
 		}
 
-		if (optargs_opt_count_by_long(opts, "help"))
+		if (optargs_option_count(opts, OPTION_HELP))
 		{
 			optargs_print_help(av[0], ABOUT, opts, args);
 			return EXIT_SUCCESS;
 		}
 
-		if (optargs_parse_args(ac - t, (char const **)av + t, args) < 0)
+		if (optargs_parse_arguments(ac - t, (char const **)av + t, args) < 0)
 		{
 			printf("Something went wrong when parsing arguments.\n");
 			return EXIT_FAILURE;
 		}
 
-		debug = optargs_opt_count_by_short(opts, 'd');
+		debug = optargs_option_count(opts, OPTION_DEBUG);
 
-		res = optargs_opt_res_by_index(opts, OPTION_VERBOSE);
+		res = optargs_option_result(opts, OPTION_VERBOSE);
 		if (!res)
 			verbosity = 0;
-		else if (optargs_res_type(res) == optargs_count)
+		else if (optargs_result_type(res) == optargs_count)
 			verbosity = 100;
 		else
-			verbosity = atoi(optargs_res_string(res));
+			verbosity = atoi(optargs_result_string(res));
 
-		if (!optargs_opt_count_by_index(opts, OPTION_QUIET))
+		if (!optargs_option_count(opts, OPTION_QUIET))
 		{
 			printf("Doing stuff with %d%% verbosity.\n", verbosity);
 			printf("Debug level defined to %d.\n", debug);
 
-			str = optargs_opt_value_by_index(opts, OPTION_SOCKET);
+			str = optargs_option_value(opts, OPTION_SOCKET);
 			if (str)
 				printf("Socket file: %s.\n", str);
 		}
 
-		switch (optargs_arg_value_index(args, COMMAND))
+		switch (optargs_argument_value_index(args, COMMAND))
 		{
 			case COMMAND_START:
-				when = optargs_arg_value(&args[COMMAND_START].subargument[0]);
+				when = optargs_argument_value(&args[COMMAND_START].subargument[0]);
 				if (when)
 					printf("Start doing stuff '%s'.\n", when);
 				else
@@ -232,7 +232,7 @@ below might be more to your interest.
 				printf("Stopping stuff.\n");
 				break;
 			default:
-				printf("Nope, optargs_parse_args() would have returned an error.\n");
+				printf("Nope, optargs_parse_arguments() would have returned an error.\n");
 				break;
 		}
 

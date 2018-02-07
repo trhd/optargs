@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,86 +25,86 @@ static char const about[] = "skibidiwaynow!";
 int
 main(int ac __attribute__((unused)), char **av)
 {
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		{
 			.description = "An option with a named argument.",
 			.long_option = "option1",
 			.short_option = 'o',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 
 				{
 					.name = "FOOBAR :=",
 					.description = "This is the argument.",
-					.type = optargs_arg_any
+					.type = optargs_argument_any
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		}, {
 			.description = "Another option with a named argument.",
 			.long_option = "option2",
 			.short_option = 'O',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "BARFOO",
 					.description = "This is another argument.",
-					.type = optargs_arg_any_opt
+					.type = optargs_argument_any_opt
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		}, {
 			.description = "A third option with a named argument.",
 			.long_option = "option3",
 			.short_option = '0',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 
 				{
 					.name = "KEKEKE =>",
 					.description = "This a third argument.",
-					.type = optargs_arg_any_opt
+					.type = optargs_argument_any_opt
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		}, {
 			.description = "A fourth option with a long name argument.",
 			.long_option = "option3",
 			.short_option = '0',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "This-is-an-option-argument-with-a-really-long-name",
 					.description = "This is the fourth argument.",
-					.type = optargs_arg_any_opt
+					.type = optargs_argument_any_opt
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		}, {
 			.description = "Fifth option.",
 			.long_option = "option5",
 			.short_option = '5',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "YOMAMMA",
 					.description = "This is the fifth option argument with a really long description that will wrap to multiple lines.",
-					.type = optargs_arg_any_opt
+					.type = optargs_argument_any_opt
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
-		optargs_opt_eol
+		optargs_option_eol
 	};
-	struct optargs_arg const args[] =
+	struct optargs_argument const args[] =
 	{
 		{
 			.name = "MY_ARGUMENT",
 			.description = "Just some argument.",
-			.type = optargs_arg_any
+			.type = optargs_argument_any
 		},
-		optargs_arg_eol
+		optargs_argument_eol
 	};
 
 	optargs_print_help(av[0], about, opts, args);

@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,20 +25,20 @@ static char const about[] = "foobar";
 int
 main(int ac __attribute__((unused)), char **av)
 {
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		{ .description = "AAA", .short_option = 'a', .long_option = "aaa" },
 		{ .short_option = 'x', .long_option = "secret" },
 		{ .description = "BBB", .short_option = 'b', .long_option = "bbb" },
-		optargs_opt_div,
+		optargs_option_divider,
 		{ .description = "CCC", .short_option = 'c', .long_option = "ccc" },
-		optargs_opt_eol
+		optargs_option_eol
 	};
-	struct optargs_arg args[] =
+	struct optargs_argument args[] =
 	{
-		{ .name = "Name_0", .type = optargs_arg_any, .description = "Jottain 0." },
-		{ .name = "Name_1", .type = optargs_arg_any, .description = "Jottain 1." },
-		optargs_arg_eol
+		{ .name = "Name_0", .type = optargs_argument_any, .description = "Jottain 0." },
+		{ .name = "Name_1", .type = optargs_argument_any, .description = "Jottain 1." },
+		optargs_argument_eol
 	};
 
 	optargs_print_help(av[0], about, opts, args);

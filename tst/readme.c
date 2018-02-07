@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ main(int ac, char ** av)
 {
 	int verbosity, debug, t;
 	char const * str, * when;
-	struct optargs_res const * res;
 	enum
 	{
 		OPTION_HELP,
@@ -39,7 +38,7 @@ main(int ac, char ** av)
 		OPTION_SECRET,
 		_OPTION_COUNT
 	};
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		[OPTION_HELP] =
 		{
@@ -58,13 +57,13 @@ main(int ac, char ** av)
 		{
 			.description = "Path to an imaginary socket file.",
 			.long_option = "socket",
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "file",
-					.type = optargs_arg_any
+					.type = optargs_argument_any
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
 
@@ -73,14 +72,14 @@ main(int ac, char ** av)
 			.description = "Be verbose.",
 			.long_option = "verbose",
 			.short_option = 'v',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "level",
 					.description = "The level of the desired verbosity.",
-					.type = optargs_arg_any_opt
+					.type = optargs_argument_any_opt
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
 
@@ -95,7 +94,7 @@ main(int ac, char ** av)
 			.long_option = "secret-option",
 		},
 
-		[_OPTION_COUNT] = optargs_opt_eol
+		[_OPTION_COUNT] = optargs_option_eol
 	};
 	enum
 	{
@@ -104,91 +103,95 @@ main(int ac, char ** av)
 		COMMAND_STOP,
 		_COMMAND_COUNT
 	};
-	struct optargs_arg args[] =
+	struct optargs_argument args[] =
 	{
 		[COMMAND] =
 		{
 			.name = "COMMAND",
-			.type = optargs_arg_group
+			.type = optargs_argument_group
 		},
 
 		[COMMAND_START] =
 		{
 			.name = "start",
 			.description = "Start doing stuff.",
-			.type = optargs_arg_group_member,
-			.subargument = (struct optargs_arg [])
+			.type = optargs_argument_group_member,
+			.subargument = (struct optargs_argument [])
 			{
 				{
-					.type = optargs_arg_group_opt,
+					.type = optargs_argument_group_opt,
 					.name = "WHEN",
 					.description = "When to start doing stuff."
 				},
 				{
-					.type = optargs_arg_group_member,
+					.type = optargs_argument_group_member,
 					.name = "now",
 					.description = "Start doing stuff now."
 				},
 				{
-					.type = optargs_arg_group_member,
+					.type = optargs_argument_group_member,
 					.name = "then",
 					.description = "Start doing stuff later."
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
 
 		[COMMAND_STOP] = {
 			.name = "stop",
 			.description = "Stop doing stuff.",
-			.type = optargs_arg_group_member
+			.type = optargs_argument_group_member
 		},
 
-		[_COMMAND_COUNT] = optargs_arg_eol
+		[_COMMAND_COUNT] = optargs_argument_eol
 	};
 
-	if ((t = optargs_parse_opts(ac, (char const **)av, opts)) < 0)
+	if ((t = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 	{
 		printf("Something went wrong when parsing options.\n");
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_count_by_long(opts, "help"))
+	if (optargs_option_count(opts, OPTION_HELP))
 	{
 		optargs_print_help(av[0], ABOUT, opts, args);
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_parse_args(ac - t, (char const **)av + t, args) < 0)
+	if (optargs_parse_arguments(ac - t, (char const **)av + t, args) < 0)
 	{
 		printf("Something went wrong when parsing arguments.\n");
 		return EXIT_FAILURE;
 	}
 
-	debug = optargs_opt_count_by_short(opts, 'd');
+	debug = optargs_option_count(opts, OPTION_DEBUG);
 
-	res = optargs_opt_res_by_index(opts, OPTION_VERBOSE);
-	if (!res)
-		verbosity = 0;
-	else if (optargs_res_type(res) == optargs_count)
-		verbosity = 100;
-	else
-		verbosity = atoi(optargs_res_string(res));
+	switch (optargs_option_type(opts, OPTION_VERBOSE))
+	{
+		case optargs_argument:
+			verbosity = atoi(optargs_option_string(opts, OPTION_VERBOSE));
+			break;
+		case optargs_flag:
+			verbosity = 100;
+			break;
+		default:
+			verbosity = 0;
+	}
 
-	if (!optargs_opt_count_by_index(opts, OPTION_QUIET))
+	if (!optargs_option_count(opts, OPTION_QUIET))
 	{
 		printf("Doing stuff with %d%% verbosity.\n", verbosity);
 		printf("Debug level defined to %d.\n", debug);
 
-		str = optargs_opt_value_by_index(opts, OPTION_SOCKET);
+		str = optargs_option_string(opts, OPTION_SOCKET);
 		if (str)
 			printf("Socket file: %s.\n", str);
 	}
 
-	switch (optargs_arg_value_index(args, COMMAND))
+	switch (optargs_argument_index(args, COMMAND))
 	{
 		case COMMAND_START:
-			when = optargs_arg_value(&args[COMMAND_START].subargument[0]);
+			when = optargs_argument_value(&args[COMMAND_START].subargument[0]);
 			if (when)
 				printf("Start doing stuff '%s'.\n", when);
 			else
@@ -198,7 +201,7 @@ main(int ac, char ** av)
 			printf("Stopping stuff.\n");
 			break;
 		default:
-			printf("Nope, optargs_parse_args() would have returned an error.\n");
+			printf("Nope, optargs_parse_arguments() would have returned an error.\n");
 			break;
 	}
 

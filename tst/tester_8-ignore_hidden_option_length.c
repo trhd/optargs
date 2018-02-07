@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 int
 main(int ac __attribute__((unused)), char **av)
 {
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		{ .long_option = "opt", .description = "Blaablaa.", .short_option = 'b'},
 		{ .long_option = "hidden-option-with-long-name", .short_option = 'h' },
-		optargs_opt_eol
+		optargs_option_eol
 	};
 
 	optargs_print_help(av[0], NULL, opts, NULL);

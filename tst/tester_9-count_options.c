@@ -1,6 +1,6 @@
 /**
  * optargs -- A command line option and argument management library.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@
 int
 main(int ac, char **av)
 {
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		{ .long_option = "verbose", .short_option = 'v' },
 		{ .long_option = "wanha", .short_option = 'w' },
-		optargs_opt_eol
+		optargs_option_eol
 	};
 	unsigned t;
 
-	if (optargs_parse_opts(ac, (char const **)av, opts) < 0)
+	if (optargs_parse_options(ac, (char const **)av, opts) < 0)
 	{
 		printf("WTF m8!?!?\n");
 		return EXIT_FAILURE;
@@ -40,11 +40,11 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	t = optargs_opt_count_by_long(opts, "verbose");
+	t = optargs_option_count(opts, 0);
 	if (t)
 		printf("v=%u ", t);
 
-	t = optargs_opt_count_by_long(opts, "wanha");
+	t = optargs_option_count(opts, 1);
 	if (t)
 		printf("w=%u ", t);
 
