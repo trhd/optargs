@@ -19,7 +19,6 @@
 #pragma once
 
 #include "optargs_config.h"
-#include <stdbool.h>
 
 /**
  * A convenience macro for generating an argument sink entry.
