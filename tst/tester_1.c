@@ -160,47 +160,47 @@ main(int ac, char **av)
 			.description = "Description I.",
 			.long_option = "iiii",
 			.short_option = 'i',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_I2] = {
 			.description = "Description I2.",
 			.long_option = "iiii2",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_I3] = {
 			.description = "Description I3.",
 			.long_option = NULL,
 			.short_option = 'I',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_J] = {
 			.description = "Description J.",
 			.long_option = "jjjj",
 			.short_option = 'j',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_K] = {
 			.description = "Description K.",
 			.long_option = NULL,
 			.short_option = 'k',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_L] = {
 			.description = "Description L.",
 			.long_option = "llll",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_M] = {
 			.description = "Description M.",
 			.long_option = "mmmmmmmmmmmmmmmmmmmm",
 			.short_option = 'm',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_LONG_1] = {
 			.description = "This is a super long option description that will have to be printed on several lines as it is too long to fit on only one line and we thus need to test that in this kinds of situations the descriptions are printed nicely to several lines with proper indentation.",
 			.long_option = "nnnnnnnn",
 			.short_option = 'n',
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 #endif
 		[OPTION_HELP] = {
@@ -236,60 +236,60 @@ main(int ac, char **av)
 		[OPTION_CRAZY_4] = {
 			.description = "A crazy long option #0.1.",
 			.long_option = "option-lt-LEFT_COLUMN_MAX_WIDTH",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_5] = {
 			.description = "A crazy long option #0.2.",
 			.long_option = "option-lt-LEFT_COLUMN_MAX_WIDTHx",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_6] = {
 			.description = "A crazy long option #1.",
 			.long_option = "option-eq-LEFT_COLUMN_MAX_WIDTH-args",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_7] = {
 			.description = "A crazy long option #2.",
 			.long_option = "option-args-just-less-than-in-above",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_8] = {
 			.description = "A crazy long option #3.",
 			.long_option = "option-args-greater-than-LEFT_COLUMN_MAX_WIDTH",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any}, optargs_argument_eol},
 		},
 		[OPTION_DIV_4] = optargs_option_divider,
 		[OPTION_CRAZY_9] = {
 			.description = "A crazy long option #0.1.",
 			.long_option = "opti-lt-LEFT_COLUMN_MAX_WIDTH",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_10] = {
 			.description = "A crazy long option #0.2.",
 			.long_option = "opti-lt-LEFT_COLUMN_MAX_WIDTHx",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_11] = {
 			.description = "A crazy long option #1.",
 			.long_option = "option-eq-LEFT_COLUMN_MAX_WIDTH-opti",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_12] = {
 			.description = "A crazy long option #2.",
 			.long_option = "option-opti-just-less-than-in-above",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 		[OPTION_CRAZY_13] = {
 			.description = "A crazy long option #3.",
 			.long_option = "option-opti-greater-than-LEFT_COLUMN_MAX_WIDTH",
-			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
+			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 #endif
 		[_OPTION_COUNT] = optargs_option_eol
 	};
 	struct optargs_argument args[] =
 	{
-#ifndef NO_ARGS
+#ifndef NO_argS
 		{
 			.name = "Name_1",
 			.description = "Description 1."
@@ -306,7 +306,7 @@ main(int ac, char **av)
 			.name = "Name_4",
 			.description = "fooboo",
 		}, {
-			.name = "COMMANDS",
+			.name = "commands",
 			.type = optargs_argument_group,
 		}, {
 			.name = "command_1",

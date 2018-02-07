@@ -1,4 +1,4 @@
-Usage: @TESTER_1_PATH@ [OPTIONS] Name_1 Name_3 Name_2 Name_4 COMMANDS argument argument argument [curse_words [argument [argument]]]
+Usage: @TESTER_1_PATH@ [OPTIONS] Name_1 Name_3 Name_2 Name_4 COMMANDS argument argument argument [CURSE_WORDS [ARGUMENT [ARGUMENT]]]
 
 OPTIONS:
   -a,--aaaa                             Description A.
@@ -81,16 +81,16 @@ COMMANDS:
   argument name greater than LEFT_COLUMN_MAX_WIDTH
                                         Some non-relevant description #4.
 
-curse_words:
+CURSE_WORDS:
   vittu                                 fuck / vag
   perkele                               god damn it / devil
 
-argument group name with maximum widt: tittidisd fksdlf klsdal kdsalkf sdlk
+ARGUMENT GROUP NAME WITH MAXIMUM WIDT: tittidisd fksdlf klsdal kdsalkf sdlk
                                        flksdflksadkl fsdlk dslka dsakl
                                        dlksfakli
   argument usb-argument                 Some non-relevant description.
 
-argument group name with maximum width:
+ARGUMENT GROUP NAME WITH MAXIMUM WIDTH:
                                        tittidisd fksdlf klsdal kdsalkf sdlk
                                        flksdflksadkl fsdlk dslka dsakl
                                        dlksfakli

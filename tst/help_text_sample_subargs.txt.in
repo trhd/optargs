@@ -1,4 +1,4 @@
-Usage: @SUBARGS_PATH@ [OPTIONS] G1 { g2m1 G2M1G1 | g2m2 [G2M2G1] | g2m3 } G3 [ g4m1 G4M1G1 | g4m2 { g4m2g1m1 | g4m2g1m2 [wtf] | g4m2g1m3 } [wtf] ]
+Usage: @SUBARGS_PATH@ [OPTIONS] G1 { g2m1 G2M1G1 | g2m2 [G2M2G1] | g2m3 } G3 [{ g4m1 G4M1G1 | g4m2 { g4m2g1m1 | g4m2g1m2 [wtf] | g4m2g1m3 } [wtf] }]
 
 OPTIONS:
   -h,--help           Print help.

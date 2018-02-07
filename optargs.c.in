@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +52,17 @@ word_length(char const * s)
 	assert(s);
 
 	return strcspn(s, " =\t\v\n\r\0");
+}
+
+static void
+strcpyup(char * dst, char const * src, unsigned int len)
+{
+	assert(dst);
+	assert(src);
+	assert(len);
+
+	for (unsigned int i = 0 ; i < len ; i++)
+		dst[i] = toupper(src[i]);
 }
 
 static bool
@@ -161,8 +173,14 @@ unmatching_optional_argument_error(char const * const opt, char const * const hd
 	assert(opt);
 	assert(hdr);
 
+	int len = strlen(hdr);
+	char buf[len];
+
+	strcpyup(buf, hdr, len);
+	buf[len] = '\0';
+
 	fprintf(stderr, "'%s' is not a valid value for optional argument '%s'.\n",
-			opt, hdr);
+			opt, buf);
 	return -EINVAL;
 }
 
@@ -172,8 +190,14 @@ unmatching_mandatory_argument_error(char const * const opt, char const * const h
 	assert(opt);
 	assert(hdr);
 
+	int len = strlen(hdr);
+	char buf[len];
+
+	strcpyup(buf, hdr, len);
+	buf[len] = '\0';
+
 	fprintf(stderr, "'%s' is not a valid value for mandatory argument '%s'.\n",
-			opt, hdr);
+			opt, buf);
 	return -EINVAL;
 }
 
@@ -230,7 +254,7 @@ short_option_is_invalid(char const c)
 }
 
 static bool
-option_is_dividerider(struct optargs_option const * const opt)
+option_is_divider(struct optargs_option const * const opt)
 {
 	assert(opt);
 
@@ -242,7 +266,7 @@ option_is_hidden(struct optargs_option const * const opt)
 {
 	assert(opt);
 
-	return !option_is_dividerider(opt) && !opt->description;
+	return !option_is_divider(opt) && !opt->description;
 }
 
 static bool
@@ -250,11 +274,11 @@ argument_is_header(struct optargs_argument const * const arg)
 {
 	assert(arg);
 
-	return arg->type == optargs_argument_group || arg->type == optargs_argument_group_opt;
+	return (arg->type == optargs_argument_group || arg->type == optargs_argument_group_opt);
 }
 
 static bool
-argument_is_dividerider(struct optargs_argument const * const arg)
+argument_is_divider(struct optargs_argument const * const arg)
 {
 	assert(arg);
 
@@ -550,7 +574,11 @@ assert_argument_sanity(struct optargs_argument const * args)
 	assert(args);
 
 	assert_optional_arguments_at_the_end(args);
-	assert_subargument_sanity(args);
+
+	if (args->type == optargs_argument_group || args->type == optargs_argument_group_opt)
+		assert(!args->subargument);
+	else
+		assert_subargument_sanity(args);
 
 	for ( ; !argument_is_eol(args) ; args++)
 		assert_argument_required_fields(args);
@@ -662,7 +690,13 @@ invalid_argument_for_group(char const * a, char const * g)
 	assert(a);
 	assert(g);
 
-	fprintf(stderr, "Invalid argument '%s' for '%s'.\n", a, g);
+	int len = strlen(g);
+	char buf[len];
+
+	strcpyup(buf, g, len);
+	buf[len] = '\0';
+
+	fprintf(stderr, "Invalid argument '%s' for '%s'.\n", a, buf);
 
 	return -EINVAL;
 }
@@ -672,7 +706,13 @@ missing_argument_error(char const * a)
 {
 	assert(a);
 
-	fprintf(stderr, "Missing an argument for '%s'.\n", a);
+	int len = strlen(a);
+	char buf[len];
+
+	strcpyup(buf, a, len);
+	buf[len] = '\0';
+
+	fprintf(stderr, "Missing an argument for '%s'.\n", buf);
 
 	return -EINVAL;
 }
@@ -810,6 +850,52 @@ print_group_names(struct optargs_argument const * args)
 }
 
 static int
+print_arg_group(struct optargs_argument const * const arg, char const * const prefix)
+{
+	assert(arg);
+	assert(prefix);
+
+	int rv = 0;
+
+	printf("%s{", prefix);
+	rv = print_group_names(arg + 1) + 3 + strlen(prefix);
+	printf(" }");
+
+	return rv;
+}
+
+static int
+print_arg_group_name(struct optargs_argument const * const arg, char const * const prefix)
+{
+	assert(arg);
+	assert(prefix);
+
+	int l = word_length(arg->name);
+	char buf[l + 1];
+
+	strcpyup(buf, arg->name, l);
+	buf[l] = '\0';
+
+	printf("%s%s", prefix, buf);
+
+	return l + strlen(prefix);
+}
+
+static int
+print_arg_any_name(struct optargs_argument const * const arg, char const * const prefix)
+{
+	assert(arg);
+	assert(arg->name);
+	assert(prefix);
+
+	int l = word_length(arg->name);
+
+	printf("%s%.*s", prefix, l, arg->name);
+
+	return l + strlen(prefix);
+}
+
+static int
 print_arg_name(struct optargs_argument const * const arg, int * l)
 {
 	assert(arg);
@@ -820,34 +906,25 @@ print_arg_name(struct optargs_argument const * const arg, int * l)
 	{
 		case optargs_argument_group:
 			if (!arg->name)
-			{
-				printf(" {");
-				rv += print_group_names(arg + 1);
-				printf(" }");
-				rv += 4;
-				break;
-			}
-			// fall through
+				rv += print_arg_group(arg, " ");
+			else
+				rv += print_arg_group_name(arg, " ");
+			break;
 		case optargs_argument_any:
-			assert(arg->name);
-			printf(" %.*s", word_length(arg->name), arg->name);
-			rv = strlen(arg->name) + 1;
+			rv += print_arg_any_name(arg, " ");
 			break;
 		case optargs_argument_group_opt:
+			++*l;
 			if (!arg->name)
-			{
-				printf(" [");
-				rv += print_group_names(arg + 1);
-				printf(" ]");
-				rv += 4;
-				break;
-			}
-			// fall through
+				rv += print_arg_group(arg, " [");
+			else
+				rv += print_arg_group_name(arg, " [");
+			rv += 1;
+			break;
 		case optargs_argument_any_opt:
 			++*l;
-			assert(arg->name);
-			printf(" [%.*s", word_length(arg->name), arg->name);
-			rv = strlen(arg->name) + 3;
+			rv += print_arg_any_name(arg, " [");
+			rv += 1;
 			break;
 		case optargs_argument_group_member:
 		case _optargs_argument_divider:
@@ -979,7 +1056,7 @@ find_longest_opt(struct optargs_option const * opts)
 		if (option_is_hidden(opts))
 			continue;
 
-		if (option_is_dividerider(opts))
+		if (option_is_divider(opts))
 			continue;
 
 		t = get_opt_length(opts);
@@ -1074,7 +1151,10 @@ print_mandatory_option_argument(struct optargs_option const * const opt)
 	assert(opt->argument->name);
 
 	int z = word_length(opt->argument->name);
-	printf(" %.*s", (int)z, opt->argument->name);
+	char buf[z + 1];
+	strcpyup(buf, opt->argument->name, z);
+	buf[z] = '\0';
+	printf(" %.*s", (int)z, buf);
 	return z + 1;
 }
 
@@ -1086,7 +1166,10 @@ print_optional_option_argument(struct optargs_option const * const opt)
 	assert(opt->argument->name);
 
 	int z = word_length(opt->argument->name);
-	printf("[=%.*s]", z, opt->argument->name);
+	char buf[z + 1];
+	strcpyup(buf, opt->argument->name, z);
+	buf[z] = '\0';
+	printf("[=%.*s]", z, buf);
 	return z + 3;
 }
 
@@ -1133,8 +1216,12 @@ print_option_argument_desc(struct optargs_argument const * const arg, int left_c
 
 	int name_length = strlen(arg->name),
 	    right_indent = 1;
+	char buf[name_length + 1];
 
-	printf("    %s", arg->name);
+	strcpyup(buf, arg->name, name_length);
+	buf[name_length] = '\0';
+
+	printf("    %s", buf);
 
 	if (4 + name_length >= left_column)
 		printf("\n%*s", left_column + right_indent, "");
@@ -1153,8 +1240,11 @@ print_option_argument_header_item_desc(struct optargs_argument const * const arg
 
 	int name_length = strlen(arg->name),
 	    right_indent = 2;
+	char buf[name_length + 1];
 
-	printf("      %s", arg->name);
+	strcpyup(buf, arg->name, name_length);
+
+	printf("      %s", buf);
 
 	if (5 + name_length >= left_column)
 		printf("\n%*s", left_column + right_indent, "");
@@ -1196,7 +1286,7 @@ print_regular_option(struct optargs_option const * const opt,
 static void
 print_option(struct optargs_option const * const opt, int const left_column)
 {
-	if (option_is_dividerider(opt))
+	if (option_is_divider(opt))
 		printf("\n");
 	else if (!option_is_hidden(opt))
 		print_regular_option(opt, left_column + 2);
@@ -1284,12 +1374,16 @@ print_argument_header(struct optargs_argument const * const arg, int const left_
 
 	int name_length = strlen(arg->name),
 	    right_indent = indent ? indent : 1;
+	char buf[name_length + 1];
+
+	strcpyup(buf, arg->name, name_length);
+	buf[name_length] = '\0';
 
 	if (!arg->description)
-		printf("%*s%s:\n", indent, "", arg->name);
+		printf("%*s%s:\n", indent, "", buf);
 	else
 	{
-		printf("%*s%s:", indent, "", arg->name);
+		printf("%*s%s:", indent, "", buf);
 
 		if (indent + name_length + 1 >= left_column + right_indent)
 			printf("\n%*s", left_column + right_indent, "");
@@ -1300,14 +1394,14 @@ print_argument_header(struct optargs_argument const * const arg, int const left_
 }
 
 static void
-print_all_arguments(struct optargs_argument const * args, int const left_column, int const indent)
+print_all_arguments(struct optargs_argument const * args, int const left_column, unsigned int const indent)
 {
 	assert(args);
 	assert(left_column > 0);
 
 	int extra_indent = 0;
 
-	if (!indent && !argument_is_header(args))
+	if (!indent && !(argument_is_header(args) && args->name))
 	{
 		printf("\nARGUMENTS:\n");
 		extra_indent = 2;
@@ -1315,7 +1409,7 @@ print_all_arguments(struct optargs_argument const * args, int const left_column,
 
 	for ( ; !argument_is_eol(args) ; args++)
 	{
-		if (argument_is_dividerider(args))
+		if (argument_is_divider(args))
 			printf("\n");
 
 		if (!args->name)
@@ -1333,7 +1427,7 @@ print_all_arguments(struct optargs_argument const * args, int const left_column,
 			print_argument_header(args, left_column, indent);
 		}
 		else if (args->description)
-			print_normal_argument(args, left_column, indent +extra_indent );
+			print_normal_argument(args, left_column, indent + extra_indent);
 
 		if (args->subargument)
 			print_all_arguments(args->subargument, left_column, indent + extra_indent + 1);

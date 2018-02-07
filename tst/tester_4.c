@@ -35,7 +35,7 @@ main(int ac __attribute__((unused)), char **av)
 			{
 
 				{
-					.name = "FOOBAR :=",
+					.name = "foobar :=",
 					.description = "This is the argument.",
 					.type = optargs_argument_any
 				},
@@ -48,7 +48,7 @@ main(int ac __attribute__((unused)), char **av)
 			.argument = (struct optargs_argument [])
 			{
 				{
-					.name = "BARFOO",
+					.name = "barfoo",
 					.description = "This is another argument.",
 					.type = optargs_argument_any_opt
 				},
@@ -62,7 +62,7 @@ main(int ac __attribute__((unused)), char **av)
 			{
 
 				{
-					.name = "KEKEKE =>",
+					.name = "kekeke =>",
 					.description = "This a third argument.",
 					.type = optargs_argument_any_opt
 				},

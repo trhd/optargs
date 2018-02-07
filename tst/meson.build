@@ -1,5 +1,5 @@
 # optargs -- A command line option and argument management library.
-# Copyright (C) 2016-2017 Hemmo Nieminen
+# Copyright (C) 2016-2018 Hemmo Nieminen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -109,6 +109,13 @@ TESTER_9 = executable(
 	dependencies : dep
 )
 
+ARGUMENTS_ON_USAGE = executable(
+	'arguments_on_usage',
+	'arguments_on_usage_line.c',
+	dependencies : dep
+)
+CONF_DATA.set('ARGUMENTS_ON_USAGE_PATH', ARGUMENTS_ON_USAGE.full_path())
+
 MINIMAL = executable('minimal', 'minimal.c', dependencies : dep)
 CONF_DATA.set('MINIMAL_PATH', MINIMAL.full_path())
 
@@ -126,6 +133,7 @@ foreach f : [
 		'help_text_sample_readme.txt',
 		'help_text_sample_minimal.txt',
 		'help_text_sample_all_hidden.txt',
+		'help_text_sample_arguments_on_usage.txt',
 		'help_text_sample_subargs.txt' ]
 	configure_file(
 		input : f + '.in',
@@ -854,6 +862,7 @@ foreach t : [
 			[ 'readme', README.full_path()],
 			[ 'minimal', MINIMAL.full_path() ],
 			[ 'subargs', SUBARGS.full_path() ],
+			[ 'arguments_on_usage', ARGUMENTS_ON_USAGE.full_path() ],
 		]
 	test(
 		'Ensure help text integrity @0@.'.format(t.get(0)), MATCHER,

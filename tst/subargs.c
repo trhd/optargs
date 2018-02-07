@@ -35,7 +35,7 @@ main(int ac, char ** av)
 	{
 		{
 			.type = optargs_argument_group,
-			.name = "G1",
+			.name = "g1",
 			.description = "Description of G1."
 		},
 		{
@@ -46,7 +46,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					//.name = "G1M1G1",
+					//.name = "g1m1g1",
 					//.description = "Description of G1M1G1."
 				},
 				{
@@ -75,7 +75,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					.name = "G1M2G1",
+					.name = "g1m2g1",
 					.description = "Description of G1M1G1."
 				},
 				{
@@ -107,7 +107,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					.name = "G2M1G1",
+					.name = "g2m1g1",
 					.description = "Description of G2M1G1."
 				},
 				{
@@ -136,7 +136,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group_opt,
-					.name = "G2M2G1",
+					.name = "g2m2g1",
 					.description = "Description of G2M1G1."
 				},
 				{
@@ -164,7 +164,7 @@ main(int ac, char ** av)
 		},
 		{
 			.type = optargs_argument_group,
-			.name = "G3",
+			.name = "g3",
 			.description = "Description of G3."
 		},
 		{
@@ -175,7 +175,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					.name = "G3M1G1",
+					.name = "g3m1g1",
 					.description = "Description of G3M1G1."
 				},
 				{
@@ -204,7 +204,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					.name = "G3M2G1",
+					.name = "g3m2g1",
 					.description = "Description of G3M1G1."
 				},
 				{
@@ -236,7 +236,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group,
-					.name = "G4M1G1",
+					.name = "g4m1g1",
 					.description = "Description of G4M1G1."
 				},
 				{
