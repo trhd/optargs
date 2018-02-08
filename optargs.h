@@ -25,43 +25,47 @@
  *
  * A sink entry will consume all extra arguments allowing more arguments
  * to be given to a program that are actually expected by the
- * optargs_argument_parse() function. A sink entry will also end argument
+ * optargs_parse_arguments() function. A sink entry will also end argument
  * parsing just like optargs_argument_eol does.
  */
 #define optargs_argument_sink \
-{\
-	.type = _optargs_argument_sink\
+{ \
+	.type = _optargs_argument_sink \
 }
 
 /**
  * A convenience macro for initializing an argument entry that will
- * generate a vertical space/divider in argument descriptions.
+ * generate a vertical space/divider in help texts' argument descriptions.
  */
 #define optargs_argument_divider \
-{\
-	.type = _optargs_argument_divider\
+{ \
+	.type = _optargs_argument_divider \
 }
 
 /**
  * A convenience macro for initializing an option entry that will
- * generate a vertical space/divider in option descriptions.
+ * generate a vertical space/divider in help texts' option descriptions.
  */
 #define optargs_option_divider \
-{\
-	.argument = (struct optargs_argument []) { optargs_argument_divider, optargs_argument_eol }\
+{ \
+	.argument = (struct optargs_argument []) \
+	{ \
+		optargs_argument_divider, \
+		optargs_argument_eol \
+	} \
 }
 
 /**
  * A convenience macro for initializing an "end of list" argument entry.
  *
- * This can (and must if optargs_argument_sink is not used) be used to indicate
- * the end of an argument array.
+ * This can (and must if optargs_argument_sink is not used) be used to
+ * indicate the end of an argument array.
  */
 #define optargs_argument_eol \
-{\
-	.name = (void*)0,\
-	.description = (void*)0,\
-	.type = _optargs_argument_eol\
+{ \
+	.name = (void*)0, \
+	.description = (void*)0, \
+	.type = _optargs_argument_eol \
 }
 
 /**
@@ -70,12 +74,12 @@
  * This can (and must) be used to indicate the end of an option array.
  */
 #define optargs_option_eol \
-{\
-	.long_option = (void*)0,\
-	.short_option = 0,\
-	.description = (void*)0,\
-	.value_type = optargs_undef,\
-	.argument = (struct optargs_argument []){optargs_argument_eol}\
+{ \
+	.long_option = (void*)0, \
+	.short_option = 0, \
+	.description = (void*)0, \
+	.value_type = optargs_undef, \
+	.argument = (struct optargs_argument []) { optargs_argument_eol } \
 }
 
 /**
@@ -84,20 +88,25 @@
  * An instance of this structure will be used to store and relay
  * information about which arguments were found from the parsed input.
  *
- * A list of these is also used to define the names, descriptions and
- * types of the accepted arguments.
+ * A list of these is used to define the names, descriptions and types of
+ * the accepted arguments.
  */
 struct optargs_argument
 {
 	/**
-	 * The name of the argument (e.g. "COMMAND", "FILE" or "action").
+	 * The name of the argument. E.g. "command", "file" or "directory".
+	 *
+	 * An argument group (see types below) without a name will be
+	 * "expanded" (all the members of the group will be listed
+	 * individually (e.g. on the usage line)).
 	 */
 	char const * const NULLABLE name;
 
 	/**
-	 * Description of the argument. Not necessarily needed for a group
-	 * type of an argument (individual group members will require
-	 * descriptions nevertheless).
+	 * Description of the argument.
+	 *
+	 * Not necessarily needed for a group type of an argument (individual
+	 * group members will require descriptions nevertheless).
 	 */
 	char const * const NULLABLE description;
 
@@ -121,34 +130,40 @@ struct optargs_argument
 		optargs_argument_any_opt,
 
 		/**
-		 * Specifies an argument group (name).
+		 * Specifies an argument group (i.e. a common name for a group of
+		 * arguments out of which a single one can be given).
 		 *
-		 * The optargs_argument_structures following this in the supplied list
-		 * will defined the members of this argument group.
+		 * The argument structures following this in the supplied list
+		 * will define the members of this argument group (as long as
+		 * their type is optargs_argument_group_member (see below)).
 		 *
-		 * E.g. an argument group could be defined as "COMMAND" and the
-		 * members of the group define the actual commands (names and
-		 * descriptions) that are accepted as an argument for this group.
+		 * E.g. an argument group could be defined as "command" and the
+		 * members of the group define the actual commands (e.g. "start"
+		 * and "stop") that are accepted as an argument for this group.
 		 */
 		optargs_argument_group,
 
 		/**
 		 * As optargs_argument_group, but optional.
 		 *
-		 * It will not be an error to omit the argument from the user
-		 * input.
+		 * It will not be an error to omit the argument from the user input.
 		 */
 		optargs_argument_group_opt,
 
 		/**
 		 * An argument group member.
 		 *
-		 * Defines a member of optargs_argument_group or optargs_argument_group_opt.
-		 * Must immediately follow a optargs_argument structure instance of
-		 * type optargs_argument_group or optargs_argument_group_opt. Can be given
-		 * multiple times. An optargs_argument structure instance of a type
-		 * other than optargs_argument_group_member indicates the end of
-		 * optargs_argument_group or optargs_argument_group_opt type of an argument.
+		 * Defines a member of a preceeding optargs_argument_group or
+		 * optargs_argument_group_opt.
+		 *
+		 * Must immediately follow a optargs_argument_group or
+		 * optargs_argument_group_opt element.
+		 *
+		 * Can be given multiple times to define multiple arguments for
+		 * the given group. An optargs_argument structure element of any
+		 * other type will indicate the end of the
+		 * optargs_argument_group's or optargs_argument_group_opt's
+		 * members.
 		 */
 		optargs_argument_group_member,
 
@@ -197,7 +212,7 @@ struct optargs_argument
 
 		/**
 		 * A pointer to the argument group member instance that was given
-		 * by the user.
+		 * by the user for this group of arguments.
 		 *
 		 * This will be used only for group types of arguments.
 		 */
@@ -208,7 +223,7 @@ struct optargs_argument
 	 * A list of possible subarguments this argument might be expecting.
 	 *
 	 * The list must be terminated with an optargs_argument_eol of its own if
-	 * defined. Can be left to NULL if no subarguments are expected.
+	 * defined. Must be left to NULL if no subarguments are expected.
 	 */
 	struct optargs_argument * NULLABLE subargument;
 };
@@ -217,14 +232,8 @@ struct optargs_argument
  * Command line option structure.
  *
  * A list of these is used to define the names, descriptions and types of
- * the accepted options.
- *
- * The results of the option parsing will be stored in the _result_ field
- * after parsing.
- *
- * An option with only the _argument_ field defined will yield a vertical
- * divider into the option help text. See optargs_option_divider convenience
- * macro for more information about this.
+ * the accepted options as well as to store the results of the option
+ * parsing.
  */
 struct optargs_option
 {
@@ -239,7 +248,7 @@ struct optargs_option
 	/**
 	 * The short name of this option (e.g. 'h' would become "-h" option).
 	 *
-	 * Should be left to NULL/0 if no short form for this option is needed.
+	 * Should be left to 0 if no short form for this option is needed.
 	 */
 	char const short_option;
 
@@ -248,18 +257,18 @@ struct optargs_option
 	 *
 	 * Should be left to NULL if no description for this option is needed.
 	 *
-	 * An option without a description will not be shown in the help text.
-	 * It could be seen as an undocumented "secret option".
+	 * An option without a description will not be shown in the help text
+	 * and can be thought as an undocumented "secret option".
 	 */
 	char const * const NULLABLE description;
 
 	/**
-	 * The type of the result (i.e. which type from the value union should
+	 * The type of the result (i.e. which type from the below union should
 	 * be used).
 	 */
 	enum optargs_option_value_type
 	{
-		/** This option was not given. */
+		/** This option has not been given/defined. */
 		optargs_undef = 0,
 
 		/** This option was given with an argument to it. */
@@ -272,9 +281,18 @@ struct optargs_option
 	union
 	{
 		/**
-		 * Defines a (single) possible argument for this option.
+		 * A list of optargs_argument structures defining the argument for
+		 * this option.
 		 *
-		 * Should be left to NULL if no argument is expected for this option.
+		 * Should be left to NULL if no argument is expected for this
+		 * option.
+		 *
+		 * Supplying option arguments with subarguments is not supported.
+		 *
+		 * Supplying an optargs_argument_divider here (to an otherwise
+		 * empty structure) will yield in a vertical empty space in help
+		 * texts' option descriptions (see convenience macro
+		 * optargs_option_divider above for this).
 		 */
 		struct optargs_argument * NULLABLE argument;
 
@@ -287,13 +305,13 @@ struct optargs_option
 };
 
 /**
- * Parse the command line options from the given arguments.
+ * Parse command line options from the given arguments.
  *
  * Arguments:
  *  argc:    Number of arguments in the argv array.
- *  argv:    An array of arguments to parse options from.
+ *  argv:    An array of char * arguments to parse options from.
  *  options: An array of options to parse from the argv array. The array
- *           must be terminated with an optargs_option_eol instance.
+ *           must be terminated with an optargs_option_eol element.
  *
  * Return value:
  *  The index number of the first non-option element (a "--" is not
@@ -305,28 +323,30 @@ WARN_UNUSED_RESULT
 int
 optargs_parse_options(
 		int argc,
-		char const * const NONNULL * NONNULL argv,
+		char const * NONNULL const * NONNULL const argv,
 		struct optargs_option * NONNULL options
 		);
 
 /**
- * Parse the optargs arguments from the given set of char * arguments.
+ * Parse command line arguments from the given set of char * arguments.
  *
  * Arguments:
- *  argc:      Number of arguments (char *) in the argv array.
- *  argv:      The arguments (char *) from where the arguments are to be
- *             parsed from.
- *  arguments: The arguments structures defining the accepted arguments.
+ *  argc:      Number of arguments in the argv array.
+ *  argv:      A list of char * arguments from where the arguments are to
+ *             be parsed from.
+ *  arguments: A list of optargs_argument structures defining the accepted
+ *             arguments. The list should be terminated with an
+ *             optargs_argument_eol element.
  *
  * Return value:
- *  The number of successfully parsed argument (not counting what went
+ *  The number of successfully parsed arguments (not counting what went
  *  into a sink) or a negative integer in case of an error.
  */
 WARN_UNUSED_RESULT
 int
 optargs_parse_arguments(
 		int argument_count,
-		char const * const NONNULL * NONNULL arguments,
+		char const * NONNULL const * NONNULL const arguments,
 		struct optargs_argument * NONNULL supported_arguments
 		);
 
@@ -341,10 +361,10 @@ optargs_parse_arguments(
  *  cmd:       The name/path of the executed file (i.e. name of the program).
  *  about:     A general description of the executed program or NULL if
  *             not relevant.
- *  options:   A null terminated array of supported options or NULL if
- *             none are supported.
- *  arguments: A null terminated array of supported arguments or NULL if
- *             none are supported.
+ *  options:   A optargs_option_eol terminated array of supported options
+ *             or NULL if none are supported.
+ *  arguments: A optargs_argument_eol or optargs_argument_sink terminated
+ *             array of supported arguments or NULL if none are supported.
  */
 void
 optargs_print_help(
@@ -359,13 +379,15 @@ optargs_print_help(
  *
  * Simply returns the (index + 1)th option's result (pointer) from the
  * given array. The given index number must match an element in the given
- * list of options. The type of the result struct must be optargs_string
- * (or optargs_undef).
+ * list of options.
+ *
+ * The type of the relevant option stucture must be optargs_string (or
+ * optargs_undef).
  *
  * Arguments:
  *  options: An array of options from where to fetch the desired option.
  *           The array should have previously been processed by the
- *           optargs_option_parse() function.
+ *           optargs_parse_options() function.
  *  index:   The index of the sought option in the options array.
  *
  * Return value:
@@ -379,6 +401,23 @@ optargs_option_string(
 		int index
 		);
 
+/**
+ * Find the type for the option in the given index.
+ *
+ * Simply returns the (index + 1)th option's type from the given array.
+ * The given index number must match an element in the given list of
+ * options.
+ *
+ * Arguments:
+ *  options: An array of options from where to fetch the desired option.
+ *           The array should have previously been processed by the
+ *           optargs_parse_options() function.
+ *  index:   The index of the sought option in the options array.
+ *
+ * Return value:
+ *  A pointer to the result string from the matching option structure
+ *  or NULL if the specified option was not given by the user.
+ */
 WARN_UNUSED_RESULT
 enum optargs_option_value_type
 optargs_option_type(
@@ -387,21 +426,22 @@ optargs_option_type(
 		);
 
 /**
- * Find the result count for the option in the given index.
+ * Find the count for the option in the given index.
  *
- * Simply returns the (index + 1)th option's result (pointer) from the
- * given array. The given index number must match an element in the given
- * list of options. The type of the result struct must be optargs_count
- * (or optargs_undef).
+ * Simply returns the (index + 1)th option's count number (how many time
+ * the option was given/defined) from the given array. The given index
+ * number must match an element in the given list of options. The type of
+ * the result struct must be optargs_flag (or optargs_undef).
  *
  * Arguments:
  *  options: An array of options from where to fetch the desired option.
  *           The array should have previously been processed by the
- *           optargs_option_parse() function.
+ *           optargs_parse_options() function.
  *  index:   The index of the sought option in the options array.
  *
  * Return value:
- *  A count of how many times the given option was given by the user.
+ *  The number of times the given option was given by the user (without an
+ *  argument).
  */
 WARN_UNUSED_RESULT
 unsigned int
@@ -432,16 +472,21 @@ optargs_argument_value(
 		);
 
 /**
- * Get the index offset from a optargs_argument_group (or optargs_argument_group_opt)
- * to the optargs_argument_group_member array member that was given by the
- * user.
+ * Get the index offset from an optargs_argument_group (or
+ * optargs_argument_group_opt) to the optargs_argument_group_member
+ * element that was given by the user (the user provided matching input).
+ *
+ * I.e. if an argument group "command" contains the members "start" and
+ * "stop" this function will return 1 or 2 for the  "command" group
+ * element depending whether the user gave "start" or "stop" as an
+ * argument for it.
  *
  * Arguments:
- *   argument: The optargs_argument_group (or optargs_argument_group_opt) array
- *             member from which to calculate the distance to the user
- *             supplied optargs_argument_group_member instance. The array
+ *   argument: The optargs_argument_group (or optargs_argument_group_opt) element
+ *             from which to calculate the distance to the user
+ *             supplied optargs_argument_group_member element. The array
  *             should have previously been processed by the
- *             optargs_option_parse() function.
+ *             optargs_parse_arguments() function.
  *
  * Return value:
  *   The calculated distance (offset) or a negative value if the argument
@@ -454,9 +499,9 @@ optargs_argument_offset(
 		);
 
 /**
- * Get the index of the optargs_argument_group_member array member that was
- * provided by the user as the value for the specified optarg_arg_group
- * (or optargs_argument_group_opt).
+ * Get the (full) index of the optargs_argument_group_member array member
+ * that was provided by the user as the value for the specified
+ * optarg_arg_group (or optargs_argument_group_opt).
  *
  * Arguments:
  *   arguments:  The argument array from which to look for the group and
@@ -465,8 +510,9 @@ optargs_argument_offset(
  *               group member argument belongs to.
  *
  * Return value:
- *   The calculated distance (offset) or -1 if the argument was not
- *   given by the user.
+ *   The index of the found optargs_argument_group_member element in the
+ *   arguments array or NULL if the specified argument group element had
+ *   no value associated to it.
  */
 WARN_UNUSED_RESULT
 int
