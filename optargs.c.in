@@ -1552,3 +1552,5 @@ optargs_argument_offset(struct optargs_argument const * a)
 
 	return ((long)a->result.match - (long)a)/sizeof(struct optargs_argument);
 }
+
+// vim:noet:ts=4:sw=4:ft=c
