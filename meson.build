@@ -62,7 +62,7 @@ dep = declare_dependency(
 )
 
 install_headers(
-	'optargs.h',
+	files(['optargs.h', meson.build_root() + '/optargs_config.h']),
 	subdir : 'optargs'
 )
 
