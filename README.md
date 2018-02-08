@@ -29,7 +29,7 @@ To use, write something like this:
 	int
 	main(int ac, char ** av)
 	{
-		struct optargs_opt opts[] =
+		struct optargs_option opts[] =
 		{
 			{
 				.long_option = "help",
@@ -41,7 +41,7 @@ To use, write something like this:
 		if (optargs_parse_options(ac, (char const **)av, opts) < 0)
 			return -1;
 
-		if (optargs_option_result(opts, 0))
+		if (optargs_option_type(opts, 0))
 			optargs_print_help(av[0], 0, opts, 0);
 
 		return 0;
@@ -62,7 +62,6 @@ below might be more to your interest.
 	{
 		int verbosity, debug, t;
 		char const * str, * when;
-		struct optargs_res const * res;
 		enum
 		{
 			OPTION_HELP,
@@ -73,7 +72,7 @@ below might be more to your interest.
 			OPTION_SECRET,
 			_OPTION_COUNT
 		};
-		struct optargs_opt opts[] =
+		struct optargs_option opts[] =
 		{
 			[OPTION_HELP] =
 			{
@@ -92,11 +91,11 @@ below might be more to your interest.
 			{
 				.description = "Path to an imaginary socket file.",
 				.long_option = "socket",
-				.argument = (struct optargs_arg [])
+				.argument = (struct optargs_argument [])
 				{
 					{
 						.name = "file",
-						.type = optargs_arg_any
+						.type = optargs_argument_any
 					},
 					optargs_argument_eol
 				}
@@ -107,12 +106,12 @@ below might be more to your interest.
 				.description = "Be verbose.",
 				.long_option = "verbose",
 				.short_option = 'v',
-				.argument = (struct optargs_arg [])
+				.argument = (struct optargs_argument [])
 				{
 					{
 						.name = "level",
 						.description = "The level of the desired verbosity.",
-						.type = optargs_arg_any_opt
+						.type = optargs_argument_any_opt
 					},
 					optargs_argument_eol
 				}
@@ -138,33 +137,33 @@ below might be more to your interest.
 			COMMAND_STOP,
 			_COMMAND_COUNT
 		};
-		struct optargs_arg args[] =
+		struct optargs_argument args[] =
 		{
 			[COMMAND] =
 			{
 				.name = "COMMAND",
-				.type = optargs_arg_group
+				.type = optargs_argument_group
 			},
 
 			[COMMAND_START] =
 			{
 				.name = "start",
 				.description = "Start doing stuff.",
-				.type = optargs_arg_group_member,
-				.subargument = (struct optargs_arg [])
+				.type = optargs_argument_group_member,
+				.subargument = (struct optargs_argument [])
 				{
 					{
-						.type = optargs_arg_group_opt,
-						.name = "WHEN",
+						.type = optargs_argument_group_opt,
+						.name = "when",
 						.description = "When to start doing stuff."
 					},
 					{
-						.type = optargs_arg_group_member,
+						.type = optargs_argument_group_member,
 						.name = "now",
 						.description = "Start doing stuff now."
 					},
 					{
-						.type = optargs_arg_group_member,
+						.type = optargs_argument_group_member,
 						.name = "then",
 						.description = "Start doing stuff later."
 					},
@@ -175,7 +174,7 @@ below might be more to your interest.
 			[COMMAND_STOP] = {
 				.name = "stop",
 				.description = "Stop doing stuff.",
-				.type = optargs_arg_group_member
+				.type = optargs_argument_group_member
 			},
 
 			[_COMMAND_COUNT] = optargs_argument_eol
@@ -201,25 +200,29 @@ below might be more to your interest.
 
 		debug = optargs_option_count(opts, OPTION_DEBUG);
 
-		res = optargs_option_result(opts, OPTION_VERBOSE);
-		if (!res)
-			verbosity = 0;
-		else if (optargs_result_type(res) == optargs_count)
-			verbosity = 100;
-		else
-			verbosity = atoi(optargs_result_string(res));
+		switch (optargs_option_type(opts, OPTION_VERBOSE))
+		{
+			case optargs_argument:
+				verbosity = atoi(optargs_option_string(opts, OPTION_VERBOSE));
+				break;
+			case optargs_flag:
+				verbosity = 100;
+				break;
+			default:
+				verbosity = 0;
+		}
 
 		if (!optargs_option_count(opts, OPTION_QUIET))
 		{
 			printf("Doing stuff with %d%% verbosity.\n", verbosity);
 			printf("Debug level defined to %d.\n", debug);
 
-			str = optargs_option_value(opts, OPTION_SOCKET);
+			str = optargs_option_string(opts, OPTION_SOCKET);
 			if (str)
 				printf("Socket file: %s.\n", str);
 		}
 
-		switch (optargs_argument_value_index(args, COMMAND))
+		switch (optargs_argument_index(args, COMMAND))
 		{
 			case COMMAND_START:
 				when = optargs_argument_value(&args[COMMAND_START].subargument[0]);
@@ -239,17 +242,17 @@ below might be more to your interest.
 		return EXIT_SUCCESS;
 	}
 
-and get something like this:
+In the above case you would then get something like this:
 
-	$ readme -h
-	Usage: readme [OPTIONS] COMMAND
+	$ b/tst/readme -h
+	Usage: b/tst/readme [OPTIONS] COMMAND
 
 	OPTIONS:
 	  -h,--help              Help text
 	  --quiet                Be quiet.
-	  --socket file          Path to an imaginary socket file.
-	  -v,--verbose[=level]   Be verbose.
-	    level                 The level of the desired verbosity.
+	  --socket FILE          Path to an imaginary socket file.
+	  -v,--verbose[=LEVEL]   Be verbose.
+	    LEVEL                 The level of the desired verbosity.
 	  -d                     Output debug info (can be given several times).
 
 	COMMAND:
@@ -261,10 +264,10 @@ and get something like this:
 
 	About this program. This is the most awesomest program ever written and you
 	ought to know that.
-	$ readme -v=13 -ddd --socket demo.socket start nwo
-	Invalid argument 'nwo' for WHEN.
+	$ b/tst/readme -v=13 -ddd --socket demo.socket start nwo
+	Invalid argument 'nwo' for 'WHEN'.
 	Something went wrong when parsing arguments.
-	$ readme -v=13 -ddd --socket demo.socket start now
+	$ b/tst/readme -v=13 -ddd --socket demo.socket start now
 	Doing stuff with 13% verbosity.
 	Debug level defined to 3.
 	Socket file: demo.socket.

@@ -107,7 +107,7 @@ main(int ac, char ** av)
 	{
 		[COMMAND] =
 		{
-			.name = "COMMAND",
+			.name = "command",
 			.type = optargs_argument_group
 		},
 
@@ -120,7 +120,7 @@ main(int ac, char ** av)
 			{
 				{
 					.type = optargs_argument_group_opt,
-					.name = "WHEN",
+					.name = "when",
 					.description = "When to start doing stuff."
 				},
 				{
