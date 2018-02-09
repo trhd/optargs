@@ -65,7 +65,7 @@ main(int ac, char **av)
 		OPTION_CRAZY_11,
 		OPTION_CRAZY_12,
 		OPTION_CRAZY_13,
-		_OPTION_COUNT
+		_OPTION_EOL
 	};
 	struct optargs_option opts[] =
 	{
@@ -240,7 +240,7 @@ main(int ac, char **av)
 			.long_option = "option-opti-greater-than-LEFT_COLUMN_MAX_WIDTH",
 			.argument = (struct optargs_argument []){ {.name = "ARG", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
-		[_OPTION_COUNT] = optargs_option_eol
+		[_OPTION_EOL] = optargs_option_eol
 	};
 
 	if ((idx = optargs_parse_options(ac, (char const **)av, opts)) < 0)

@@ -66,7 +66,7 @@ main(int ac, char ** av)
 		OPTION_FAIL,
 		OPTION_FILE,
 		OPTION_EXIT,
-		_OPTION_COUNT
+		_OPTION_EOL
 	};
 	struct optargs_option opts[] =
 	{
@@ -86,7 +86,7 @@ main(int ac, char ** av)
 			.short_option = 'e',
 			.argument = (struct optargs_argument []){ { .name = "CODE", .type = optargs_argument_any}, optargs_argument_eol }
 		},
-		[_OPTION_COUNT] = optargs_option_eol
+		[_OPTION_EOL] = optargs_option_eol
 	};
 
 	if ((idx = optargs_parse_options(ac, (char const **)av, opts)) < 0)

@@ -27,7 +27,7 @@ main(int ac, char **av)
 	{
 		OPTION_HELP,
 		OPTION_HELP_FULL,
-		_OPTION_COUNT
+		_OPTION_EOL
 	};
 	struct optargs_option opts[] =
 	{
@@ -45,7 +45,7 @@ main(int ac, char **av)
 			optargs_undef,
 			{NULL}
 		},
-		[_OPTION_COUNT] = optargs_option_eol
+		[_OPTION_EOL] = optargs_option_eol
 	};
 
 	if (optargs_parse_options(ac, (char const **)av, opts) < 0)

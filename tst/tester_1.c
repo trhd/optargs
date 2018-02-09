@@ -105,7 +105,7 @@ main(int ac, char **av)
 		OPTION_CRAZY_11,
 		OPTION_CRAZY_12,
 		OPTION_CRAZY_13,
-		_OPTION_COUNT
+		_OPTION_EOL
 	};
 
 	struct optargs_option opts[] =
@@ -285,7 +285,7 @@ main(int ac, char **av)
 			.argument = (struct optargs_argument []){ {.name = "arg", .type = optargs_argument_any_opt}, optargs_argument_eol},
 		},
 #endif
-		[_OPTION_COUNT] = optargs_option_eol
+		[_OPTION_EOL] = optargs_option_eol
 	};
 	struct optargs_argument args[] =
 	{

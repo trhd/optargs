@@ -70,7 +70,7 @@ below might be more to your interest.
 			OPTION_VERBOSE,
 			OPTION_DEBUG,
 			OPTION_SECRET,
-			_OPTION_COUNT
+			_OPTION_EOL
 		};
 		struct optargs_option opts[] =
 		{
@@ -128,14 +128,14 @@ below might be more to your interest.
 				.long_option = "secret-option",
 			},
 
-			[_OPTION_COUNT] = optargs_option_eol
+			[_OPTION_EOL] = optargs_option_eol
 		};
 		enum
 		{
 			COMMAND,
 			COMMAND_START,
 			COMMAND_STOP,
-			_COMMAND_COUNT
+			_COMMAND_EOL
 		};
 		struct optargs_argument args[] =
 		{
@@ -177,7 +177,7 @@ below might be more to your interest.
 				.type = optargs_argument_group_member
 			},
 
-			[_COMMAND_COUNT] = optargs_argument_eol
+			[_COMMAND_EOL] = optargs_argument_eol
 		};
 
 		if ((t = optargs_parse_options(ac, (char const **)av, opts)) < 0)
