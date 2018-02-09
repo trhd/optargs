@@ -132,4 +132,4 @@ matrix:
         - _CC=clang-3.9
         - _SCANBUILD=scan-build-3.9
 script:
-    - SCANBUILD=${_SCANBUILD:-scan-build} CXX=$_CXX CC=$_CC CCC_CC=$_CC ./.travis/comprehensive-ci-test.sh --verbose
+    - GIT_CLONE_MESON=1 SCANBUILD=${_SCANBUILD:-scan-build} CXX=$_CXX CC=$_CC CCC_CC=$_CC ./.travis/comprehensive-ci-test.sh --verbose
