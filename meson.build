@@ -46,7 +46,7 @@ configure_file(
 	configuration : conf
 )
 
-src = files(meson.build_root() +'/optargs.c')
+src = files(meson.current_build_dir() +'/optargs.c')
 
 lib = library(
 	'optargs',
@@ -62,7 +62,7 @@ dep = declare_dependency(
 )
 
 install_headers(
-	files(['optargs.h', meson.build_root() + '/optargs_config.h']),
+	files(['optargs.h', meson.current_build_dir() + '/optargs_config.h']),
 	subdir : 'optargs'
 )
 
