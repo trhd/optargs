@@ -669,7 +669,6 @@ UT_optargs_parse_arguments__four_arguments__invalid_argument__group_title_as_mem
 	assert_int_equal(optargs_parse_arguments(2, (char const * const []){"a", "TOKA"}, args), -EINVAL);
 }
 
-
 static void
 UT_optargs_parse_arguments__four_arguments__required_arguments()
 {
@@ -720,6 +719,13 @@ UT_optargs_parse_arguments__four_arguments__invalid_fourth_argument()
 }
 
 static void
+UT_optargs_parse_arguments__four_arguments__invalid_optional_argument()
+{
+	four_arguments
+	assert_int_equal(optargs_parse_arguments(4, (char const * const []){"a", "TOKA.1", "jeejee", "NELJAS.XXX"}, args), -EINVAL);
+}
+
+static void
 UT_optargs_parse_arguments__four_arguments__all_four()
 {
 	four_arguments
@@ -761,6 +767,98 @@ UT_optargs_parse_arguments__four_arguments__double_hyphen_not_special()
 }
 
 #undef four_arguments
+
+/************************************************************************/
+
+static void
+UT_optargs_parse_arguments__invalid_argument()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		optargs_argument_sink
+	};
+	assert_int_equal(optargs_parse_arguments(2, (char const * const []){"anything", "X"}, args), -EINVAL);
+}
+
+static void
+UT_optargs_parse_arguments__invalid_argument__sink()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		optargs_argument_eol
+	};
+	assert_int_equal(optargs_parse_arguments(2, (char const * const []){"anything", "X"}, args), -EINVAL);
+}
+
+static void
+UT_optargs_parse_arguments__invalid_argument__early()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		{.type = optargs_argument_group, .name = "cd", .description = "Desc cd."},
+		{.type = optargs_argument_group_member, .name = "c", .description = "Desc c."},
+		{.type = optargs_argument_group_member, .name = "d", .description = "Desc d."},
+		optargs_argument_sink
+	};
+	assert_int_equal(optargs_parse_arguments(3, (char const * const []){"anything", "X", "c"}, args), -EINVAL);
+}
+
+static void
+UT_optargs_parse_arguments__invalid_optional_argument()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group_opt, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		optargs_argument_sink
+	};
+	assert_int_equal(optargs_parse_arguments(2, (char const * const []){"anything", "X"}, args), -EINVAL);
+}
+
+static void
+UT_optargs_parse_arguments__invalid_optional_argument__sink()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group_opt, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		optargs_argument_eol
+	};
+	assert_int_equal(optargs_parse_arguments(2, (char const * const []){"anything", "X"}, args), -EINVAL);
+}
+
+static void
+UT_optargs_parse_arguments__invalid_optional_argument__early()
+{
+	struct optargs_argument args[] =
+	{
+		{.type = optargs_argument_any, .name = "anything", .description = "Desc anything."},
+		{.type = optargs_argument_group_opt, .name = "ab", .description = "Desc ab."},
+		{.type = optargs_argument_group_member, .name = "a", .description = "Desc a."},
+		{.type = optargs_argument_group_member, .name = "b", .description = "Desc b."},
+		{.type = optargs_argument_group_opt, .name = "cd", .description = "Desc cd."},
+		{.type = optargs_argument_group_member, .name = "c", .description = "Desc c."},
+		{.type = optargs_argument_group_member, .name = "d", .description = "Desc d."},
+		optargs_argument_sink
+	};
+	assert_int_equal(optargs_parse_arguments(3, (char const * const []){"anything", "X", "c"}, args), -EINVAL);
+}
 
 /************************************************************************/
 
@@ -1784,10 +1882,18 @@ main()
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__invalid_argument__group_title_as_member),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__required_arguments_and_optional),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__invalid_fourth_argument),
+		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__invalid_optional_argument),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__missing_argument),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__no_arguments),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__double_hyphen_not_special),
 		cmocka_unit_test(UT_optargs_parse_arguments__four_arguments__all_four),
+
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_argument),
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_argument__sink),
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_argument__early),
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_optional_argument),
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_optional_argument__sink),
+		cmocka_unit_test(UT_optargs_parse_arguments__invalid_optional_argument__early),
 
 		cmocka_unit_test(UT_optargs_parse_arguments__mandatory_fixed_argument),
 		cmocka_unit_test(UT_optargs_parse_arguments__NULL),

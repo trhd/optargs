@@ -686,20 +686,15 @@ argument_name_compare(const char * a, const char * b)
 }
 
 static int
-invalid_argument_for_group(char const * a, char const * g)
+invalid_argument_for_group(char const * arg, struct optargs_argument const * grp)
 {
-	assert(a);
-	assert(g);
+	assert(arg);
+	assert(grp);
 
-	int len = strlen(g);
-	char buf[len];
-
-	strcpyup(buf, g, len);
-	buf[len] = '\0';
-
-	fprintf(stderr, "Invalid argument '%s' for '%s'.\n", a, buf);
-
-	return -EINVAL;
+	if (grp->type == optargs_argument_group)
+		return unmatching_mandatory_argument_error(arg, grp->name);
+	else
+		return unmatching_optional_argument_error(arg, grp->name);
 }
 
 static int
@@ -760,12 +755,7 @@ parse_arguments(int const ac, char const * const * const av, struct optargs_argu
 		else if (grp)
 		{
 			if (args->type != optargs_argument_group_member)
-			{
-				if (grp->type == optargs_argument_group)
-					return unmatching_mandatory_argument_error(av[i], grp->name);
-				else
-					return unmatching_optional_argument_error(av[i], grp->name);
-			}
+				return invalid_argument_for_group(av[i], grp);
 
 			if (!argument_name_compare(args->name, av[i]))
 			{
@@ -800,7 +790,7 @@ parse_arguments(int const ac, char const * const * const av, struct optargs_argu
 	if (grp)
 	{
 		assert(i < ac);
-		return invalid_argument_for_group(av[i], grp->name);
+		return invalid_argument_for_group(av[i], grp);
 	}
 
 	if (i < ac && args->type != _optargs_argument_sink)
