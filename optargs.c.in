@@ -1199,7 +1199,7 @@ print_option_padding(int const width, int const pos)
 }
 
 static void
-print_option_argument_desc(struct optargs_argument const * const arg, int left_column)
+print_option_argument_group(struct optargs_argument const * const arg, int left_column)
 {
 	assert(arg);
 	assert(arg->name);
@@ -1223,24 +1223,21 @@ print_option_argument_desc(struct optargs_argument const * const arg, int left_c
 }
 
 static void
-print_option_argument_header_item_desc(struct optargs_argument const * const arg, int left_column)
+print_option_argument_item(struct optargs_argument const * const arg, int left_column)
 {
 	assert(arg);
 	assert(arg->name);
 	assert(arg->description);
 
 	int name_length = strlen(arg->name),
-	    right_indent = 2;
-	char buf[name_length + 1];
+	    right_indent = 1;
 
-	strcpyup(buf, arg->name, name_length);
+	printf("     %s", arg->name);
 
-	printf("      %s", buf);
-
-	if (5 + name_length >= left_column)
+	if (4 + name_length >= left_column)
 		printf("\n%*s", left_column + right_indent, "");
 	else
-		printf("%*s", left_column - 5 - name_length + right_indent, "");
+		printf("%*s", left_column - 4 - name_length + right_indent, "");
 
 	print_wrapped(arg->description, MAX_WIDTH, left_column);
 }
@@ -1254,9 +1251,9 @@ print_option_argument_description(struct optargs_argument const * arg,
 	for ( ; !argument_is_eol(arg) ; arg++)
 	{
 		if (arg->type == optargs_argument_group_member)
-			print_option_argument_header_item_desc(arg, left_column);
+			print_option_argument_item(arg, left_column);
 		else if (arg->description)
-			print_option_argument_desc(arg, left_column);
+			print_option_argument_group(arg, left_column);
 	}
 }
 

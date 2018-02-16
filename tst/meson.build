@@ -116,6 +116,13 @@ ARGUMENTS_ON_USAGE = executable(
 )
 CONF_DATA.set('ARGUMENTS_ON_USAGE_PATH', ARGUMENTS_ON_USAGE.full_path())
 
+OPTION_ARGUMENTS = executable(
+	'option_arguments',
+	'option_arguments.c',
+	dependencies : dep
+)
+CONF_DATA.set('OPTION_ARGUMENTS_PATH', OPTION_ARGUMENTS.full_path())
+
 MINIMAL = executable('minimal', 'minimal.c', dependencies : dep)
 CONF_DATA.set('MINIMAL_PATH', MINIMAL.full_path())
 
@@ -134,7 +141,8 @@ foreach f : [
 		'help_text_sample_minimal.txt',
 		'help_text_sample_all_hidden.txt',
 		'help_text_sample_arguments_on_usage.txt',
-		'help_text_sample_subargs.txt' ]
+		'help_text_sample_subargs.txt',
+		'help_text_sample_option_arguments.txt' ]
 	configure_file(
 		input : f + '.in',
 		output : f,
@@ -863,6 +871,7 @@ foreach t : [
 			[ 'minimal', MINIMAL.full_path() ],
 			[ 'subargs', SUBARGS.full_path() ],
 			[ 'arguments_on_usage', ARGUMENTS_ON_USAGE.full_path() ],
+			[ 'option_arguments', OPTION_ARGUMENTS.full_path() ],
 		]
 	test(
 		'Ensure help text integrity @0@.'.format(t.get(0)), MATCHER,
