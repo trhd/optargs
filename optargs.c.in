@@ -1401,20 +1401,29 @@ print_all_arguments(struct optargs_argument const * args, int const left_column,
 	assert(left_column > 0);
 
 	int extra_indent = 0;
+	bool group = false;
 
 	if (!indent && !(argument_is_header(args) && args->name))
 	{
 		printf("\nARGUMENTS:\n");
 		extra_indent = 2;
+		group = true;
 	}
 
 	for ( ; !argument_is_eol(args) ; args++)
 	{
 		if (argument_is_divider(args))
+		{
 			printf("\n");
+			continue;
+		}
 
 		if (!args->name)
+		{
+			if (argument_is_header(args) && group)
+				printf("\n");
 			continue;
+		}
 
 		if (argument_is_header(args))
 		{
@@ -1426,12 +1435,20 @@ print_all_arguments(struct optargs_argument const * args, int const left_column,
 				printf("\n");
 			}
 			print_argument_header(args, left_column, indent);
+			group = true;
 		}
 		else if (args->description)
+		{
+			if (group && args->type != optargs_argument_group_member)
+				group = false;
 			print_normal_argument(args, left_column, indent + extra_indent);
+		}
 
 		if (args->subargument)
+		{
 			print_all_arguments(args->subargument, left_column, indent + extra_indent + 1);
+			group = false;
+		}
 	}
 }
 
