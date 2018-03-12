@@ -152,7 +152,7 @@ main(int ac, char ** av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_option_count(opts, OPTION_HELP))
+	if (optargs_option_count(&opts[OPTION_HELP]))
 	{
 		optargs_print_help(av[0], ABOUT, opts, args);
 		return EXIT_SUCCESS;
@@ -164,12 +164,12 @@ main(int ac, char ** av)
 		return EXIT_FAILURE;
 	}
 
-	debug = optargs_option_count(opts, OPTION_DEBUG);
+	debug = optargs_option_count(&opts[OPTION_DEBUG]);
 
-	switch (optargs_option_type(opts, OPTION_VERBOSE))
+	switch (optargs_option_type(&opts[OPTION_VERBOSE]))
 	{
 		case optargs_argument:
-			verbosity = atoi(optargs_option_string(opts, OPTION_VERBOSE));
+			verbosity = atoi(optargs_option_string(&opts[OPTION_VERBOSE]));
 			break;
 		case optargs_flag:
 			verbosity = 100;
@@ -178,12 +178,12 @@ main(int ac, char ** av)
 			verbosity = 0;
 	}
 
-	if (!optargs_option_count(opts, OPTION_QUIET))
+	if (!optargs_option_count(&opts[OPTION_QUIET]))
 	{
 		printf("Doing stuff with %d%% verbosity.\n", verbosity);
 		printf("Debug level defined to %d.\n", debug);
 
-		str = optargs_option_string(opts, OPTION_SOCKET);
+		str = optargs_option_string(&opts[OPTION_SOCKET]);
 		if (str)
 			printf("Socket file: %s.\n", str);
 	}

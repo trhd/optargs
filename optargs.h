@@ -385,10 +385,9 @@ optargs_print_help(
  * optargs_undef).
  *
  * Arguments:
- *  options: An array of options from where to fetch the desired option.
- *           The array should have previously been processed by the
- *           optargs_parse_options() function.
- *  index:   The index of the sought option in the options array.
+ *  option: A pointer to an option from where to fetch the desired string.
+ *          The option should have previously been processed by the
+ *          optargs_parse_options() function.
  *
  * Return value:
  *  A pointer to the result string from the matching option structure
@@ -397,8 +396,7 @@ optargs_print_help(
 WARN_UNUSED_RESULT
 char const * NULLABLE
 optargs_option_string(
-		struct optargs_option const * NONNULL opts,
-		int index
+		struct optargs_option const * NONNULL option
 		);
 
 /**
@@ -409,20 +407,17 @@ optargs_option_string(
  * options.
  *
  * Arguments:
- *  options: An array of options from where to fetch the desired option.
- *           The array should have previously been processed by the
- *           optargs_parse_options() function.
- *  index:   The index of the sought option in the options array.
+ *  option: A pointer to an option from where to fetch its type.
+ *          The option should have previously been processed by the
+ *          optargs_parse_options() function.
  *
  * Return value:
- *  A pointer to the result string from the matching option structure
- *  or NULL if the specified option was not given by the user.
+ *  The type of the option's value.
  */
 WARN_UNUSED_RESULT
 enum optargs_option_value_type
 optargs_option_type(
-		struct optargs_option const * NONNULL opts,
-		int index
+		struct optargs_option const * NONNULL opts
 		);
 
 /**
@@ -434,10 +429,9 @@ optargs_option_type(
  * the result struct must be optargs_flag (or optargs_undef).
  *
  * Arguments:
- *  options: An array of options from where to fetch the desired option.
- *           The array should have previously been processed by the
- *           optargs_parse_options() function.
- *  index:   The index of the sought option in the options array.
+ *  option: A pointer to an option from where to fetch its type.
+ *          The option should have previously been processed by the
+ *          optargs_parse_options() function.
  *
  * Return value:
  *  The number of times the given option was given by the user (without an
@@ -446,8 +440,7 @@ optargs_option_type(
 WARN_UNUSED_RESULT
 unsigned int
 optargs_option_count(
-		struct optargs_option const * NONNULL opts,
-		int index
+		struct optargs_option const * NONNULL opts
 		);
 
 /**

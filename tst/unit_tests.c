@@ -1497,20 +1497,20 @@ UT_optargs_option_string()
 	assert_int_equal(optargs_parse_options(argc, argv, opts_sample), 7);
 	assert_int_equal(optargs_parse_arguments(argc - 7, argv + 7, args_sample), 6);
 
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_A));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_B));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_C));
-	expect_assert_failure(optargs_option_string(opts_sample,  SAMPLE_OPT_D));
-	expect_assert_failure(optargs_option_string(opts_sample,  SAMPLE_OPT_E));
-	expect_assert_failure(optargs_option_string(opts_sample,  SAMPLE_OPT_F));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_G));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_H));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_I));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_J));
-	assert_string_equal(optargs_option_string(opts_sample,    SAMPLE_OPT_K), "bar");
-	assert_string_equal(optargs_option_string(opts_sample,    SAMPLE_OPT_L), "fez");
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_M));
-	assert_null(optargs_option_string(opts_sample,            SAMPLE_OPT_N));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_A]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_B]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_C]));
+	expect_assert_failure(optargs_option_string(&opts_sample[SAMPLE_OPT_D]));
+	expect_assert_failure(optargs_option_string(&opts_sample[SAMPLE_OPT_E]));
+	expect_assert_failure(optargs_option_string(&opts_sample[SAMPLE_OPT_F]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_G]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_H]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_I]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_J]));
+	assert_string_equal(optargs_option_string(&opts_sample[SAMPLE_OPT_K]), "bar");
+	assert_string_equal(optargs_option_string(&opts_sample[SAMPLE_OPT_L]), "fez");
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_M]));
+	assert_null(optargs_option_string(&opts_sample[SAMPLE_OPT_N]));
 }
 
 /************************************************************************/
@@ -1518,22 +1518,8 @@ UT_optargs_option_string()
 static void
 UT_optargs_option_string__NULL()
 {
-	expect_assert_failure(optargs_option_string(NULL, 0));
-	expect_assert_failure(optargs_option_string(NULL, 1));
+	expect_assert_failure(optargs_option_string(NULL));
 }
-
-/************************************************************************/
-
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-
-static void
-UT_optargs_option_string__ENOENT()
-{
-	#include "opts_sample.inc"
-	expect_assert_failure(optargs_option_string(opts_sample, 99999));
-}
-
-#endif
 
 /************************************************************************/
 
@@ -1548,20 +1534,20 @@ UT_optargs_option_count()
 	assert_int_equal(optargs_parse_options(argc, argv, opts_sample), 10);
 	assert_int_equal(optargs_parse_arguments(argc - 10, argv + 10, args_sample), 6);
 
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_A), 3);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_B), 2);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_C), 1);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_D), 1);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_E), 1);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_F), 1);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_G), 1);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_H), 0);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_I), 0);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_J), 1);
-	expect_assert_failure(optargs_option_count(opts_sample,   SAMPLE_OPT_K));
-	expect_assert_failure(optargs_option_count(opts_sample,   SAMPLE_OPT_L));
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_M), 0);
-	assert_int_equal(optargs_option_count(opts_sample,        SAMPLE_OPT_N), 0);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_A]), 3);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_B]), 2);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_C]), 1);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_D]), 1);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_E]), 1);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_F]), 1);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_G]), 1);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_H]), 0);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_I]), 0);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_J]), 1);
+	expect_assert_failure(optargs_option_count(&opts_sample[SAMPLE_OPT_K]));
+	expect_assert_failure(optargs_option_count(&opts_sample[SAMPLE_OPT_L]));
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_M]), 0);
+	assert_int_equal(optargs_option_count(&opts_sample[SAMPLE_OPT_N]), 0);
 }
 
 /************************************************************************/
@@ -1569,22 +1555,8 @@ UT_optargs_option_count()
 static void
 UT_optargs_option_count__NULL()
 {
-	expect_assert_failure(optargs_option_count(NULL, 0));
-	expect_assert_failure(optargs_option_count(NULL, 1));
+	expect_assert_failure(optargs_option_count(NULL));
 }
-
-/************************************************************************/
-
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-
-static void
-UT_optargs_option_count__ENOENT()
-{
-	#include "opts_sample.inc"
-	expect_assert_failure(optargs_option_count(opts_sample, 99999));
-}
-
-#endif
 
 /************************************************************************/
 
@@ -1600,20 +1572,20 @@ UT_optargs_option_type()
 	assert_int_equal(optargs_parse_options(argc, argv, opts_sample), 10);
 	assert_int_equal(optargs_parse_arguments(argc - 10, argv + 10, args_sample), 6);
 
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_A), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_B), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_C), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_D), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_E), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_F), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_G), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_H), optargs_undef);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_I), optargs_undef);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_J), optargs_flag);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_K), optargs_argument);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_L), optargs_argument);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_M), optargs_undef);
-	assert_int_equal(optargs_option_type(opts_sample, SAMPLE_OPT_N), optargs_undef);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_A]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_B]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_C]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_D]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_E]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_F]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_G]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_H]), optargs_undef);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_I]), optargs_undef);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_J]), optargs_flag);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_K]), optargs_argument);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_L]), optargs_argument);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_M]), optargs_undef);
+	assert_int_equal(optargs_option_type(&opts_sample[SAMPLE_OPT_N]), optargs_undef);
 }
 
 /************************************************************************/
@@ -1621,22 +1593,8 @@ UT_optargs_option_type()
 static void
 UT_optargs_option_type__NULL()
 {
-	expect_assert_failure(optargs_option_type(NULL, 0));
-	expect_assert_failure(optargs_option_type(NULL, 1));
+	expect_assert_failure(optargs_option_type(NULL));
 }
-
-/************************************************************************/
-
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-
-static void
-UT_optargs_option_type__ENOENT()
-{
-	#include "opts_sample.inc"
-	expect_assert_failure(optargs_option_type(opts_sample, 99999));
-}
-
-#endif
 
 /************************************************************************/
 
@@ -1935,21 +1893,12 @@ main()
 
 		cmocka_unit_test(UT_optargs_option_string),
 		cmocka_unit_test(UT_optargs_option_string__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-		cmocka_unit_test(UT_optargs_option_string__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_option_count),
 		cmocka_unit_test(UT_optargs_option_count__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-		cmocka_unit_test(UT_optargs_option_count__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_option_type),
 		cmocka_unit_test(UT_optargs_option_type__NULL),
-#if !defined(NDEBUG) || defined(UNIT_TESTING)
-		cmocka_unit_test(UT_optargs_option_type__ENOENT),
-#endif
 
 		cmocka_unit_test(UT_optargs_argument_value),
 		cmocka_unit_test(UT_optargs_argument_value__NULL),

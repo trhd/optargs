@@ -54,10 +54,10 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_option_count(opts, OPTION_HELP))
+	if (optargs_option_count(&opts[OPTION_HELP]))
 		printf("got basic\n");
 
-	if (optargs_option_count(opts, OPTION_HELP_FULL))
+	if (optargs_option_count(&opts[OPTION_HELP_FULL]))
 		printf("got full\n");
 
 	return EXIT_SUCCESS;

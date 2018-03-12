@@ -607,21 +607,8 @@ assert_option_sanity(struct optargs_option const * opts)
 	}
 }
 
-static void
-assert_at_least_n_options(struct optargs_option const * opts, unsigned int i)
-{
-	assert(opts);
-
-	unsigned int t;
-
-	for ( t = 0 ;  option_is_valid(opts) ; opts++, t++);
-
-	assert(t >= i);
-}
-
 #else
 
-# define assert_at_least_n_options(...)
 # define assert_optional_arguments_at_the_end(...)
 # define assert_argument_sanity(...)
 # define assert_option_sanity(...)
@@ -1480,41 +1467,38 @@ optargs_print_help(char const * const exe, char const * const about,
 }
 
 char const *
-optargs_option_string(struct optargs_option const * const opts, int const i)
+optargs_option_string(struct optargs_option const * const opts)
 {
 	assert(opts);
-	assert_at_least_n_options(opts, i);
-	assert(opts[i].value_type != optargs_flag);
+	assert(opts->value_type != optargs_flag);
 
-	if (optargs_option_type(opts, i) != optargs_argument)
+	if (optargs_option_type(opts) != optargs_argument)
 	{
-		assert(optargs_option_type(opts, i) == optargs_undef);
+		assert(optargs_option_type(opts) == optargs_undef);
 		return NULL;
 	}
 
-	return optargs_argument_value(opts[i].argument);
+	return optargs_argument_value(opts->argument);
 }
 
 unsigned int
-optargs_option_count(struct optargs_option const * const opts, int const i)
+optargs_option_count(struct optargs_option const * const opts)
 {
 	assert(opts);
-	assert_at_least_n_options(opts, i);
-	assert(opts[i].value_type != optargs_argument);
+	assert(opts->value_type != optargs_argument);
 
-	if (optargs_option_type(opts, i) == optargs_undef)
+	if (optargs_option_type(opts) == optargs_undef)
 		return 0;
 
-	return opts[i].count;
+	return opts->count;
 }
 
 enum optargs_option_value_type
-optargs_option_type(struct optargs_option const * const opts, int const i)
+optargs_option_type(struct optargs_option const * const opts)
 {
 	assert(opts);
-	assert_at_least_n_options(opts, i);
 
-	return opts[i].value_type;
+	return opts->value_type;
 }
 
 char const *

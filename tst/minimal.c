@@ -33,7 +33,7 @@ main(int ac, char ** av)
 	if (optargs_parse_options(ac, (char const **)av, opts) < 0)
 		return -1;
 
-	if (optargs_option_type(opts, 0))
+	if (optargs_option_type(&opts[0]))
 		optargs_print_help(av[0], 0, opts, 0);
 
 	return 0;

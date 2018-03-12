@@ -361,7 +361,7 @@ main(int ac, char **av)
 	if ((idx = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_option_count(opts, OPTION_HELP))
+	if (optargs_option_count(&opts[OPTION_HELP]))
 	{
 		optargs_print_help(av[0], about, opts, args);
 		return EXIT_SUCCESS;
@@ -372,44 +372,44 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	if (optargs_option_count(opts, OPTION_A))
+	if (optargs_option_count(&opts[OPTION_A]))
 		printf("a");
 
-	if (optargs_option_count(opts, OPTION_B))
+	if (optargs_option_count(&opts[OPTION_B]))
 		printf("b");
 
-	if (optargs_option_count(opts, OPTION_C))
+	if (optargs_option_count(&opts[OPTION_C]))
 		printf("c");
 
-	if (optargs_option_count(opts, OPTION_D))
+	if (optargs_option_count(&opts[OPTION_D]))
 		printf("d");
 
-	if (optargs_option_count(opts, OPTION_E))
+	if (optargs_option_count(&opts[OPTION_E]))
 		printf("e");
 
-	if (optargs_option_count(opts, OPTION_F))
+	if (optargs_option_count(&opts[OPTION_F]))
 		printf("f");
 
-	if (optargs_option_count(opts, OPTION_G))
+	if (optargs_option_count(&opts[OPTION_G]))
 		printf("g");
 
-	if (optargs_option_count(opts, 7))
+	if (optargs_option_count(&opts[7]))
 		printf("h");
 
-	if (optargs_option_count(opts, OPTION_HIDDEN))
+	if (optargs_option_count(&opts[OPTION_HIDDEN]))
 		printf("hidden!");
 
-	if ((t = optargs_option_string(opts, OPTION_I1)))
+	if ((t = optargs_option_string(&opts[OPTION_I1])))
 		printf("i{%s}", t);
 
-	if (optargs_option_type(opts, OPTION_J) == optargs_flag)
+	if (optargs_option_type(&opts[OPTION_J]) == optargs_flag)
 	{
 		t = "Oujea!";
 		printf("j{%s}", t);
 	}
-	else if (optargs_option_type(opts, OPTION_J) == optargs_argument)
+	else if (optargs_option_type(&opts[OPTION_J]) == optargs_argument)
 	{
-		t = optargs_option_string(opts, OPTION_J);
+		t = optargs_option_string(&opts[OPTION_J]);
 		printf("j{%s}", t);
 	}
 

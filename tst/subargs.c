@@ -300,7 +300,7 @@ main(int ac, char ** av)
 	if ((t = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_option_count(opts, 0))
+	if (optargs_option_count(&opts[0]))
 	{
 		optargs_print_help(av[0], "About this program...", opts, args);
 		return EXIT_SUCCESS;

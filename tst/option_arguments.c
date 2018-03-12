@@ -107,7 +107,7 @@ main(int ac, char **av)
 	if ((idx = optargs_parse_options(ac, (char const **)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_option_count(opts, OPTION_HELP))
+	if (optargs_option_count(&opts[OPTION_HELP]))
 	{
 		optargs_print_help(av[0], "Töttöröö!", opts, args);
 		return EXIT_SUCCESS;

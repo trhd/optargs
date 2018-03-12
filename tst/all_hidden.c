@@ -51,10 +51,10 @@ main(int ac, char ** av)
 			|| optargs_parse_arguments(ac - t, (char const **)av + t, args) < 0)
 		return -1;
 
-	if (optargs_option_type(opts, 0))
+	if (optargs_option_type(&opts[0]))
 		printf("hidden option invoked\n");
 
-	if (optargs_option_count(opts, 1))
+	if (optargs_option_count(&opts[1]))
 		printf("second hidden option invoked\n");
 
 	if (optargs_argument_value(&args[0]))

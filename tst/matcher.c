@@ -135,7 +135,7 @@ main(int ac, char ** av)
 		if (close(pp[1]))
 			error("Failed to close pipe's writing end.");
 
-		if (!optargs_option_count(opts, OPTION_FILE))
+		if (!optargs_option_count(&opts[OPTION_FILE]))
 		{
 			if (!fgets(buf1, buf_size, fp))
 				error("Failed to read program's output.");
@@ -147,7 +147,7 @@ main(int ac, char ** av)
 
 			compare_outputs(buf1, av[idx],
 					min(strlen(av[idx + 1]) + 1, strlen(buf1) + 1),
-					optargs_option_count(opts, OPTION_FAIL));
+					optargs_option_count(&opts[OPTION_FAIL]));
 
 		}
 		else
@@ -158,7 +158,7 @@ main(int ac, char ** av)
 				error("fdopen() failed");
 
 			while (fgets(buf1, buf_size, fp) && fgets(buf2, buf_size, ff))
-				compare_outputs(buf1, buf2, buf_size, optargs_option_count(opts, OPTION_FAIL));
+				compare_outputs(buf1, buf2, buf_size, optargs_option_count(&opts[OPTION_FAIL]));
 		}
 
 
@@ -171,11 +171,11 @@ main(int ac, char ** av)
 		if (!WIFEXITED(i))
 			error("Expected child to return a status.");
 
-		if (WEXITSTATUS(i) != (optargs_option_string(opts, OPTION_EXIT) ? atoi(optargs_option_string(opts, OPTION_EXIT)) : 0))
+		if (WEXITSTATUS(i) != (optargs_option_string(&opts[OPTION_EXIT]) ? atoi(optargs_option_string(&opts[OPTION_EXIT])) : 0))
 		{
 			printf("Child returned: %d, expected %s.\n",
 					WEXITSTATUS(i),
-					optargs_option_string(opts, OPTION_EXIT) ? optargs_option_string(opts, OPTION_EXIT) : "0");
+					optargs_option_string(&opts[OPTION_EXIT]) ? optargs_option_string(&opts[OPTION_EXIT]) : "0");
 			error("Child returned incorrect exit code.");
 		}
 	}

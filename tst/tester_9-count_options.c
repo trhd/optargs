@@ -40,11 +40,11 @@ main(int ac, char **av)
 
 	printf("Got: ");
 
-	t = optargs_option_count(opts, 0);
+	t = optargs_option_count(&opts[0]);
 	if (t)
 		printf("v=%u ", t);
 
-	t = optargs_option_count(opts, 1);
+	t = optargs_option_count(&opts[1]);
 	if (t)
 		printf("w=%u ", t);
 

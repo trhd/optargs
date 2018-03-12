@@ -106,7 +106,7 @@ main(int ac, char ** av)
 	if ((t = optargs_parse_options(ac, (char const * const *)av, opts)) < 0)
 		return EXIT_FAILURE;
 
-	if (optargs_option_type(opts, 0))
+	if (optargs_option_type(&opts[0]))
 	{
 		optargs_print_help(av[0], "Yeah!", opts, args);
 		return EXIT_SUCCESS;
