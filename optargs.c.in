@@ -27,6 +27,7 @@
 
 #mesondefine WARN_OPTIONS_AS_ARGUMENTS
 
+WARN_UNUSED_RESULT
 static int parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args);
 
 enum constants
@@ -35,18 +36,21 @@ enum constants
 	LEFT_COLUMN_MAX_WIDTH = 38
 };
 
+WARN_UNUSED_RESULT
 static int
 max(const int a, const int b)
 {
 	return a > b ? a : b;
 }
 
+WARN_UNUSED_RESULT
 static int
 min(const int a, const int b)
 {
 	return a > b ? b : a;
 }
 
+WARN_UNUSED_RESULT
 static int
 word_length(char const * s)
 {
@@ -66,18 +70,21 @@ strcpyup(char * dst, char const * src, unsigned int len)
 		dst[i] = toupper(src[i]);
 }
 
+WARN_UNUSED_RESULT
 static bool
 is_word_separator(char const c)
 {
 	return c == ' ' || c == '\t' || c == '\v' || c == '\n' || c == '\r' || c == '\0';
 }
 
+WARN_UNUSED_RESULT
 static bool
 argument_is_eol(struct optargs_argument const * const arg)
 {
 	return arg->type == _optargs_argument_eol || arg->type == _optargs_argument_sink;
 }
 
+WARN_UNUSED_RESULT
 static bool
 option_is_valid(struct optargs_option const * const o)
 {
@@ -91,6 +98,7 @@ option_is_valid(struct optargs_option const * const o)
 		return !argument_is_eol(o->argument);
 }
 
+WARN_UNUSED_RESULT
 static bool
 option_supports_argument(struct optargs_option const * o)
 {
@@ -99,6 +107,7 @@ option_supports_argument(struct optargs_option const * o)
 	return o->value_type != optargs_flag && o->argument;
 }
 
+WARN_UNUSED_RESULT
 static int
 opt_missing_arg_error(struct optargs_option const * const opt)
 {
@@ -114,6 +123,7 @@ opt_missing_arg_error(struct optargs_option const * const opt)
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static int
 non_wanted_argument_error(struct optargs_option const * const opt)
 {
@@ -129,6 +139,7 @@ non_wanted_argument_error(struct optargs_option const * const opt)
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static int
 redefine_option_argument_error(struct optargs_option const * const opt)
 {
@@ -146,6 +157,7 @@ redefine_option_argument_error(struct optargs_option const * const opt)
 
 #if WARN_OPTIONS_AS_ARGUMENTS
 
+WARN_UNUSED_RESULT
 static bool
 looks_like_an_option(char const * arg)
 {
@@ -168,6 +180,7 @@ option_as_argument_warning(struct optargs_option const * opt, char const * arg)
 
 #endif
 
+WARN_UNUSED_RESULT
 static int
 unmatching_optional_argument_error(char const * const opt, char const * const hdr)
 {
@@ -185,6 +198,7 @@ unmatching_optional_argument_error(char const * const opt, char const * const hd
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static int
 unmatching_mandatory_argument_error(char const * const opt, char const * const hdr)
 {
@@ -202,6 +216,7 @@ unmatching_mandatory_argument_error(char const * const opt, char const * const h
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static bool
 starts_with_single_hyphen(char const * const str)
 {
@@ -210,6 +225,7 @@ starts_with_single_hyphen(char const * const str)
 	return str[0] == '-';
 }
 
+WARN_UNUSED_RESULT
 static bool
 starts_with_double_hyphen(char const * const opt)
 {
@@ -219,6 +235,7 @@ starts_with_double_hyphen(char const * const opt)
 	return opt[1] == '-';
 }
 
+WARN_UNUSED_RESULT
 static bool
 is_empty_argument(char const * const str)
 {
@@ -227,6 +244,7 @@ is_empty_argument(char const * const str)
 	return *str == '\0';
 }
 
+WARN_UNUSED_RESULT
 static bool
 is_double_hyphen(char const * const opt)
 {
@@ -235,6 +253,7 @@ is_double_hyphen(char const * const opt)
 	return opt[0] == '-' && opt[1] == '-' && opt[2] == '\0';
 }
 
+WARN_UNUSED_RESULT
 static int
 long_option_is_invalid(char const * o, int const l)
 {
@@ -246,6 +265,7 @@ long_option_is_invalid(char const * o, int const l)
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static int
 short_option_is_invalid(char const c)
 {
@@ -254,6 +274,7 @@ short_option_is_invalid(char const c)
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static bool
 option_is_divider(struct optargs_option const * const opt)
 {
@@ -262,6 +283,7 @@ option_is_divider(struct optargs_option const * const opt)
 	return !(opt->short_option || opt->long_option);
 }
 
+WARN_UNUSED_RESULT
 static bool
 option_is_hidden(struct optargs_option const * const opt)
 {
@@ -270,6 +292,7 @@ option_is_hidden(struct optargs_option const * const opt)
 	return !option_is_divider(opt) && !opt->description;
 }
 
+WARN_UNUSED_RESULT
 static bool
 argument_is_header(struct optargs_argument const * const arg)
 {
@@ -278,6 +301,7 @@ argument_is_header(struct optargs_argument const * const arg)
 	return (arg->type == optargs_argument_group || arg->type == optargs_argument_group_opt);
 }
 
+WARN_UNUSED_RESULT
 static bool
 argument_is_divider(struct optargs_argument const * const arg)
 {
@@ -286,6 +310,7 @@ argument_is_divider(struct optargs_argument const * const arg)
 	return arg->type == _optargs_argument_divider;
 }
 
+WARN_UNUSED_RESULT
 static bool
 argument_type_is_any(struct optargs_argument const * const arg)
 {
@@ -294,6 +319,7 @@ argument_type_is_any(struct optargs_argument const * const arg)
 	return arg->type == optargs_argument_any || arg->type == optargs_argument_any_opt;
 }
 
+WARN_UNUSED_RESULT
 static struct optargs_option *
 locate_short_option(struct optargs_option * o, char const c)
 {
@@ -341,6 +367,7 @@ mark_default_option(struct optargs_option * opt)
 	}
 }
 
+WARN_UNUSED_RESULT
 static int
 mark_no_argument_option(struct optargs_option * opt, bool const assign)
 {
@@ -354,6 +381,7 @@ mark_no_argument_option(struct optargs_option * opt, bool const assign)
 	return 0;
 }
 
+WARN_UNUSED_RESULT
 static int
 mark_argument_option(struct optargs_option * opt, char const * const arg)
 {
@@ -375,6 +403,7 @@ mark_argument_option(struct optargs_option * opt, char const * const arg)
 	return 1;
 }
 
+WARN_UNUSED_RESULT
 static int
 mark_optional_argument_option(struct optargs_option * opt,
 		char const * const arg, bool const assign)
@@ -392,6 +421,7 @@ mark_optional_argument_option(struct optargs_option * opt,
 	return 0;
 }
 
+WARN_UNUSED_RESULT
 static int
 mark_option(struct optargs_option * opt, char const * const arg, bool const force)
 {
@@ -417,6 +447,7 @@ mark_option(struct optargs_option * opt, char const * const arg, bool const forc
 	abort();
 }
 
+WARN_UNUSED_RESULT
 static int
 parse_short_option(char const * c, char const * n, struct optargs_option * const o)
 {
@@ -451,6 +482,7 @@ parse_short_option(char const * c, char const * n, struct optargs_option * const
 	return r;
 }
 
+WARN_UNUSED_RESULT
 static int
 parse_long_option(char const * c, char const * n, struct optargs_option * o)
 {
@@ -655,6 +687,7 @@ optargs_parse_options(int const ac, char const * const * const av, struct optarg
 	return i;
 }
 
+WARN_UNUSED_RESULT
 static int
 argument_name_compare(const char * a, const char * b)
 {
@@ -672,6 +705,7 @@ argument_name_compare(const char * a, const char * b)
 		return strncmp(a, b, min(al, bl));
 }
 
+WARN_UNUSED_RESULT
 static int
 invalid_argument_for_group(char const * arg, struct optargs_argument const * grp)
 {
@@ -684,6 +718,7 @@ invalid_argument_for_group(char const * arg, struct optargs_argument const * grp
 		return unmatching_optional_argument_error(arg, grp->name);
 }
 
+WARN_UNUSED_RESULT
 static int
 missing_argument_error(char const * a)
 {
@@ -700,6 +735,7 @@ missing_argument_error(char const * a)
 	return -EINVAL;
 }
 
+WARN_UNUSED_RESULT
 static int
 check_for_missing_mandatory_arguments(struct optargs_argument const * args)
 {
@@ -713,6 +749,7 @@ check_for_missing_mandatory_arguments(struct optargs_argument const * args)
 	return 0;
 }
 
+WARN_UNUSED_RESULT
 static int
 excess_arguments_error(int g, int e)
 {
@@ -725,6 +762,7 @@ excess_arguments_error(int g, int e)
 }
 
 
+WARN_UNUSED_RESULT
 static int
 parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args)
 {
@@ -787,6 +825,8 @@ parse_arguments(int const ac, char const * const * const av, struct optargs_argu
 
 	return t < 0 ? t : i;
 }
+
+WARN_UNUSED_RESULT
 int
 optargs_parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args)
 {
@@ -807,8 +847,10 @@ close_optionality_brackets(int * l)
 		printf("]");
 }
 
+WARN_UNUSED_RESULT
 static int print_subargument(struct optargs_argument const * args, int * l);
 
+WARN_UNUSED_RESULT
 static int
 print_group_names(struct optargs_argument const * args)
 {
@@ -821,12 +863,13 @@ print_group_names(struct optargs_argument const * args)
 		printf("%s %s", !rv ? "" : " |", args->name);
 		rv += strlen(args->name) + (!rv ? 1 : 3);
 		if (args->subargument)
-			print_subargument(args->subargument, &l);
+			rv += print_subargument(args->subargument, &l);
 	}
 
 	return rv;
 }
 
+WARN_UNUSED_RESULT
 static int
 print_arg_group(struct optargs_argument const * const arg, char const * const prefix)
 {
@@ -842,6 +885,7 @@ print_arg_group(struct optargs_argument const * const arg, char const * const pr
 	return rv;
 }
 
+WARN_UNUSED_RESULT
 static int
 print_arg_group_name(struct optargs_argument const * const arg, char const * const prefix)
 {
@@ -859,6 +903,7 @@ print_arg_group_name(struct optargs_argument const * const arg, char const * con
 	return l + strlen(prefix);
 }
 
+WARN_UNUSED_RESULT
 static int
 print_arg_any_name(struct optargs_argument const * const arg, char const * const prefix)
 {
@@ -928,6 +973,7 @@ print_arg_names(struct optargs_argument const * args)
 	close_optionality_brackets(&l);
 }
 
+WARN_UNUSED_RESULT
 static int
 calc_line_length(char const * const src, int const cols)
 {
@@ -972,6 +1018,7 @@ print_wrapped(char const * src, int width, int const indent)
 	} while (*(src - 1) != '\0');
 }
 
+WARN_UNUSED_RESULT
 static int
 get_option_argument_length(struct optargs_argument const * arg)
 {
@@ -998,6 +1045,7 @@ get_option_argument_length(struct optargs_argument const * arg)
 	return i + e + 1;
 }
 
+WARN_UNUSED_RESULT
 static int
 get_opt_length(struct optargs_option const * const opt)
 {
@@ -1022,6 +1070,7 @@ get_opt_length(struct optargs_option const * const opt)
 }
 
 
+WARN_UNUSED_RESULT
 static int
 find_longest_opt(struct optargs_option const * opts)
 {
@@ -1048,6 +1097,7 @@ find_longest_opt(struct optargs_option const * opts)
 	return r;
 }
 
+WARN_UNUSED_RESULT
 static int
 get_arg_length(struct optargs_argument const * const arg)
 {
@@ -1063,6 +1113,7 @@ get_arg_length(struct optargs_argument const * const arg)
 	return l;
 }
 
+WARN_UNUSED_RESULT
 static int
 find_longest_arg(struct optargs_argument const * args)
 {
@@ -1086,6 +1137,7 @@ find_longest_arg(struct optargs_argument const * args)
 	return r;
 }
 
+WARN_UNUSED_RESULT
 static int
 find_left_column_maximum(struct optargs_option const * const opts,
 		struct optargs_argument const * const args)
@@ -1099,6 +1151,7 @@ find_left_column_maximum(struct optargs_option const * const opts,
 	);
 }
 
+WARN_UNUSED_RESULT
 static int
 print_option_options(struct optargs_option const * const opt)
 {
@@ -1121,6 +1174,7 @@ print_option_options(struct optargs_option const * const opt)
 	return strlen(opt->long_option) + 4;
 }
 
+WARN_UNUSED_RESULT
 static int
 print_mandatory_option_argument(struct optargs_option const * const opt)
 {
@@ -1136,6 +1190,7 @@ print_mandatory_option_argument(struct optargs_option const * const opt)
 	return z + 1;
 }
 
+WARN_UNUSED_RESULT
 static int
 print_optional_option_argument(struct optargs_option const * const opt)
 {
@@ -1151,6 +1206,7 @@ print_optional_option_argument(struct optargs_option const * const opt)
 	return z + 3;
 }
 
+WARN_UNUSED_RESULT
 static int
 print_option_argument(struct optargs_option const * const opt)
 {
@@ -1267,6 +1323,7 @@ print_option(struct optargs_option const * const opt, int const left_column)
 		print_regular_option(opt, left_column + 2);
 }
 
+WARN_UNUSED_RESULT
 static int
 count_printable_options(struct optargs_option const * opts)
 {
@@ -1294,6 +1351,7 @@ print_all_options(struct optargs_option const * opts, int const indent)
 		print_option(opts, indent);
 }
 
+WARN_UNUSED_RESULT
 static int
 print_subargument(struct optargs_argument const * args, int * l)
 {
@@ -1466,6 +1524,7 @@ optargs_print_help(char const * const exe, char const * const about,
 		print_wrapped(about, MAX_WIDTH, 0);
 }
 
+WARN_UNUSED_RESULT
 char const *
 optargs_option_string(struct optargs_option const * const opts)
 {
@@ -1481,6 +1540,7 @@ optargs_option_string(struct optargs_option const * const opts)
 	return optargs_argument_value(opts->argument);
 }
 
+WARN_UNUSED_RESULT
 unsigned int
 optargs_option_count(struct optargs_option const * const opts)
 {
@@ -1493,6 +1553,7 @@ optargs_option_count(struct optargs_option const * const opts)
 	return opts->count;
 }
 
+WARN_UNUSED_RESULT
 enum optargs_option_value_type
 optargs_option_type(struct optargs_option const * const opts)
 {
@@ -1501,6 +1562,7 @@ optargs_option_type(struct optargs_option const * const opts)
 	return opts->value_type;
 }
 
+WARN_UNUSED_RESULT
 char const *
 optargs_argument_value(struct optargs_argument const * a)
 {
@@ -1514,6 +1576,7 @@ optargs_argument_value(struct optargs_argument const * a)
 	return a->result.value;
 }
 
+WARN_UNUSED_RESULT
 int
 optargs_argument_index(struct optargs_argument const * a, int i)
 {
@@ -1528,6 +1591,7 @@ optargs_argument_index(struct optargs_argument const * a, int i)
 		return i + rv;
 }
 
+WARN_UNUSED_RESULT
 int
 optargs_argument_offset(struct optargs_argument const * a)
 {
