@@ -109,7 +109,7 @@ opt_missing_arg_error(struct optargs_option const * const opt)
 	fprintf(stderr, "Mandatory argument for option %s%s%s%s%s missing.\n",
 			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
 			opt->long_option && opt->short_option ? " / " : "",
-			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+			opt->short_option ? strcat(strncat(buf, &opt->short_option, 1), "'") : "");
 
 	return -EINVAL;
 }
@@ -124,7 +124,7 @@ non_wanted_argument_error(struct optargs_option const * const opt)
 	fprintf(stderr, "The option %s%s%s%s%s doesn't take an argument.\n",
 			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
 			opt->long_option && opt->short_option ? " / " : "",
-			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+			opt->short_option ? strcat(strncat(buf, &opt->short_option, 1), "'") : "");
 
 	return -EINVAL;
 }
@@ -139,7 +139,7 @@ redefine_option_argument_error(struct optargs_option const * const opt)
 	fprintf(stderr, "Conflicting arguments given for the option %s%s%s%s%s.\n",
 			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
 			opt->long_option && opt->short_option ? " / " : "",
-			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+			opt->short_option ? strcat(strncat(buf, &opt->short_option, 1), "'") : "");
 
 	return -EINVAL;
 }
@@ -163,7 +163,7 @@ option_as_argument_warning(struct optargs_option const * opt, char const * arg)
 			arg,
 			opt->long_option ? "'--" : "", opt->long_option ? opt->long_option : "", opt->long_option ? "'" : "",
 			opt->long_option && opt->short_option ? " / " : "",
-			opt->short_option ? strncat(strncat(buf, &opt->short_option, 1), "'", 1) : "");
+			opt->short_option ? strcat(strncat(buf, &opt->short_option, 1), "'") : "");
 }
 
 #endif
