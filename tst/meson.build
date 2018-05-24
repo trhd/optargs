@@ -931,6 +931,7 @@ if CMOCKA.found()
 			dependencies : CMOCKA,
 			c_args : [
 				'-DUNIT_TESTING',
+				'-Wno-unused-result',
 				'-isystem', meson.current_source_dir() + '/system'
 			])
 		)
