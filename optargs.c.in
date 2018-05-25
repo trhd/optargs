@@ -28,7 +28,7 @@
 #mesondefine WARN_OPTIONS_AS_ARGUMENTS
 
 WARN_UNUSED_RESULT
-static int parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args);
+static int parse_arguments(int const ac, char const * NONNULL const * NONNULL const av, struct optargs_argument * NONNULL args);
 
 enum constants
 {
@@ -52,7 +52,7 @@ min(const int a, const int b)
 
 WARN_UNUSED_RESULT
 static int
-word_length(char const * s)
+word_length(char const * NONNULL s)
 {
 	assert(s);
 
@@ -60,7 +60,7 @@ word_length(char const * s)
 }
 
 static void
-strcpyup(char * dst, char const * src, unsigned int len)
+strcpyup(char * NONNULL dst, char const * NONNULL src, unsigned int len)
 {
 	assert(dst);
 	assert(src);
@@ -79,14 +79,14 @@ is_word_separator(char const c)
 
 WARN_UNUSED_RESULT
 static bool
-argument_is_eol(struct optargs_argument const * const arg)
+argument_is_eol(struct optargs_argument const * NONNULL const arg)
 {
 	return arg->type == _optargs_argument_eol || arg->type == _optargs_argument_sink;
 }
 
 WARN_UNUSED_RESULT
 static bool
-option_is_valid(struct optargs_option const * const o)
+option_is_valid(struct optargs_option const * NONNULL const o)
 {
 	assert(o);
 
@@ -100,7 +100,7 @@ option_is_valid(struct optargs_option const * const o)
 
 WARN_UNUSED_RESULT
 static bool
-option_supports_argument(struct optargs_option const * o)
+option_supports_argument(struct optargs_option const * NONNULL o)
 {
 	assert(o);
 
@@ -109,7 +109,7 @@ option_supports_argument(struct optargs_option const * o)
 
 WARN_UNUSED_RESULT
 static int
-opt_missing_arg_error(struct optargs_option const * const opt)
+opt_missing_arg_error(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -125,7 +125,7 @@ opt_missing_arg_error(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-non_wanted_argument_error(struct optargs_option const * const opt)
+non_wanted_argument_error(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -141,7 +141,7 @@ non_wanted_argument_error(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-redefine_option_argument_error(struct optargs_option const * const opt)
+redefine_option_argument_error(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -159,7 +159,7 @@ redefine_option_argument_error(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static bool
-looks_like_an_option(char const * arg)
+looks_like_an_option(char const * NONNULL arg)
 {
 	assert(arg);
 
@@ -167,7 +167,7 @@ looks_like_an_option(char const * arg)
 }
 
 static void
-option_as_argument_warning(struct optargs_option const * opt, char const * arg)
+option_as_argument_warning(struct optargs_option const * NONNULL opt, char const * NONNULL arg)
 {
 	char buf[5] = "'-";
 
@@ -182,7 +182,7 @@ option_as_argument_warning(struct optargs_option const * opt, char const * arg)
 
 WARN_UNUSED_RESULT
 static int
-unmatching_optional_argument_error(char const * const opt, char const * const hdr)
+unmatching_optional_argument_error(char const * NONNULL const opt, char const * NONNULL const hdr)
 {
 	assert(opt);
 	assert(hdr);
@@ -200,7 +200,7 @@ unmatching_optional_argument_error(char const * const opt, char const * const hd
 
 WARN_UNUSED_RESULT
 static int
-unmatching_mandatory_argument_error(char const * const opt, char const * const hdr)
+unmatching_mandatory_argument_error(char const * NONNULL const opt, char const * NONNULL const hdr)
 {
 	assert(opt);
 	assert(hdr);
@@ -218,7 +218,7 @@ unmatching_mandatory_argument_error(char const * const opt, char const * const h
 
 WARN_UNUSED_RESULT
 static bool
-starts_with_single_hyphen(char const * const str)
+starts_with_single_hyphen(char const * NONNULL const str)
 {
 	assert(str);
 
@@ -227,7 +227,7 @@ starts_with_single_hyphen(char const * const str)
 
 WARN_UNUSED_RESULT
 static bool
-starts_with_double_hyphen(char const * const opt)
+starts_with_double_hyphen(char const * NONNULL const opt)
 {
 	assert(opt);
 	assert(starts_with_single_hyphen(opt));
@@ -237,7 +237,7 @@ starts_with_double_hyphen(char const * const opt)
 
 WARN_UNUSED_RESULT
 static bool
-is_empty_argument(char const * const str)
+is_empty_argument(char const * NONNULL const str)
 {
 	assert(str);
 
@@ -246,7 +246,7 @@ is_empty_argument(char const * const str)
 
 WARN_UNUSED_RESULT
 static bool
-is_double_hyphen(char const * const opt)
+is_double_hyphen(char const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -255,7 +255,7 @@ is_double_hyphen(char const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-long_option_is_invalid(char const * o, int const l)
+long_option_is_invalid(char const * NONNULL o, int const l)
 {
 	assert(o);
 	assert(l > 0);
@@ -276,7 +276,7 @@ short_option_is_invalid(char const c)
 
 WARN_UNUSED_RESULT
 static bool
-option_is_divider(struct optargs_option const * const opt)
+option_is_divider(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -285,7 +285,7 @@ option_is_divider(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static bool
-option_is_hidden(struct optargs_option const * const opt)
+option_is_hidden(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -294,7 +294,7 @@ option_is_hidden(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static bool
-argument_is_header(struct optargs_argument const * const arg)
+argument_is_header(struct optargs_argument const * NONNULL const arg)
 {
 	assert(arg);
 
@@ -303,7 +303,7 @@ argument_is_header(struct optargs_argument const * const arg)
 
 WARN_UNUSED_RESULT
 static bool
-argument_is_divider(struct optargs_argument const * const arg)
+argument_is_divider(struct optargs_argument const * NONNULL const arg)
 {
 	assert(arg);
 
@@ -312,7 +312,7 @@ argument_is_divider(struct optargs_argument const * const arg)
 
 WARN_UNUSED_RESULT
 static bool
-argument_type_is_any(struct optargs_argument const * const arg)
+argument_type_is_any(struct optargs_argument const * NONNULL const arg)
 {
 	assert(arg);
 
@@ -321,7 +321,7 @@ argument_type_is_any(struct optargs_argument const * const arg)
 
 WARN_UNUSED_RESULT
 static struct optargs_option *
-locate_short_option(struct optargs_option * o, char const c)
+locate_short_option(struct optargs_option * NONNULL o, char const c)
 {
 	assert(o);
 
@@ -333,7 +333,7 @@ locate_short_option(struct optargs_option * o, char const c)
 }
 
 static void
-locate_long_option(struct optargs_option ** o, char const * l, int const ll)
+locate_long_option(struct optargs_option * NONNULL* NONNULL o, char const * NONNULL l, int const ll)
 {
 	assert(o);
 	assert(*o);
@@ -354,7 +354,7 @@ locate_long_option(struct optargs_option ** o, char const * l, int const ll)
 }
 
 static void
-mark_default_option(struct optargs_option * opt)
+mark_default_option(struct optargs_option * NONNULL opt)
 {
 	assert(opt);
 
@@ -369,7 +369,7 @@ mark_default_option(struct optargs_option * opt)
 
 WARN_UNUSED_RESULT
 static int
-mark_no_argument_option(struct optargs_option * opt, bool const assign)
+mark_no_argument_option(struct optargs_option * NONNULL opt, bool const assign)
 {
 	assert(opt);
 
@@ -383,7 +383,7 @@ mark_no_argument_option(struct optargs_option * opt, bool const assign)
 
 WARN_UNUSED_RESULT
 static int
-mark_argument_option(struct optargs_option * opt, char const * const arg)
+mark_argument_option(struct optargs_option * NONNULL opt, char const * NONNULL const arg)
 {
 	if (opt->value_type)
 		return redefine_option_argument_error(opt);
@@ -405,8 +405,8 @@ mark_argument_option(struct optargs_option * opt, char const * const arg)
 
 WARN_UNUSED_RESULT
 static int
-mark_optional_argument_option(struct optargs_option * opt,
-		char const * const arg, bool const assign)
+mark_optional_argument_option(struct optargs_option * NONNULL opt,
+		char const * NONNULL const arg, bool const assign)
 {
 	assert(opt);
 
@@ -423,7 +423,7 @@ mark_optional_argument_option(struct optargs_option * opt,
 
 WARN_UNUSED_RESULT
 static int
-mark_option(struct optargs_option * opt, char const * const arg, bool const force)
+mark_option(struct optargs_option * NONNULL opt, char const * NONNULL const arg, bool const force)
 {
 	assert(opt);
 
@@ -449,13 +449,13 @@ mark_option(struct optargs_option * opt, char const * const arg, bool const forc
 
 WARN_UNUSED_RESULT
 static int
-parse_short_option(char const * c, char const * n, struct optargs_option * const o)
+parse_short_option(char const * NONNULL c, char const * NONNULL n, struct optargs_option * NONNULL const o)
 {
 	assert(c);
 	assert(o);
 	assert(starts_with_single_hyphen(c));
 
-	struct optargs_option *t;
+	struct optargs_option * t;
 	int r;
 
 	if (*++c == '\0')
@@ -484,7 +484,7 @@ parse_short_option(char const * c, char const * n, struct optargs_option * const
 
 WARN_UNUSED_RESULT
 static int
-parse_long_option(char const * c, char const * n, struct optargs_option * o)
+parse_long_option(char const * NONNULL c, char const * NONNULL n, struct optargs_option * NONNULL o)
 {
 	assert(c);
 	assert(o);
@@ -514,7 +514,7 @@ parse_long_option(char const * c, char const * n, struct optargs_option * o)
  * argument.
  */
 static void
-assert_argument_required_fields(struct optargs_argument const * const arg)
+assert_argument_required_fields(struct optargs_argument const * NONNULL const arg)
 {
 	switch (arg->type)
 	{
@@ -541,7 +541,7 @@ assert_argument_required_fields(struct optargs_argument const * const arg)
  * option argument.
  */
 static void
-assert_option_argument_required_fields(struct optargs_argument const * const arg)
+assert_option_argument_required_fields(struct optargs_argument const * NONNULL const arg)
 {
 	switch (arg->type)
 	{
@@ -566,7 +566,7 @@ assert_option_argument_required_fields(struct optargs_argument const * const arg
  * All optinal arguments should be at the and of the expected arguments' list
  */
 static void
-assert_optional_arguments_at_the_end(struct optargs_argument const * args)
+assert_optional_arguments_at_the_end(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -587,7 +587,7 @@ assert_optional_arguments_at_the_end(struct optargs_argument const * args)
  * Only optargs_argument_group_member type arguments should use subarguments.
  */
 static void
-assert_subargument_sanity(struct optargs_argument const * args)
+assert_subargument_sanity(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -602,7 +602,7 @@ assert_subargument_sanity(struct optargs_argument const * args)
 }
 
 static void
-assert_argument_sanity(struct optargs_argument const * args)
+assert_argument_sanity(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -618,7 +618,7 @@ assert_argument_sanity(struct optargs_argument const * args)
 }
 
 static void
-assert_option_sanity(struct optargs_option const * opts)
+assert_option_sanity(struct optargs_option const * NONNULL opts)
 {
 	assert(opts);
 
@@ -648,7 +648,7 @@ assert_option_sanity(struct optargs_option const * opts)
 #endif
 
 int
-optargs_parse_options(int const ac, char const * const * const av, struct optargs_option * const opts)
+optargs_parse_options(int const ac, char const * NONNULL const * NONNULL const av, struct optargs_option * NONNULL const opts)
 {
 	assert(ac > 0);
 	assert(av);
@@ -689,7 +689,7 @@ optargs_parse_options(int const ac, char const * const * const av, struct optarg
 
 WARN_UNUSED_RESULT
 static int
-argument_name_compare(const char * a, const char * b)
+argument_name_compare(const char * NONNULL a, const char * NONNULL b)
 {
 	assert(a);
 	assert(b);
@@ -707,7 +707,7 @@ argument_name_compare(const char * a, const char * b)
 
 WARN_UNUSED_RESULT
 static int
-invalid_argument_for_group(char const * arg, struct optargs_argument const * grp)
+invalid_argument_for_group(char const * NONNULL arg, struct optargs_argument const * NONNULL grp)
 {
 	assert(arg);
 	assert(grp);
@@ -720,7 +720,7 @@ invalid_argument_for_group(char const * arg, struct optargs_argument const * grp
 
 WARN_UNUSED_RESULT
 static int
-missing_argument_error(char const * a)
+missing_argument_error(char const * NONNULL a)
 {
 	assert(a);
 
@@ -737,7 +737,7 @@ missing_argument_error(char const * a)
 
 WARN_UNUSED_RESULT
 static int
-check_for_missing_mandatory_arguments(struct optargs_argument const * args)
+check_for_missing_mandatory_arguments(struct optargs_argument const * NONNULL args)
 {
 	for ( ; !argument_is_eol(args) ; args++)
 	{
@@ -764,7 +764,7 @@ excess_arguments_error(int g, int e)
 
 WARN_UNUSED_RESULT
 static int
-parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args)
+parse_arguments(int const ac, char const * NONNULL const * NONNULL const av, struct optargs_argument * NONNULL args)
 {
 	assert(ac >= 0);
 	assert(!ac || av);
@@ -828,7 +828,7 @@ parse_arguments(int const ac, char const * const * const av, struct optargs_argu
 
 WARN_UNUSED_RESULT
 int
-optargs_parse_arguments(int const ac, char const * const * const av, struct optargs_argument * args)
+optargs_parse_arguments(int const ac, char const * NONNULL const * NONNULL const av, struct optargs_argument * NONNULL args)
 {
 	assert(ac >= 0);
 	assert(!ac || av);
@@ -839,7 +839,7 @@ optargs_parse_arguments(int const ac, char const * const * const av, struct opta
 }
 
 static void
-close_optionality_brackets(int * l)
+close_optionality_brackets(int * NONNULL l)
 {
 	assert(l);
 
@@ -848,11 +848,11 @@ close_optionality_brackets(int * l)
 }
 
 WARN_UNUSED_RESULT
-static int print_subargument(struct optargs_argument const * args, int * l);
+static int print_subargument(struct optargs_argument const * NONNULL args, int * NONNULL l);
 
 WARN_UNUSED_RESULT
 static int
-print_group_names(struct optargs_argument const * args)
+print_group_names(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -871,7 +871,7 @@ print_group_names(struct optargs_argument const * args)
 
 WARN_UNUSED_RESULT
 static int
-print_arg_group(struct optargs_argument const * const arg, char const * const prefix)
+print_arg_group(struct optargs_argument const * NONNULL const arg, char const * NONNULL const prefix)
 {
 	assert(arg);
 	assert(prefix);
@@ -887,7 +887,7 @@ print_arg_group(struct optargs_argument const * const arg, char const * const pr
 
 WARN_UNUSED_RESULT
 static int
-print_arg_group_name(struct optargs_argument const * const arg, char const * const prefix)
+print_arg_group_name(struct optargs_argument const * NONNULL const arg, char const * NONNULL const prefix)
 {
 	assert(arg);
 	assert(prefix);
@@ -905,7 +905,7 @@ print_arg_group_name(struct optargs_argument const * const arg, char const * con
 
 WARN_UNUSED_RESULT
 static int
-print_arg_any_name(struct optargs_argument const * const arg, char const * const prefix)
+print_arg_any_name(struct optargs_argument const * NONNULL const arg, char const * NONNULL const prefix)
 {
 	assert(arg);
 	assert(arg->name);
@@ -919,7 +919,7 @@ print_arg_any_name(struct optargs_argument const * const arg, char const * const
 }
 
 static int
-print_arg_name(struct optargs_argument const * const arg, int * l)
+print_arg_name(struct optargs_argument const * NONNULL const arg, int * NONNULL l)
 {
 	assert(arg);
 
@@ -961,7 +961,7 @@ print_arg_name(struct optargs_argument const * const arg, int * l)
 }
 
 static void
-print_arg_names(struct optargs_argument const * args)
+print_arg_names(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -975,7 +975,7 @@ print_arg_names(struct optargs_argument const * args)
 
 WARN_UNUSED_RESULT
 static int
-calc_line_length(char const * const src, int const cols)
+calc_line_length(char const * NONNULL const src, int const cols)
 {
 	assert(src);
 	assert(cols > 0);
@@ -1000,7 +1000,7 @@ calc_line_length(char const * const src, int const cols)
 }
 
 static void
-print_wrapped(char const * src, int width, int const indent)
+print_wrapped(char const * NONNULL src, int width, int const indent)
 {
 	assert(src);
 	assert(width > 0);
@@ -1020,7 +1020,7 @@ print_wrapped(char const * src, int width, int const indent)
 
 WARN_UNUSED_RESULT
 static int
-get_option_argument_length(struct optargs_argument const * arg)
+get_option_argument_length(struct optargs_argument const * NONNULL arg)
 {
 	assert(arg);
 
@@ -1047,7 +1047,7 @@ get_option_argument_length(struct optargs_argument const * arg)
 
 WARN_UNUSED_RESULT
 static int
-get_opt_length(struct optargs_option const * const opt)
+get_opt_length(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -1072,7 +1072,7 @@ get_opt_length(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-find_longest_opt(struct optargs_option const * opts)
+find_longest_opt(struct optargs_option const * NONNULL opts)
 {
 	assert(opts);
 
@@ -1099,7 +1099,7 @@ find_longest_opt(struct optargs_option const * opts)
 
 WARN_UNUSED_RESULT
 static int
-get_arg_length(struct optargs_argument const * const arg)
+get_arg_length(struct optargs_argument const * NONNULL const arg)
 {
 	assert(arg);
 
@@ -1115,7 +1115,7 @@ get_arg_length(struct optargs_argument const * const arg)
 
 WARN_UNUSED_RESULT
 static int
-find_longest_arg(struct optargs_argument const * args)
+find_longest_arg(struct optargs_argument const * NONNULL args)
 {
 	assert(args);
 
@@ -1139,8 +1139,8 @@ find_longest_arg(struct optargs_argument const * args)
 
 WARN_UNUSED_RESULT
 static int
-find_left_column_maximum(struct optargs_option const * const opts,
-		struct optargs_argument const * const args)
+find_left_column_maximum(struct optargs_option const * NONNULL const opts,
+		struct optargs_argument const * NONNULL const args)
 {
 	return min(
 		LEFT_COLUMN_MAX_WIDTH,
@@ -1153,7 +1153,7 @@ find_left_column_maximum(struct optargs_option const * const opts,
 
 WARN_UNUSED_RESULT
 static int
-print_option_options(struct optargs_option const * const opt)
+print_option_options(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -1176,7 +1176,7 @@ print_option_options(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-print_mandatory_option_argument(struct optargs_option const * const opt)
+print_mandatory_option_argument(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 	assert(opt->argument);
@@ -1192,7 +1192,7 @@ print_mandatory_option_argument(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-print_optional_option_argument(struct optargs_option const * const opt)
+print_optional_option_argument(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 	assert(opt->argument);
@@ -1208,7 +1208,7 @@ print_optional_option_argument(struct optargs_option const * const opt)
 
 WARN_UNUSED_RESULT
 static int
-print_option_argument(struct optargs_option const * const opt)
+print_option_argument(struct optargs_option const * NONNULL const opt)
 {
 	assert(opt);
 
@@ -1242,7 +1242,7 @@ print_option_padding(int const width, int const pos)
 }
 
 static void
-print_option_argument_group(struct optargs_argument const * const arg, int left_column)
+print_option_argument_group(struct optargs_argument const * NONNULL const arg, int left_column)
 {
 	assert(arg);
 	assert(arg->name);
@@ -1266,7 +1266,7 @@ print_option_argument_group(struct optargs_argument const * const arg, int left_
 }
 
 static void
-print_option_argument_item(struct optargs_argument const * const arg, int left_column)
+print_option_argument_item(struct optargs_argument const * NONNULL const arg, int left_column)
 {
 	assert(arg);
 	assert(arg->name);
@@ -1286,7 +1286,7 @@ print_option_argument_item(struct optargs_argument const * const arg, int left_c
 }
 
 static void
-print_option_argument_description(struct optargs_argument const * arg,
+print_option_argument_description(struct optargs_argument const * NONNULL arg,
 		int const left_column)
 {
 	assert(arg);
@@ -1301,7 +1301,7 @@ print_option_argument_description(struct optargs_argument const * arg,
 }
 
 static void
-print_regular_option(struct optargs_option const * const opt,
+print_regular_option(struct optargs_option const * NONNULL const opt,
 		int const left_column)
 {
 	int len = print_option_options(opt);
@@ -1315,7 +1315,7 @@ print_regular_option(struct optargs_option const * const opt,
 
 
 static void
-print_option(struct optargs_option const * const opt, int const left_column)
+print_option(struct optargs_option const * NONNULL const opt, int const left_column)
 {
 	if (option_is_divider(opt))
 		printf("\n");
@@ -1325,7 +1325,7 @@ print_option(struct optargs_option const * const opt, int const left_column)
 
 WARN_UNUSED_RESULT
 static int
-count_printable_options(struct optargs_option const * opts)
+count_printable_options(struct optargs_option const * NONNULL opts)
 {
 	assert(opts);
 
@@ -1339,7 +1339,7 @@ count_printable_options(struct optargs_option const * opts)
 }
 
 static void
-print_all_options(struct optargs_option const * opts, int const indent)
+print_all_options(struct optargs_option const * NONNULL opts, int const indent)
 {
 	assert(opts);
 	assert(indent > 0);
@@ -1353,7 +1353,7 @@ print_all_options(struct optargs_option const * opts, int const indent)
 
 WARN_UNUSED_RESULT
 static int
-print_subargument(struct optargs_argument const * args, int * l)
+print_subargument(struct optargs_argument const * NONNULL args, int * NONNULL l)
 {
 	assert(args);
 	assert(l);
@@ -1373,7 +1373,7 @@ print_subargument(struct optargs_argument const * args, int * l)
 }
 
 static void
-print_normal_argument(struct optargs_argument const * const arg, int const left_column, int const indent)
+print_normal_argument(struct optargs_argument const * NONNULL const arg, int const left_column, int const indent)
 {
 	assert(arg);
 	assert(left_column > 0);
@@ -1399,7 +1399,7 @@ print_normal_argument(struct optargs_argument const * const arg, int const left_
 }
 
 static void
-print_argument_header(struct optargs_argument const * const arg, int const left_column, int const indent)
+print_argument_header(struct optargs_argument const * NONNULL const arg, int const left_column, int const indent)
 {
 	assert(arg);
 	assert(left_column > 0);
@@ -1427,7 +1427,7 @@ print_argument_header(struct optargs_argument const * const arg, int const left_
 }
 
 static void
-print_all_arguments(struct optargs_argument const * args, int const left_column, unsigned int const indent)
+print_all_arguments(struct optargs_argument const * NONNULL args, int const left_column, unsigned int const indent)
 {
 	assert(args);
 	assert(left_column > 0);
@@ -1485,8 +1485,8 @@ print_all_arguments(struct optargs_argument const * args, int const left_column,
 }
 
 static void
-print_usage(char const * const exe, struct optargs_option const * const opts,
-		struct optargs_argument const * const args)
+print_usage(char const * NONNULL const exe, struct optargs_option const * NONNULL const opts,
+		struct optargs_argument const * NONNULL const args)
 {
 	assert(exe);
 
@@ -1502,9 +1502,9 @@ print_usage(char const * const exe, struct optargs_option const * const opts,
 }
 
 void
-optargs_print_help(char const * const exe, char const * const about,
-		struct optargs_option const * const opts,
-		struct optargs_argument const * const args)
+optargs_print_help(char const * NONNULL const exe, char const * NULLABLE const about,
+		struct optargs_option const * NULLABLE const opts,
+		struct optargs_argument const * NULLABLE const args)
 {
 	assert(exe);
 
@@ -1525,8 +1525,8 @@ optargs_print_help(char const * const exe, char const * const about,
 }
 
 WARN_UNUSED_RESULT
-char const *
-optargs_option_string(struct optargs_option const * const opts)
+char const * NONNULL
+optargs_option_string(struct optargs_option const * NONNULL const opts)
 {
 	assert(opts);
 	assert(opts->value_type != optargs_flag);
@@ -1542,7 +1542,7 @@ optargs_option_string(struct optargs_option const * const opts)
 
 WARN_UNUSED_RESULT
 unsigned int
-optargs_option_count(struct optargs_option const * const opts)
+optargs_option_count(struct optargs_option const * NONNULL const opts)
 {
 	assert(opts);
 	assert(opts->value_type != optargs_argument);
@@ -1555,7 +1555,7 @@ optargs_option_count(struct optargs_option const * const opts)
 
 WARN_UNUSED_RESULT
 enum optargs_option_value_type
-optargs_option_type(struct optargs_option const * const opts)
+optargs_option_type(struct optargs_option const * NONNULL const opts)
 {
 	assert(opts);
 
@@ -1563,8 +1563,8 @@ optargs_option_type(struct optargs_option const * const opts)
 }
 
 WARN_UNUSED_RESULT
-char const *
-optargs_argument_value(struct optargs_argument const * a)
+char const * NONNULL
+optargs_argument_value(struct optargs_argument const * NONNULL a)
 {
 	assert(a);
 
@@ -1578,7 +1578,7 @@ optargs_argument_value(struct optargs_argument const * a)
 
 WARN_UNUSED_RESULT
 int
-optargs_argument_index(struct optargs_argument const * a, int i)
+optargs_argument_index(struct optargs_argument const * NONNULL a, int i)
 {
 	assert(a);
 	assert(i >= 0);
@@ -1593,7 +1593,7 @@ optargs_argument_index(struct optargs_argument const * a, int i)
 
 WARN_UNUSED_RESULT
 int
-optargs_argument_offset(struct optargs_argument const * a)
+optargs_argument_offset(struct optargs_argument const * NONNULL a)
 {
 	assert(a);
 
